@@ -1,4 +1,4 @@
-# Handoff: where work stopped (2026-10-09, session 3)
+# Handoff: where work stopped (2026-10-09, end of session 3)
 
 Work happens in the fork `cghath/unnamed-rts` on branch **`handoff-tasks`** (upstream: `noahgonzalez4506/Unnamed-RTS`).
 Do not commit to `main`; it stays in sync with upstream. PRs go from `handoff-tasks` to upstream when Noah is ready.
@@ -6,6 +6,34 @@ Do not commit to `main`; it stays in sync with upstream. PRs go from `handoff-ta
 Godot 4.5.1 project in `godot_demo/`. Compile check: `--headless --path . res://tests/compile.tscn` (prints "COMPILE DONE").
 Export: `--export-release "Windows Desktop" build/windows/StarshipDemo.exe`, then split into 28 MB parts with PLAY.bat.
 GDScript warnings count as errors: give explicit types when reading from a Dictionary or Variant.
+
+## Start here: open loose ends from session 3
+Everything below this section is done and pushed to `handoff-tasks` (last code commit dd88742). What's still open:
+
+1. **Windows build repo.** The user is creating a private repo **`cghath/StarshipDemo-windows`** for game builds.
+   (Claude's GitHub integration can't create repos: 403. It can push once the repo exists and the Claude GitHub
+   App has access to it.) If it has no build yet, rebuild from `handoff-tasks` (see "Windows build" below) and push
+   `PLAY.bat`, `StarshipDemo.part1`-`part5` and a short README with the play steps into a folder per build,
+   named `<date>_<commit>/` (e.g. `2026-10-09_dd88742/`). GitHub refuses files over 100 MB, so never push the
+   joined 139 MB .exe. A user-attached build repo and this fork can share a session (different names).
+2. **PR to upstream not opened yet.** Claude can't open it: `noahgonzalez4506/Unnamed-RTS` has the same name as
+   this fork, so the two can't be attached to one session. The user opens it themselves from
+   https://github.com/noahgonzalez4506/Unnamed-RTS/compare/main...cghath:Unnamed-RTS:handoff-tasks?expand=1
+   (they were given a title and description). Ask whether it's open or merged before building on it.
+3. **Noah's handoff doc.** Noah shared a Claude Doc ("another handoff doc") from his own account. Claude couldn't
+   read it (outside the user's organisation: access denied). Ask the user to paste its text, then compare it with
+   this file and say which tasks are new.
+4. **Playtest.** Nobody has played the grenadier yet. The user wants to test on their Windows PC, either with
+   the Windows build or with a local session in the Claude desktop app (Code tab, Environment: Local) on their
+   clone in `Documents\Unnamed-RTS`. That clone starts on `main`, so it needs `git checkout handoff-tasks`.
+   Their terminal Claude Code is signed in with an API key, so `claude --teleport` fails until they run
+   `claude auth login` with their claude.ai account.
+5. **For Noah**, who is new to Git: a cheatsheet doc "Getting the merged changes onto your computer"
+   (https://claude.ai/code/artifact/2a7bbf2d-4d6a-49b1-82b1-2e32a897c7e0) covers merging the PR and pulling with
+   GitHub Desktop or the command line. The user shares it with him.
+
+Working with this user: ask clarifying questions before big or ambiguous work; commit and push to `handoff-tasks`
+as each piece finishes; send screenshots of anything visual. The rest of the to-do list is at the end of this file.
 
 ## Cloud container setup (no Godot preinstalled)
 - Download: `curl -sSL -o g.zip https://github.com/godotengine/godot/releases/download/4.5.1-stable/Godot_v4.5.1-stable_linux.x86_64.zip && unzip g.zip` (keep it outside the repo, e.g. a scratch dir).
