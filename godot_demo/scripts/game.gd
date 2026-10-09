@@ -244,8 +244,9 @@ var _focus_paused := false
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		# (not in tests and picture runs: they run in the background while you use other windows)
 		if match_node and not (network and network.active) and settings.get("alt_tab_pause", true) \
-				and not get_tree().paused:
+				and not get_tree().paused and OS.get_cmdline_user_args().is_empty():
 			get_tree().paused = true
 			_focus_paused = true
 	elif what == NOTIFICATION_APPLICATION_FOCUS_IN:

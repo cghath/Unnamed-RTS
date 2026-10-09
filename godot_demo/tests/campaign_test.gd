@@ -13,6 +13,8 @@ var me: Node
 var post: Node
 var cam: Camera3D
 var _cam_on := false
+var _vis := 0                      # (pictures only) the city and the RTS view with the fog
+var _vis_t := 0.0
 
 
 func _ready() -> void:
@@ -86,6 +88,14 @@ func _physics_process(dt: float) -> void:
 					_look(hp + (hp - (pl["pos"] as Vector3)).normalized() * 700.0 + Vector3.UP * 320.0, (pl["pos"] as Vector3).lerp(hp, 0.4))
 					_shot("01_home_system")
 		1:
+			if out != "" and t - _w > 0.6 and not report.has("s_station"):
+				# the starter station close up, from above: the T (docking boom across the spine's end)
+				report["s_station"] = true
+				var st: Node3D = G.match_node.homes[1]
+				var sc: Vector3 = st.to_global(st.aabb.get_center())
+				var sr: float = st.aabb.size.length()
+				_look(sc + st.global_basis.y * sr * 0.9 + st.global_basis.z * sr * 0.35, sc)
+				await _shot("01b_starter_station")
 			if out != "" and t - _w > 1.0 and not report.has("s_mine"):
 				for mc in G.match_node.miner_crafts:
 					if is_instance_valid(mc) and mc.stage == 2:
@@ -233,7 +243,7 @@ func _physics_process(dt: float) -> void:
 			if "--perf" in OS.get_cmdline_user_args() and t > 3.0:
 				_perf(t)
 				return
-			if t > 3.0:
+			if t > 3.0 and not report.has("on_surface"):    # (once: its pictures await frames, and _process keeps coming)
 				report["on_surface"] = G.match_node.on_surface
 				report["surface_ships"] = G.vessels.filter(func(v): return v.team == 1 and v.kind == "ship").size()
 				report["surface_bases"] = G.vessels.filter(func(v): return v.kind == "station").size()
@@ -373,6 +383,9 @@ func _physics_process(dt: float) -> void:
 				step = 31
 				_w = t
 		31:
+			if out != "" and _vis != 3:
+				await _vis_shots()
+				return
 			# convoy range: a path from the landing zone right across to the farthest walkable area
 			var gnd2: Node3D = G.match_node.ground
 			if gnd2 and gnd2.areas.size() > 1 and not report.has("cross_path_gap"):
@@ -392,6 +405,40 @@ func _physics_process(dt: float) -> void:
 				report["back_in_orbit"] = not G.match_node.on_surface and G.vessels.filter(func(v): return v.team == 1 and v.kind == "ship").size() > 0
 				_report()
 				step = 99
+
+
+## (Pictures only) the merged city from above, then the commander's RTS view over the
+## landing zone: the fog shading, the ground minimap and its radar rings.
+func _vis_shots() -> void:
+	if t < _vis_t:
+		return
+	var cc: Dictionary = G.match_node.city
+	match _vis:
+		0:
+			_vis_t = t + 1.5
+			_vis = 1
+		1:
+			_vis = 4                                     # (busy: _process keeps coming while we await)
+			if not cc.is_empty():
+				var ctr: Vector3 = cc["center"]
+				var r: float = float(cc["radius"])
+				_look(ctr + Vector3(r * 0.7, r * 0.45, r * 0.7), ctr)
+				await get_tree().process_frame
+				await _shot("11_city")
+			_cam_on = false
+			var cmd: Node = G.commander
+			var sh: Array = G.vessels.filter(func(v): return v.team == 1 and v.kind == "ship")
+			cmd.pivot = sh[0].global_position if not sh.is_empty() else Vector3.ZERO
+			cmd.zoom = 1400.0
+			cmd.pitch = 1.05
+			cmd.interior_forced = 0
+			cmd.cam.make_current()
+			_vis_t = t + 2.5
+			_vis = 2
+		2:
+			_vis = 4
+			await _shot("12_rts_fog_minimap")
+			_vis = 3
 
 
 func _report() -> void:

@@ -42,14 +42,26 @@ func _draw() -> void:
 	var fog: Node = m.get("fog") if m else null
 	var fogged: bool = fog != null and fog.enabled()
 	var px_per_m: float = size.x / (_half() * 2.0)
+	var ground: bool = m != null and m.get("on_surface") == true
+	if ground and m.has_meta("ground_map"):
+		# the terrain from above (baked when we landed: surface.gd _minimap_image)
+		var gh: float = m.get_meta("ground_map_half", HALF_GROUND)
+		var a := _to_map(Vector3(-gh, 0, -gh))
+		var b := _to_map(Vector3(gh, 0, gh))
+		draw_texture_rect(m.get_meta("ground_map"), Rect2(a, b - a), false, Color(1.15, 1.15, 1.15, 1.0))
+		if m.get("city") != null and not (m.city as Dictionary).is_empty():
+			draw_arc(_to_map(m.city["center"]), float(m.city["radius"]) * px_per_m, 0, TAU, 28, Color(0.85, 0.85, 0.8, 0.55), 1.2)
 	if fogged:
 		# shade everything, then lift what our eyes cover; radar reach as a faint ring
-		draw_rect(Rect2(Vector2.ZERO, size), Color(0.0, 0.0, 0.0, 0.35))
+		draw_rect(Rect2(Vector2.ZERO, size), Color(0.0, 0.0, 0.0, 0.38 if ground else 0.35))
 		for e in fog.eyes:
 			var ep := _to_map(e[0])
-			draw_circle(ep, float(e[1]) * px_per_m, Color(0.3, 0.45, 0.6, 0.09))
+			var er: float = float(e[1]) * px_per_m
+			draw_circle(ep, er, Color(1.0, 1.0, 0.95, 0.16) if ground else Color(0.3, 0.45, 0.6, 0.09))
+			if ground:
+				draw_arc(ep, er, 0, TAU, 24, Color(0.9, 0.95, 1.0, 0.35), 1.0)
 		for e in fog.eyes:
-			if float(e[2]) > 900.0:
+			if float(e[2]) > 900.0 or (ground and float(e[2]) > 0.0):     # (on a world: vehicle and outpost radar too)
 				draw_arc(_to_map(e[0]), float(e[2]) * px_per_m, 0, TAU, 32, Color(0.6, 0.7, 0.8, 0.1), 1.0)
 	for i in range(1, 4):                                   # faint grid
 		var x := size.x * i / 4.0
