@@ -162,7 +162,8 @@ func _inputs() -> void:
 		"grenade": KEY_G, "medpen": KEY_Q, "possess": KEY_TAB, "rot_left": KEY_Q, "rot_right": KEY_E,
 		"interior": KEY_X, "deck_up": KEY_UP, "deck_down": KEY_DOWN, "board": KEY_B,
 		"fighters": KEY_L, "train": KEY_T, "hold": KEY_H, "sabotage": KEY_K, "help": KEY_F1,
-		"dash": KEY_V, "deploy": KEY_J, "research": KEY_Y, "shuttle": KEY_N, "missiles": KEY_M, "resupply": KEY_U}
+		"dash": KEY_V, "deploy": KEY_J, "research": KEY_Y, "shuttle": KEY_N, "missiles": KEY_M, "resupply": KEY_U,
+		"launcher": KEY_B}
 	for a in keys:
 		if not InputMap.has_action(a):
 			InputMap.add_action(a)

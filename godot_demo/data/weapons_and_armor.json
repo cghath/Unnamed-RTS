@@ -240,6 +240,24 @@
       "fuse_s": 2.0,
       "sticks": true
     },
+    "GLShell": {
+      "damage": 85,
+      "radius_m": 4.0,
+      "speed_m_s": 50,
+      "arm_m": 4.0,
+      "reload_s": 1.6,
+      "carried": 6,
+      "note": "Grenadier's 40 mm launcher: bursts on impact once it has flown arm_m."
+    },
+    "BreachRound": {
+      "speed_m_s": 40,
+      "spin_s": 1.0,
+      "reach_m": 1.5,
+      "damage": 40,
+      "radius_m": 1.5,
+      "carried": 2,
+      "note": "Grenadier's hole-saw round: sticks, drills, then breaches a wall or door within reach_m."
+    },
     "Medpen": {
       "heal": 40,
       "use_s": 1.0,

@@ -1026,6 +1026,10 @@ HEAVY_OVERRIDES = {2: dict(damage=60, rpm=60, ammo_per_load=12, splash_radius_m=
 ITEM_STATS = {
     "FragGrenade":   dict(damage=90, radius_m=5.0, fuse_s=3.0),
     "PlasmaGrenade": dict(damage=90, radius_m=4.0, fuse_s=2.0, sticks=True),
+    "GLShell":       dict(damage=85, radius_m=4.0, speed_m_s=50, arm_m=4.0, reload_s=1.6, carried=6,
+                          note="Grenadier's 40 mm launcher: bursts on impact once it has flown arm_m."),
+    "BreachRound":   dict(speed_m_s=40, spin_s=1.0, reach_m=1.5, damage=40, radius_m=1.5, carried=2,
+                          note="Grenadier's hole-saw round: sticks, drills, then breaches a wall or door within reach_m."),
     "Medpen":        dict(heal=40, use_s=1.0, stops_bleedout=True),
     "ReviveKit":     dict(revive_s=4.0, uses=3, revive_health=50),
     "BreachCharge":  dict(damage=150, radius_m=3.0, fuse_s=3.0, breaches=["BreachWall", "BreachDoor",

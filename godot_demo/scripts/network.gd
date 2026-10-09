@@ -608,6 +608,9 @@ func _action(id: int, what: String, args: Array) -> void:
 				c.reload_t = float(c.wstats.get("reload_s", 2.0))
 		"grenade":
 			c._throw_grenade(args[0], args.size() > 1 and bool(args[1]))
+		"gl":
+			if c.role == "grenadier":
+				c.fire_launcher(args[0], args[1])
 		"medpen":
 			if not c.medpens.is_empty():
 				c.rig.show_slot(c.medpens.pop_back(), false)
