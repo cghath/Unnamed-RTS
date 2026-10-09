@@ -21,6 +21,8 @@ var fake := {}
 var out := ""
 var _view := {}                   # {from, at}: where the drill picture's camera goes (see _process)
 var _g2: Node = null
+var _floor_round: Node3D = null
+var _floor_t := 0.0
 
 
 func _ready() -> void:
@@ -229,9 +231,15 @@ func _physics_process(dt: float) -> void:
 			c.breach_ammo = 2
 			var r: Node3D = c.fire_breach_round(c.eye(), (-c.global_transform.basis.z + Vector3.DOWN * 0.5).normalized(), fake)
 			_check(r != null and c.breach_ammo == 1, "fired a breaching round at the floor")
+			_floor_round = r
+			_floor_t = 0.0
 			step = 8
 			_wait = 1.8
 		8:
+			# (it fails when it goes off on the floor, or after 3 s in the air if it missed)
+			_floor_t += dt
+			if is_instance_valid(_floor_round) and _floor_t < 4.0:
+				return
 			_check(fake["charged"] == false, "a round that breaches nothing hands its target back")
 			# who breaches a heavy door: a charge carrier, else the grenadier, else nobody
 			var v2: Node = c.vessel

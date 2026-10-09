@@ -1020,7 +1020,157 @@ func _think() -> void:
 	var t0 := Time.get_ticks_usec()
 	_separation()
 	_think2()
+	if team != 4 and state == "alive":
+		if not G.dangers.is_empty():
+			_keep_clear()
+		if is_combatant() and path_i < path.size():
+			_pass_behind_shooters()
 	G.stat("us_char_think", Time.get_ticks_usec() - t0)
+
+
+# ------------------------------------------------------------------ friendly-fire safety
+
+## A friendly grenade or breaching round is live: inside its blast, get out (away from it, at a
+## run); outside, don't walk into it, its blast or the room it's in until it has gone off.
+func _keep_clear() -> void:
+	var me_w := global_position
+	var d: Node = G.danger_for(team, me_w, 0.5)
+	if d != null:
+		var dp: Vector3 = vessel.to_local(d.danger_point())
+		var away: Vector3 = position - dp
+		away.y = 0.0
+		if away.length() < 0.1:
+			away = Vector3(randf_range(-1, 1), 0, randf_range(-1, 1))
+		var need: float = float(d.danger_radius()) + 1.5 - away.length()
+		go(vessel.snap_local(position + away.normalized() * maxf(need, 1.0)), true)
+		return
+	if goal == Vector3.INF:
+		return
+	# the next 10 m of the path, a point every metre and a half
+	var prev: Vector3 = position
+	var walked := 0.0
+	for k in range(path_i, mini(path_i + 4, path.size())):
+		var seg: Vector3 = path[k] - prev
+		var n: int = maxi(1, ceili(seg.length() / 1.5))
+		for j in n:
+			if G.danger_for(team, vessel.to_global(prev + seg * (float(j + 1) / n))) != null:
+				stop()                                   # hold here (still shooting) till it goes off
+				return
+		walked += seg.length()
+		prev = path[k]
+		if walked > 10.0:
+			break
+	# the room it's in: stay out until it's gone off
+	var gz: Dictionary = vessel.zone_at(goal)
+	if gz.is_empty() or is_same(gz, vessel.zone_at(position)):
+		return
+	for dn in G.dangers:
+		if is_instance_valid(dn) and not G.enemies(team, int(dn.team)):
+			var dl: Vector3 = vessel.to_local(dn.danger_point())
+			if vessel.aabb.has_point(dl) and is_same(vessel.zone_at(dl), gz):
+				stop()
+				return
+
+
+## Friends (downed ones too) inside a blast of radius `r` at world point `at`, in its line.
+func _friend_in_blast(at: Vector3, r: float) -> bool:
+	for o in G.characters:
+		if not is_instance_valid(o) or o == self or o.state == "dead" or G.enemies(team, o.team):
+			continue
+		if o.global_position.distance_to(at) < r \
+				and G.ray(at + Vector3.UP * 0.3, o.global_position + Vector3.UP * 1.0, [], G.LAYER_WORLD | G.LAYER_DOOR).is_empty():
+			return true
+	return false
+
+
+## A friend close to the line from `from` to `to` (world), between us and the target.
+func _friend_in_line(from: Vector3, to: Vector3) -> bool:
+	var ab := to - from
+	var l2 := maxf(ab.length_squared(), 0.0001)
+	for o in vessel.near_occupants(position, sqrt(l2) + 1.0):
+		if not is_instance_valid(o) or o == self or o.state == "dead" or G.enemies(team, o.team) or o.vessel != vessel:
+			continue
+		for h in [0.9, 1.4]:
+			var p: Vector3 = o.global_position + Vector3.UP * h
+			var t := clampf((p - from).dot(ab) / l2, 0.0, 1.0)
+			if t > 0.02 and t < 0.97 and p.distance_to(from + ab * t) < 0.7:
+				return true
+	return false
+
+
+var _clear_line_t := 0.0
+
+
+## Our shot is blocked by a friend: stand up to shoot over them, else take a side-step.
+func _clear_line(dir: Vector3) -> void:
+	if crouch:
+		crouch = false
+		return
+	if G.time < _clear_line_t or path_i < path.size():
+		return
+	_clear_line_t = G.time + 1.5
+	var dl: Vector3 = vessel.global_basis.inverse() * dir
+	var side: Vector3 = dl.cross(Vector3.UP)
+	side.y = 0.0
+	if side.length() < 0.01:
+		return
+	go(vessel.snap_local(position + side.normalized() * (1.3 if randf() < 0.5 else -1.3)), false)
+	G.stat("ff_sidesteps")
+
+
+var _detour_t := 0.0
+
+
+## On the move past a friend who's shooting: go round behind them, not across their muzzle.
+func _pass_behind_shooters() -> void:
+	if G.time < _detour_t:
+		return
+	# the next 8 m of the path (skipping waypoints we're already standing on)
+	var segs: Array = []
+	var prev: Vector3 = position
+	var ahead := 0.0
+	for k in range(path_i, mini(path_i + 16, path.size())):
+		var l: float = (path[k] as Vector3).distance_to(prev)
+		if l > 0.35:
+			segs.append([prev, path[k], k])
+			prev = path[k]
+			ahead += l
+			if ahead > 8.0:
+				break
+	if segs.is_empty():
+		return
+	for o in vessel.near_occupants(position, 8.0):
+		if not is_instance_valid(o) or o == self or o.team != team or o.state != "alive" or not o.los:
+			continue
+		var tg = o.target
+		if tg == null or not is_instance_valid(tg) or tg.get("vessel") != vessel:
+			continue
+		var fa: Vector3 = o.position
+		var fb: Vector3 = tg.position
+		var fd: Vector3 = fb - fa
+		fd.y = 0.0
+		if fd.length() < 0.5:
+			continue
+		var at_k := -1
+		for sg in segs:
+			for k in 6:
+				var p: Vector3 = (sg[0] as Vector3).lerp(sg[1], k / 5.0)
+				var t := clampf((p - fa).dot(fd) / fd.length_squared(), 0.0, 1.0)
+				var q: Vector3 = fa + fd * t
+				if t > 0.03 and Vector2(p.x - q.x, p.z - q.z).length() < 0.8:
+					at_k = int(sg[2])
+					break
+			if at_k >= 0:
+				break
+		if at_k < 0:
+			continue
+		var behind: Vector3 = vessel.snap_local(fa - fd.normalized() * 1.3)
+		if behind.distance_to(path[at_k]) > 0.5 and behind.distance_to(position) > 0.5:
+			path.insert(at_k, behind)
+			path_i = mini(path_i, at_k)
+			_detour_t = G.time + 2.0
+			G.stat("ff_detours")
+		return
 
 
 ## Personal space: a push away from teammates closer than about a metre, so squads
@@ -1161,7 +1311,8 @@ func _brain_combat() -> void:
 				crouch = squad.stack_door.is_empty() == false or squad.order.get("type", "") == "hold"
 			return
 	# grenades at targets hiding behind cover or bunched up
-	if not grenades.is_empty() and los and dist > 6.0 and dist < 22.0 and randf() < 0.06:
+	if not grenades.is_empty() and los and dist > 6.0 and dist < 22.0 and randf() < 0.06 \
+			and not _friend_in_blast(target.global_position, 6.0):
 		_throw_grenade(target.global_position)
 	# squads bound: one fireteam moves to the next cover while the other holds and fires
 	if squad and squad.bounding() and fireteam == squad.moving_team and dist > 7.0:
@@ -1640,6 +1791,11 @@ func _ai_fire(dt: float) -> void:
 	if team == 4:
 		spread *= 3.0
 	var aim: Vector3 = target.chest() + Vector3(randfn(0, 0.15), randfn(0, 0.2), randfn(0, 0.15))
+	if _friend_in_line(eye(), aim):
+		fire_t = 0.3                                     # a friend in the way: hold fire and clear the line
+		_clear_line(aim - eye())
+		G.stat("ff_held_shots")
+		return
 	var dir := (aim - eye()).normalized()
 	dir = dir.rotated(Vector3.UP, deg_to_rad(randfn(0, spread))).rotated(dir.cross(Vector3.UP).normalized(), deg_to_rad(randfn(0, spread)))
 	fire(eye(), dir, (rpm / 60.0) / sps)
@@ -1661,6 +1817,10 @@ func _suppress_fire() -> void:
 	var h := G.ray(eye(), p, [get_rid()], G.LAYER_WORLD | G.LAYER_DOOR)
 	if not h.is_empty() and (h.position as Vector3).distance_to(p) > 2.0:
 		return                                            # no line of fire from here
+	if _friend_in_line(eye(), p):
+		fire_t = 0.3
+		_clear_line(p - eye())
+		return
 	var rpm: float = float(wstats.get("rpm", 300))
 	fire_t = 1.0 / min(rpm / 60.0, 6.0) * randf_range(1.0, 1.6)
 	var dir := (p + Vector3(randfn(0, 0.5), randfn(0, 0.4), randfn(0, 0.5)) - eye()).normalized()

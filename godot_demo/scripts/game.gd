@@ -78,6 +78,7 @@ var _sphere: SphereMesh
 
 
 var sfx: Node                  # sound effects (sfx.gd)
+var dangers: Array = []        # live grenades and breaching rounds: friendly AI keeps clear (danger_for)
 
 
 func _ready() -> void:
@@ -107,6 +108,7 @@ func stat(k: String, n: int = 1) -> void:
 
 func reset() -> void:
 	stats.clear()
+	dangers.clear()
 	vessels.clear()
 	characters.clear()
 	fighters.clear()
@@ -485,6 +487,19 @@ func explosion(pos: Vector3, size: float, c: Color = Color(1.0, 0.55, 0.15)) -> 
 
 
 ## Damage every character within `radius` of `pos` (grenades, charges).
+## The live grenade or breaching round (thrown by someone not hostile to `team_`) whose blast
+## would reach world point `p` (plus `margin`), with nothing solid in between, or null.
+func danger_for(team_: int, p: Vector3, margin: float = 0.0) -> Node:
+	for d in dangers:
+		if not is_instance_valid(d) or enemies(team_, int(d.team)):
+			continue
+		var dp: Vector3 = d.danger_point()
+		if p.distance_to(dp) < float(d.danger_radius()) + margin \
+				and ray(dp + Vector3.UP * 0.3, p + Vector3.UP * 1.0, [], LAYER_WORLD | LAYER_DOOR).is_empty():
+			return d
+	return null
+
+
 func blast(pos: Vector3, radius: float, damage: float, attacker: Node) -> void:
 	explosion(pos, radius * 0.8)
 	for v in vessels:

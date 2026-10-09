@@ -221,6 +221,8 @@ func _ready() -> void:
 		add_child(load("res://tests/squad_test.gd").new())
 	elif "--grenadiertest" in args:
 		add_child(load("res://tests/grenadier_test.gd").new())
+	elif "--fftest" in args:
+		add_child(load("res://tests/ff_test.gd").new())
 	elif "--breachtest" in args:
 		add_child(load("res://tests/breach_test.gd").new())
 	elif "--opstest" in args:
@@ -856,7 +858,9 @@ func squad_command(c: Node, op: String, p: Vector3) -> void:
 					if dd < bd and dd < 25.0:
 						bd = dd
 						best = m
-			if best:
+			if best and best._friend_in_blast(v.to_global(p), 6.0):
+				G.say("%s: can't throw, friendlies by the aim point" % best.display, c.team)
+			elif best:
 				best._throw_grenade(v.to_global(p))
 				G.say("%s: frag out!" % best.display, c.team)
 			else:
