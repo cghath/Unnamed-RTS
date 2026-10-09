@@ -16,7 +16,7 @@ is at `Documents\tools\godot`, and a project audit was fixed (see "Done in sessi
    named `<date>_<commit>/`, newest listed first in its README table. `2026-10-09_dd88742/` = `handoff-tasks` at
    dd88742 (`PLAY.bat`, `StarshipDemo.part1`-`part5`, README; joined SHA-256 verified from a fresh clone).
    Newest: `2026-10-09_9a27332/` (session 4 audit fixes), built on the user's PC with the templates in
-   `%APPDATA%\Godot\export_templates.5.1.stable\`; grenadier test and self-test pass from inside the exe.
+   `%APPDATA%\Godot\export_templates\4.5.1.stable\`; grenadier test and self-test pass from inside the exe.
    For a new build: rebuild (see "Windows build" below), add a folder and a README row, push to its `main`.
    GitHub refuses files over 100 MB, so never push the joined .exe. `.gitattributes` keeps parts binary and
    `PLAY.bat` byte for byte (CRLF). Claude can't create repos (403), but can push to this one.
