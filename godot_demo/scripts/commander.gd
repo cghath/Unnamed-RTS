@@ -36,6 +36,37 @@ var _respawn_t := -1.0
 var camp_ui: Control = null    # campaign screens (galaxy map, station services)
 var viewmodel: Node3D             # the first-person gun (viewmodel.gd)
 var _roof_lvl := -1
+var _emp_rect: ColorRect          # EMP static over the first-person view (emp_static)
+var _emp_t := 0.0
+var _emp_len := 0.0
+
+const EMP_SHADER := """
+shader_type canvas_item;
+uniform sampler2D screen_tex : hint_screen_texture, filter_linear_mipmap;
+uniform float strength = 0.0;
+
+float hash(vec2 p) {
+	return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
+}
+
+void fragment() {
+	float t = TIME;
+	vec2 uv = SCREEN_UV;
+	// tearing: random bands of rows jump sideways
+	float band = floor(uv.y * 48.0) + floor(t * 18.0) * 7.0;
+	float tear = (hash(vec2(band, floor(t * 24.0))) - 0.5) * step(0.82, hash(vec2(band * 1.7, floor(t * 12.0))));
+	uv.x += tear * 0.06 * strength;
+	// blurred, washed-out and dimmed view
+	vec3 col = textureLod(screen_tex, uv, 3.5 * strength).rgb;
+	float grey = dot(col, vec3(0.299, 0.587, 0.114));
+	col = mix(col, vec3(grey) * vec3(0.75, 0.9, 1.1), 0.7 * strength) * (1.0 - 0.45 * strength);
+	// snow and scanlines
+	float n = hash(floor(FRAGCOORD.xy / 2.0) + fract(t * 61.0) * 113.0);
+	float scan = 0.85 + 0.15 * sin(FRAGCOORD.y * 1.6 + t * 40.0);
+	col = mix(col, vec3(n) * vec3(0.7, 0.85, 1.0), 0.45 * strength) * mix(1.0, scan, strength);
+	COLOR = vec4(col, 1.0);
+}
+"""
 
 
 var pause_menu: CanvasLayer
@@ -89,6 +120,40 @@ func _ready() -> void:
 	_drag_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	hud.rts.add_child(_drag_rect)
 	hud.show_help(_help)
+	var emp_layer := CanvasLayer.new()
+	emp_layer.layer = 10                           # over the HUD, under the pause menu
+	add_child(emp_layer)
+	_emp_rect = ColorRect.new()
+	_emp_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_emp_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var sh := Shader.new()
+	sh.code = EMP_SHADER
+	var mat := ShaderMaterial.new()
+	mat.shader = sh
+	_emp_rect.material = mat
+	_emp_rect.visible = false
+	emp_layer.add_child(_emp_rect)
+
+
+## The player's body was EMP'd: static over the view for t seconds, fading out.
+func emp_static(t: float) -> void:
+	if t > _emp_t:
+		_emp_t = t
+		_emp_len = t
+	_emp_rect.visible = true
+
+
+func _emp_frame(dt: float) -> void:
+	var c: Node = G.possessed
+	if c == null or not is_instance_valid(c) or c.state != "alive":
+		_emp_t = 0.0
+	_emp_t -= dt
+	if _emp_t <= 0.0:
+		_emp_rect.visible = false
+		return
+	# full strength for the first part, then fade out over the last 60 %
+	var k := clampf(_emp_t / maxf(_emp_len * 0.6, 0.01), 0.0, 1.0)
+	(_emp_rect.material as ShaderMaterial).set_shader_parameter("strength", k)
 
 
 func _inputs() -> void:
@@ -142,6 +207,8 @@ func _process(dt: float) -> void:
 			if _respawn_t < 0.0:
 				open_deploy()
 		_rts_frame(dt)
+	if _emp_rect.visible:
+		_emp_frame(dt)
 	_ui_t -= dt
 	if _ui_t <= 0.0:
 		_ui_t = 0.25

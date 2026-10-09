@@ -1709,10 +1709,11 @@ func _player_physics(dt: float) -> void:
 	if Input.is_action_just_pressed("grenade") and (not grenades.is_empty() or not emps.is_empty()) and G.commander:
 		var cam: Camera3D = G.commander.fps_cam
 		var at := cam.global_position - cam.global_transform.basis.z * 18.0
-		if G.is_client():
-			G.network.send_action(self, "grenade", [at])
 		# frags first; with Shift held (or no frags left) an EMP
-		_throw_grenade(at, not emps.is_empty() and (grenades.is_empty() or Input.is_key_pressed(KEY_SHIFT)))
+		var emp := not emps.is_empty() and (grenades.is_empty() or Input.is_key_pressed(KEY_SHIFT))
+		if G.is_client():
+			G.network.send_action(self, "grenade", [at, emp])
+		_throw_grenade(at, emp)
 	if Input.is_action_just_pressed("medpen") and not medpens.is_empty() and hp < max_hp:
 		rig.show_slot(medpens.pop_back(), false)
 		hp = min(max_hp, hp + 40)
