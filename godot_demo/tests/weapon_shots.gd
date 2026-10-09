@@ -24,6 +24,10 @@ func _ready() -> void:
 	for pose in ["tp_side", "tp_left", "tp_front", "tp_top", "tp_ads", "tp_reload"]:
 		shots.append(["F1_BattleRifle", pose])
 	shots.append(["F1_AssaultRifle", "tp_side"])
+	for pose in ["hip", "ads", "reload", "tp_side", "tp_left", "tp_front"]:
+		shots.append(["F1_BullpupGL", pose])
+	shots.append(["F2_BullpupGL", "hip"])
+	shots.append(["F2_BullpupGL", "tp_side"])
 	var args := OS.get_cmdline_user_args()
 	var only := args.find("--only")
 	if only >= 0 and only + 1 < args.size() - 1:

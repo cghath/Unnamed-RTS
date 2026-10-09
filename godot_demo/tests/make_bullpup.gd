@@ -1,52 +1,60 @@
 extends SceneTree
 ## Builds the bullpup battle rifle from primitives (there's no Blender in the container):
 ##   godot --headless --path . -s res://tests/make_bullpup.gd
-## Writes res://models/weapons/weapon_F1_BattleRifle.tscn and weapon_P_BattleRifle.tscn, using
-## the colours of the old battle rifle .glb of the same faction. character.give_weapon prefers
-## a .tscn over the .glb when both exist.
+## Writes res://models/weapons/weapon_F1_BattleRifle.tscn and weapon_P_BattleRifle.tscn, and the
+## grenadier's bullpup with an underslung 40 mm launcher, weapon_F1/F2/P_BullpupGL.tscn, using the
+## colours of an old .glb of the same faction. character.give_weapon prefers a .tscn over the .glb
+## when both exist.
 ##
 ## Godot axes: +z toward the muzzle, +y up. The grip sits at the origin like every other gun;
 ## the magazine goes in behind it (a bullpup), so the whole gun is only about 0.75 m long.
 ## The Sight marker sits on top of a plain mount on the rail; the first-person holo sight is
 ## added there by viewmodel.gd.
 
-const MATS := ["WBody", "WAccent", "WDark", "Optic", "WPanel"]
+const MATS := ["WBody", "WAccent", "WDark", "Optic", "WPanel", "Energy"]
 
 var _st := {}                    # material name -> SurfaceTool
 
 
 func _init() -> void:
-	for tag in ["F1", "P"]:
-		_save(tag)
+	# output name, the .glb whose materials it borrows, with the launcher
+	for job in [["F1_BattleRifle", "F1_BattleRifle", false], ["P_BattleRifle", "P_BattleRifle", false],
+			["F1_BullpupGL", "F1_BattleRifle", true], ["P_BullpupGL", "P_BattleRifle", true],
+			["F2_BullpupGL", "F2_PulseCarbine", true]]:
+		_save(job[0], job[1], job[2])
 	print("BULLPUP DONE")
 	quit()
 
 
-func _save(tag: String) -> void:
-	var src: Node = load("res://models/weapons/weapon_%s_BattleRifle.glb" % tag).instantiate()
+func _save(out_name: String, src_name: String, gl: bool) -> void:
+	var src: Node = load("res://models/weapons/weapon_%s.glb" % src_name).instantiate()
 	var body_src: MeshInstance3D = src.find_child("Body", true, false)
 	var mats := {}
 	for i in body_src.mesh.get_surface_count():
 		var m: Material = body_src.mesh.surface_get_material(i).duplicate()
-		mats[m.resource_name.trim_prefix("C1_")] = m
+		mats[m.resource_name.substr(3)] = m                  # "C1_WBody" -> "WBody"
 	src.free()
+	var energy := mats.has("Energy")                         # faction 2: the magazine is a glowing cell
 
 	var root := Node3D.new()
-	root.name = "weapon_%s_BattleRifle" % tag
+	root.name = "weapon_" + out_name
 	var body := MeshInstance3D.new()
 	body.name = "Body"
-	body.mesh = _body(mats)
+	body.mesh = _body(mats, gl)
 	root.add_child(body)
 	body.owner = root
 	var mag := MeshInstance3D.new()
 	mag.name = "Mag"
-	mag.mesh = _mag(mats)
+	mag.mesh = _mag(mats, "Energy" if energy else "WPanel")
 	mag.position = Vector3(0, -0.01, -0.165)          # the mesh is built around its own top centre
 	mag.rotation.x = deg_to_rad(-8.0)                 # canted back a little, like the grip
 	root.add_child(mag)
 	mag.owner = root
 	var marks := {"Grip": Vector3(0, -0.06, -0.01), "SupportHand": Vector3(0, 0.0, 0.29),
 		"Muzzle": Vector3(0, 0.05, 0.42), "Sight": Vector3(0, 0.12, 0.05), "MagWell": Vector3(0, -0.02, -0.165)}
+	if gl:
+		marks["SupportHand"] = Vector3(0, -0.07, 0.25)   # the left hand holds the launcher tube
+		marks["GLMuzzle"] = Vector3(0, -0.07, 0.385)
 	for k in marks:
 		var n := Node3D.new()
 		n.name = k
@@ -55,7 +63,7 @@ func _save(tag: String) -> void:
 		n.owner = root
 	var ps := PackedScene.new()
 	ps.pack(root)
-	var path := "res://models/weapons/weapon_%s_BattleRifle.tscn" % tag
+	var path := "res://models/weapons/weapon_%s.tscn" % out_name
 	var err := ResourceSaver.save(ps, path)
 	print("saved ", path, " ", error_string(err))
 	root.free()
@@ -63,7 +71,7 @@ func _save(tag: String) -> void:
 
 # ------------------------------------------------------------------ the gun
 
-func _body(mats: Dictionary) -> ArrayMesh:
+func _body(mats: Dictionary, gl: bool) -> ArrayMesh:
 	_begin()
 	# receiver: the full-length body, taller at the back where the action sits
 	_box("WBody", Vector3(-0.035, -0.005, -0.30), Vector3(0.035, 0.09, 0.18))
@@ -87,7 +95,10 @@ func _body(mats: Dictionary) -> ArrayMesh:
 			var x1: float = sx * 0.039
 			_box("WDark", Vector3(minf(x0, x1), 0.02, z), Vector3(maxf(x0, x1), 0.055, z + 0.022))
 	_box("WAccent", Vector3(-0.037, -0.031, 0.345), Vector3(0.037, 0.081, 0.36))       # front band
-	_box("WDark", Vector3(-0.03, -0.045, 0.2), Vector3(0.03, -0.03, 0.34))             # hand stop rail
+	if gl:
+		_launcher()
+	else:
+		_box("WDark", Vector3(-0.03, -0.045, 0.2), Vector3(0.03, -0.03, 0.34))         # hand stop rail
 	_box("WDark", Vector3(-0.045, 0.05, 0.12), Vector3(-0.035, 0.07, 0.16))            # charging handle
 	_cyl("WDark", Vector3(0, 0.05, 0.36), 0.012, 0.03)                                 # barrel
 	_cyl("WDark", Vector3(0, 0.05, 0.375), 0.019, 0.045)                               # flash hider
@@ -98,9 +109,22 @@ func _body(mats: Dictionary) -> ArrayMesh:
 	return _commit(mats)
 
 
-func _mag(mats: Dictionary) -> ArrayMesh:
+## The 40 mm launcher under the shroud: a mount rail, the tube with a dark muzzle ring and a grip
+## band, and a small breech block with its own trigger in front of the rifle's trigger guard.
+func _launcher() -> void:
+	_box("WDark", Vector3(-0.012, -0.045, 0.15), Vector3(0.012, -0.03, 0.35))          # mount
+	_cyl("WBody", Vector3(0, -0.07, 0.14), 0.026, 0.245, 16)                           # tube
+	_cyl("WDark", Vector3(0, -0.07, 0.37), 0.028, 0.015, 16)                           # muzzle ring (the dark face reads as the bore)
+	_cyl("WDark", Vector3(0, -0.07, 0.2), 0.0275, 0.008, 16)                          # grip band
+	_box("WDark", Vector3(-0.02, -0.095, 0.12), Vector3(0.02, -0.045, 0.15))           # breech block
+	_box("WAccent", Vector3(-0.021, -0.07, 0.125), Vector3(0.021, -0.06, 0.145))       # safety stripe
+	_box("WDark", Vector3(-0.004, -0.13, 0.125), Vector3(0.004, -0.095, 0.133))        # trigger
+	_box("WDark", Vector3(-0.005, -0.14, 0.11), Vector3(0.005, -0.132, 0.15))          # its guard
+
+
+func _mag(mats: Dictionary, mat: String) -> ArrayMesh:
 	_begin()
-	_box("WPanel", Vector3(-0.02, -0.17, -0.034), Vector3(0.02, 0.0, 0.034))
+	_box(mat, Vector3(-0.02, -0.17, -0.034), Vector3(0.02, 0.0, 0.034))
 	_box("WDark", Vector3(-0.022, -0.185, -0.037), Vector3(0.022, -0.17, 0.037))       # base plate
 	return _commit(mats)
 
