@@ -151,6 +151,8 @@ func _physics_process(dt: float) -> void:
 
 func _pulse() -> void:
 	G.flash(global_position, Color(0.4, 0.75, 1.0), 6.0, 8.0, 0.25)
+	if G.is_client():
+		return                                         # the host stuns; snapshot flag 128 brings it here
 	for c in G.characters:
 		if not is_instance_valid(c) or c.state != "alive":
 			continue

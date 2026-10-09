@@ -720,7 +720,10 @@ func _phys(dt: float) -> void:
 		velocity = Vector3.ZERO
 		_timers(dt)
 		return
-	# EMP'd: staggered and blind for a moment (no moving, no shooting, no seeing)
+	# EMP'd: staggered and blind for a moment (no moving, no shooting, no seeing). A client's
+	# puppets just show it (flag 128) and keep following the host.
+	if stun_t > 0.0 and G.is_client() and self != G.possessed:
+		stun_t = 0.0
 	if stun_t > 0.0:
 		stun_t -= dt
 		rig.twitch = 1.0
@@ -1056,6 +1059,9 @@ func _think2() -> void:
 		return
 	if hauling != null:
 		_haul()
+		return
+	if has_meta("retreat_to"):
+		go(get_meta("retreat_to"), true)               # falling back to the pods: run, shooting as we go
 		return
 	if armed and target and is_combatant() and _medic_in_combat():
 		return
@@ -1979,6 +1985,8 @@ func _player_physics(dt: float) -> void:
 			kick = 1.0
 		elif not spare.is_empty():
 			reload_t = float(wstats.get("reload_s", 2.0)) * (0.8 if G.has_tech(team, "w3") else 1.0)
+			if G.is_client():
+				G.network.send_action(self, "reload", [])      # (the host's copy of us reloads too)
 	if Input.is_action_just_pressed("reload") and reload_t < 0.0 and not spare.is_empty() and armed:
 		reload_t = float(wstats.get("reload_s", 2.0)) * (0.8 if G.has_tech(team, "w3") else 1.0)
 		if G.is_client():
