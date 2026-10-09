@@ -228,6 +228,26 @@ func load_settings() -> void:
 			settings[k] = cf.get_value("game", k)
 
 
+## Alt-tab / minimise in single player: the game waits (so it doesn't run on unseen and
+## come back to a pile of catch-up work); it carries on when the window has focus again.
+## Settings "alt_tab_pause" false keeps it running. A multiplayer host never stops.
+var _focus_paused := false
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		if match_node and not (network and network.active) and settings.get("alt_tab_pause", true) \
+				and not get_tree().paused:
+			get_tree().paused = true
+			_focus_paused = true
+	elif what == NOTIFICATION_APPLICATION_FOCUS_IN:
+		if _focus_paused:
+			_focus_paused = false
+			var pm = commander.get("pause_menu") if commander else null
+			if not (pm and pm.visible):
+				get_tree().paused = false
+
+
 func save_settings() -> void:
 	var cf := ConfigFile.new()
 	for k in settings:
@@ -256,7 +276,7 @@ func _json(path: String) -> Dictionary:
 
 func _process(dt: float) -> void:
 	var _t0 := Time.get_ticks_usec()
-	_fx_tick(dt)
+	_fx_tick(minf(dt, 0.25))                     # (a hitch doesn't fire every clock-driven timer at once)
 	stat("us_fx", Time.get_ticks_usec() - _t0)
 
 

@@ -223,6 +223,8 @@ func _ready() -> void:
 		add_child(load("res://tests/grenadier_test.gd").new())
 	elif "--fftest" in args:
 		add_child(load("res://tests/ff_test.gd").new())
+	elif "--hitchtest" in args:
+		add_child(load("res://tests/hitch_test.gd").new())
 	elif "--breachtest" in args:
 		add_child(load("res://tests/breach_test.gd").new())
 	elif "--opstest" in args:
