@@ -1,14 +1,16 @@
-# Handoff: where work stopped (2026-10-09, end of session 3)
+# Handoff: where work stopped (2026-10-09, end of session 4)
 
 Work happens in the fork `cghath/unnamed-rts` on branch **`handoff-tasks`** (upstream: `noahgonzalez4506/Unnamed-RTS`).
 Do not commit to `main`; it stays in sync with upstream. PRs go from `handoff-tasks` to upstream when Noah is ready.
 
-Godot 4.5.1 project in `godot_demo/`. Compile check: `--headless --path . res://tests/compile.tscn` (prints "COMPILE DONE").
+Godot 4.5.1 project in `godot_demo/`. Compile check: `--headless --path . res://tests/compile.tscn` (prints "COMPILE DONE" and
+exits 0; any script that fails to load prints "COMPILE FAIL <file>", then "COMPILE FAILED <n>" and exits 1).
 Export: `--export-release "Windows Desktop" build/windows/StarshipDemo.exe`, then split into 28 MB parts with PLAY.bat.
 GDScript warnings count as errors: give explicit types when reading from a Dictionary or Variant.
 
-## Start here: open loose ends from session 3
-Everything below this section is done and pushed to `handoff-tasks` (last code commit dd88742). What's still open:
+## Start here: open loose ends (sessions 3-4)
+Everything below this section is done and pushed to `handoff-tasks`. Session 4 ran on the user's Windows PC: Godot 4.5.1
+is at `Documents\tools\godot`, and a project audit was fixed (see "Done in session 4"). What's still open:
 
 1. **Windows build repo: done.** Private repo **`cghath/StarshipDemo-windows`** holds builds, one folder per build
    named `<date>_<commit>/`, newest listed first in its README table. `2026-10-09_dd88742/` = `handoff-tasks` at
@@ -31,8 +33,47 @@ Everything below this section is done and pushed to `handoff-tasks` (last code c
    (https://claude.ai/code/artifact/2a7bbf2d-4d6a-49b1-82b1-2e32a897c7e0) covers merging the PR and pulling with
    GitHub Desktop or the command line. The user shares it with him.
 
+6. **Multiplayer fixes are untested with two players.** Session 4 changed the client/host split a lot (see below).
+   `tests/run_net_test.sh` (host + client on one machine) hasn't been run since: on Windows the host's listening
+   port may raise a Windows Firewall prompt, so ask the user first. Then try two real PCs.
+
 Working with this user: ask clarifying questions before big or ambiguous work; commit and push to `handoff-tasks`
 as each piece finishes; send screenshots of anything visual. The rest of the to-do list is at the end of this file.
+
+## Done in session 4 (branch handoff-tasks): audit fixes
+A read-only audit (4 areas, each finding re-checked by a skeptic agent) found about 42 problems; all were fixed.
+Compile check, `--selftest` (PASS), `--grenadiertest` (26/26) and `--camptest` were run after the fixes. Not playtested.
+- **Crash / leak**: station module repair no longer errors on queued room-repair jobs (`station.gd`, so repaired
+  modules come back online). Vessels and the ground free their NavigationServer map and regions on delete
+  (`vessel.gd` `_notification`/`_free_nav`, `ground.gd` override): the "NavMap3D/NavRegion3D RIDs leaked" is gone.
+- **Grenadier**: no hand grenades from the armory; AI grenadiers rearm shells and rounds at a locker
+  (`_resupply_possible`); the stack breacher is re-chosen when it can't open a wall; the launcher's friendly check
+  counts downed allies; no rifle fire until the trigger is released after a launcher shot (`_gl_latch`); kit counts
+  ride in snapshot flags (bits 8-12) so other players see spent shells.
+- **Gameplay**: a wrecked armory blocks every resupply mark; faction 2 EMPs keep the 1.8 s fuse; supply shuttles that
+  come home loaded give their crew, troops and supplies back (`_return_cargo`); boarders with `retreat_to` run for
+  the exit before fighting (`character._think2`); `mrap.gd` no longer spams `get_meta("escort", null)` errors.
+- **Campaign saves**: research lives in `Campaign.research`/`researching` (saved; `G.reset` points `G.research[1]` at
+  it). Salvage cache ids are compared as ints and every cache draws its random numbers before the "taken" check
+  (taking one no longer moves the others). Spreaders skip player outposts. Fleet ships keep their interior
+  `variant` (`_ship(..., want_variant)`) and their hangar (`e["hangar"]`, `match.restore_hangar`). Surface captures
+  are recorded (`spawn_team` meta). Mini dropships out (and followers) go back to their ship's record when the
+  scene goes, and are saved as docked (`minidrop.owed_to`, `Campaign.to_dict`). DEPLOY VEHICLES takes each vehicle
+  off the bay as it rolls out. Miners count while you're on a planet in their system and go with a lost station.
+  New fighters/bombers are delivered only in the station's system (else they wait in its queue). City buildings
+  are sized to stay off the sidewalks. The dead `_deliveries` stub is gone.
+- **Multiplayer**: a client's `vessel_process` only animates (charges, captures, infection and swarmers are the
+  host's). Client fighter hits reach the host (vessel index or net id). Breached walls are in the slow sync
+  (`walls`). A client's breaching round and EMP are visual only; puppets show the EMP twitch from flag 128.
+  Auto-reload is sent to the host. E on a client sends "use" (the host defuses, sets demo charges, kicks doors,
+  plants charges, resupplies) and runs `player_use` locally to mirror its own kit; purge and sabotage are sent too.
+  The helm is networked: "helm" action to take/leave it, `_helm_in` streams throttle/turn/aim/fire at 20 Hz, and the
+  lock rides in the slow sync. The pause menu doesn't pause the tree in multiplayer. Lobby buttons show your real
+  side and role.
+- **Tests/docs**: `tests/compile.gd` reports failures and exits 1. `tests/campaign_test.gd` gives `_city` a city site
+  (it used to crash there and fail the gravemind check). START_HERE, HANDOFF.md (roadmap, first-person controller),
+  both READMEs, the F1 help (Up/Down for decks) and `godot_demo/HANDOFF.md` (now a pointer here) were corrected.
+  `scripts/player.gd` is marked unused (it holds the only EVA movement code).
 
 ## Working locally on the user's Windows PC
 For a session running on the user's PC (Claude desktop app, Code tab, Environment: Local). The cloud setup further
@@ -182,4 +223,9 @@ down is for Linux containers and doesn't apply. The user's Windows profile folde
 3. **Earlier report**: the infected visuals, the T station layout and the cities are unverified in play.
 4. **Grenadier follow-ups**:
    - Playtest it: B cycling, the launcher's arc at range, and AI grenadiers in a boarding action.
-   - Optionally send `gl_ammo`/`breach_ammo` in snapshots so other peers see the spent shells.
+   - ~~Send `gl_ammo`/`breach_ammo` in snapshots~~ (session 4).
+   - The player's breaching round opens whatever it sticks near (not tied to a chosen door).
+5. **Roadmap left**: zero-g / EVA in the game (port it from `player.gd`), a two-storey hangar, walkable pod and
+   shuttle interiors.
+6. **Playtest the session 4 fixes**, especially campaign save/load (research, caches, hangars, mini dropships) and
+   multiplayer (helm, E actions, walls, fighters).

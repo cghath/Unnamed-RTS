@@ -57,7 +57,7 @@ starship-kit/
   - Manning guns; TTK damage table; void rescue; patrols.
 - `squad.gd`: squad orders and breach stacking.
 - `ai.gd`: commander AI.
-- `player.gd` + `viewmodel.gd`: first-person controller and weapon viewmodel (ADS, scopes in a PiP SubViewport).
+- First person: `character.gd` `_player_physics` (movement, firing, E/G/B keys) driven from `commander.gd` (camera, input map, `interact`); `viewmodel.gd` is the weapon viewmodel (ADS, scopes in a PiP SubViewport). `player.gd` is an old standalone test player that nothing loads (it holds the only EVA movement code).
 - `rig.gd`: procedural character rig and animation.
 
 **Small craft and projectiles**
@@ -109,15 +109,13 @@ starship-kit/
 - Assets are procedural: ships come from Blender (`blender/ship_generator.py`), and vehicles, buildings and terrain are built in GDScript.
 
 ## Not finished (from the original roadmap)
-- Stations and outposts:
-  - A core ship that starts new stations.
-  - Player outposts with RTS-style building.
 - Ships and boarding:
   - Two-storey hangar.
-  - Zero-g / EVA, airlocks.
-  - Breachable walls.
+  - Zero-g / EVA in the game (only the unused `player.gd` has EVA movement).
   - Walkable pod and shuttle interiors.
-- Ground and vehicles:
-  - Player driving of vehicles.
-  - Supply ship landing and loading cargo from the ground.
-- Systems: fog of war and radar.
+
+Built since the roadmap was written (not all playtested): the station core ship (`campaign/builder.gd` CORE_SHIP,
+`match.gd` `deploy_station`), player outposts with RTS-style building (`campaign/outposts.gd`), breachable walls
+(`vessel.gd`), airlock docking for pods and shuttles, player driving of vehicles (`campaign/vehicle.gd` `player_drive`,
+`commander.gd` `drive`), supply ships landing and loading cargo (`match.gd` `land`, `campaign/depot.gd`), and fog of
+war and radar (`fog.gd`).
