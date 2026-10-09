@@ -23,17 +23,49 @@ Everything below this section is done and pushed to `handoff-tasks` (last code c
 3. **Noah's handoff doc.** Noah shared a Claude Doc ("another handoff doc") from his own account. Claude couldn't
    read it (outside the user's organisation: access denied). Ask the user to paste its text, then compare it with
    this file and say which tasks are new.
-4. **Playtest.** Nobody has played the grenadier yet. The user wants to test on their Windows PC, either with
-   the Windows build or with a local session in the Claude desktop app (Code tab, Environment: Local) on their
-   clone in `Documents\Unnamed-RTS`. That clone starts on `main`, so it needs `git checkout handoff-tasks`.
-   Their terminal Claude Code is signed in with an API key, so `claude --teleport` fails until they run
-   `claude auth login` with their claude.ai account.
+4. **Playtest.** Nobody has played the grenadier yet. The user is testing on their Windows PC from a local
+   desktop-app session (see "Working locally on the user's Windows PC" below) or with the build in
+   `StarshipDemo-windows`. Their terminal Claude Code is signed in with an API key, so `claude --teleport` fails
+   until they run `claude auth login` with their claude.ai account.
 5. **For Noah**, who is new to Git: a cheatsheet doc "Getting the merged changes onto your computer"
    (https://claude.ai/code/artifact/2a7bbf2d-4d6a-49b1-82b1-2e32a897c7e0) covers merging the PR and pulling with
    GitHub Desktop or the command line. The user shares it with him.
 
 Working with this user: ask clarifying questions before big or ambiguous work; commit and push to `handoff-tasks`
 as each piece finishes; send screenshots of anything visual. The rest of the to-do list is at the end of this file.
+
+## Working locally on the user's Windows PC
+For a session running on the user's PC (Claude desktop app, Code tab, Environment: Local). The cloud setup further
+down is for Linux containers and doesn't apply. The user's Windows profile folder has spaces in it: quote every path.
+
+- **Repos** (both cloned in the user's `Documents`):
+  - `Documents\Unnamed-RTS` is this fork. A fresh clone is on `main`, so run `git fetch origin` and
+    `git checkout handoff-tasks` first, and work only there.
+  - `Documents\StarshipDemo-windows` holds builds. If it's missing, clone
+    `https://github.com/cghath/StarshipDemo-windows.git` next to it.
+  - Git is Git for Windows (2.55), so Claude's Bash tool runs in Git Bash. `git push` uses the user's own GitHub
+    login: the first push may open a browser window to sign in.
+- **Godot 4.5.1**: download `https://github.com/godotengine/godot/releases/download/4.5.1-stable/Godot_v4.5.1-stable_win64.exe.zip`
+  into a tools folder outside the repo, e.g. `Documents\tools\godot`, and extract it.
+  - Use `Godot_v4.5.1-stable_win64_console.exe` for commands, since it prints output to the terminal.
+  - The plain `.exe` is the editor.
+  - First run: `--headless --path godot_demo --import` (about a minute), then the compile check from the top of this file.
+- **Run the game** (opens a window, which is what the user wants for playtesting): `<godot console exe> --path godot_demo`.
+  - Editor: add `-e`.
+  - The headless tests run the same as in the cloud: `-- --grenadiertest`, `-- --selftest`.
+  - `--weaponshots` needs no Xvfb here, but it opens a window and takes over the screen for a few minutes:
+    ask first.
+- **Windows build from this PC**:
+  1. Export templates go in `%APPDATA%\Godot\export_templates\4.5.1.stable\`. Get them from the `.tpz` named under
+     "Windows build" below (1.3 GB, a zip). Only `templates\version.txt` and the `windows_*_x86_64*.exe` files are needed.
+  2. Export with the line at the top of this file.
+  3. To test locally, just run `godot_demo\build\windows\StarshipDemo.exe`. No splitting is needed.
+  4. To publish to `StarshipDemo-windows`:
+     - Split with Git Bash's `split` (the command under "Windows build" below).
+     - Copy `PLAY.bat` from the newest build folder there, and update its part count, the `copy /b` list and the
+       SHA-256 (`Get-FileHash StarshipDemo.exe -Algorithm SHA256`).
+     - Add a `<date>_<commit>/` folder with the parts, `PLAY.bat` and a README, plus a row in the repo README.
+     - Push to its `main`. Keep every file under 100 MB.
 
 ## Cloud container setup (no Godot preinstalled)
 - Download: `curl -sSL -o g.zip https://github.com/godotengine/godot/releases/download/4.5.1-stable/Godot_v4.5.1-stable_linux.x86_64.zip && unzip g.zip` (keep it outside the repo, e.g. a scratch dir).
