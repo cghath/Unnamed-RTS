@@ -148,3 +148,30 @@ GDScript warnings count as errors: give explicit types when reading from a Dicti
      - the window regaining focus at a different resolution
      Reproduce: run on a planet, minimise for 30 s, restore, and watch `us_*` stats (G.stat) and the Godot monitor.
      Check `Engine.get_frames_per_second` before and after.
+7. **Next roadmap items (from the original roadmap in the root `HANDOFF.md`).** The rest of that roadmap is done:
+   the core ship (`match.deploy_station`), player outposts with a build menu (N, `outposts.gd`), breachable walls,
+   player driving and fog of war/radar.
+   - **Two-storey hangar.** Larger ships (MEDIUM and up) get a hangar spanning two decks: pads on the floor, a gallery
+     or catwalk on the upper deck with ramps or a lift, and pads for fighters/shuttles on both levels.
+     Hulls come from `blender/ship_generator.py`; regenerate the GLBs and re-bake nav (`res://nav/`).
+     `ship.pads`, the shuttle landing (`shuttle._pick_landing`) and the fighter scramble must use the new pads.
+   - **Zero-g / EVA and airlocks.**
+     - The `eva_boarder` role already exists. Add a zero-g movement mode for characters outside a hull or in a
+       depressurised zone: 6-DOF thrust with the exo energy, no gravity, magnetic boots on hull surfaces.
+     - Airlocks (`AirlockPort/Stbd` doors) cycle: inner door shut, outer door open, with a short delay. A breached
+       outer door vents the zone, pulls loose people toward the hole, and makes the zone unbreathable until sealed.
+     - EVA boarding lets troops cross from a ship to an adjacent hull without pods.
+     - Needs per-zone pressure state in `vessel.gd` (beside the infection fields) and an EVA nav/locomotion path that
+       doesn't use the deck navmesh.
+   - **Walkable pod and shuttle interiors.** Boarding pods (`pod.gd`, XS_POD) and shuttles (`shuttle.gd`,
+     XS_DROPSHIP) carry riders as hidden nodes (`riding`). Make them small vessels instead: give the models an
+     Interior collider plus a tiny navmesh and seats (the `*_Seat_n` markers already exist).
+     - Riders sit visibly and the player can walk inside, look out, and exit down the ramp or hatch
+       (`RampExit` / `ExitPoint`).
+     - Keep riders parented to the craft so they move with it.
+   - **Supply ship landing and cargo loading on the ground.**
+     - The supply ship (SMALL_SUPPORT) lands on a planet LZ or pad (`surface.gd` layout, `match.ground_y`).
+     - It drops its ramp, and depot cargo or salvage crates (`depot.gd`, caches) can be carried or driven aboard and
+       flown up to a station.
+     - Reuse the vehicle bay ramp logic (`bays.gd`, `load_vehicles`) and the Darter logistics runs (`logistics.gd`)
+       for automatic hauling.
