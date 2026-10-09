@@ -1,114 +1,11 @@
-# Handoff: where work stopped (2026-10-09, end of session 4)
+# Handoff: where work stopped (2026-10-09, session 3)
 
 Work happens in the fork `cghath/unnamed-rts` on branch **`handoff-tasks`** (upstream: `noahgonzalez4506/Unnamed-RTS`).
 Do not commit to `main`; it stays in sync with upstream. PRs go from `handoff-tasks` to upstream when Noah is ready.
 
-Godot 4.5.1 project in `godot_demo/`. Compile check: `--headless --path . res://tests/compile.tscn` (prints "COMPILE DONE" and
-exits 0; any script that fails to load prints "COMPILE FAIL <file>", then "COMPILE FAILED <n>" and exits 1).
+Godot 4.5.1 project in `godot_demo/`. Compile check: `--headless --path . res://tests/compile.tscn` (prints "COMPILE DONE").
 Export: `--export-release "Windows Desktop" build/windows/StarshipDemo.exe`, then split into 28 MB parts with PLAY.bat.
 GDScript warnings count as errors: give explicit types when reading from a Dictionary or Variant.
-
-## Start here: open loose ends (sessions 3-4)
-Everything below this section is done and pushed to `handoff-tasks`. Session 4 ran on the user's Windows PC: Godot 4.5.1
-is at `Documents\tools\godot`, and a project audit was fixed (see "Done in session 4"). What's still open:
-
-1. **Windows build repo: done.** Private repo **`cghath/StarshipDemo-windows`** holds builds, one folder per build
-   named `<date>_<commit>/`, newest listed first in its README table. `2026-10-09_dd88742/` = `handoff-tasks` at
-   dd88742 (`PLAY.bat`, `StarshipDemo.part1`-`part5`, README; joined SHA-256 verified from a fresh clone).
-   Newest: `2026-10-09_9a27332/` (session 4 audit fixes), built on the user's PC with the templates in
-   `%APPDATA%\Godot\export_templates\4.5.1.stable\`; grenadier test and self-test pass from inside the exe.
-   For a new build: rebuild (see "Windows build" below), add a folder and a README row, push to its `main`.
-   GitHub refuses files over 100 MB, so never push the joined .exe. `.gitattributes` keeps parts binary and
-   `PLAY.bat` byte for byte (CRLF). Claude can't create repos (403), but can push to this one.
-2. **PR to upstream not opened yet.** Claude can't open it: `noahgonzalez4506/Unnamed-RTS` has the same name as
-   this fork, so the two can't be attached to one session. The user opens it themselves from
-   https://github.com/noahgonzalez4506/Unnamed-RTS/compare/main...cghath:Unnamed-RTS:handoff-tasks?expand=1
-   (they were given a title and description). Ask whether it's open or merged before building on it.
-3. **Noah's handoff doc.** Noah shared a Claude Doc ("another handoff doc") from his own account. Claude couldn't
-   read it (outside the user's organisation: access denied). Ask the user to paste its text, then compare it with
-   this file and say which tasks are new.
-4. **Playtest.** Nobody has played the grenadier yet. The user is testing on their Windows PC from a local
-   desktop-app session (see "Working locally on the user's Windows PC" below) or with the build in
-   `StarshipDemo-windows`. Their terminal Claude Code is signed in with an API key, so `claude --teleport` fails
-   until they run `claude auth login` with their claude.ai account.
-5. **For Noah**, who is new to Git: a cheatsheet doc "Getting the merged changes onto your computer"
-   (https://claude.ai/code/artifact/2a7bbf2d-4d6a-49b1-82b1-2e32a897c7e0) covers merging the PR and pulling with
-   GitHub Desktop or the command line. The user shares it with him.
-
-6. **Multiplayer fixes are untested with two players.** Session 4 changed the client/host split a lot (see below).
-   `tests/run_net_test.sh` (host + client on one machine) hasn't been run since: on Windows the host's listening
-   port may raise a Windows Firewall prompt, so ask the user first. Then try two real PCs.
-
-Working with this user: ask clarifying questions before big or ambiguous work; commit and push to `handoff-tasks`
-as each piece finishes; send screenshots of anything visual. The rest of the to-do list is at the end of this file.
-
-## Done in session 4 (branch handoff-tasks): audit fixes
-A read-only audit (4 areas, each finding re-checked by a skeptic agent) found about 42 problems; all were fixed.
-Compile check, `--selftest` (PASS), `--grenadiertest` (26/26) and `--camptest` were run after the fixes. Not playtested.
-- **Crash / leak**: station module repair no longer errors on queued room-repair jobs (`station.gd`, so repaired
-  modules come back online). Vessels and the ground free their NavigationServer map and regions on delete
-  (`vessel.gd` `_notification`/`_free_nav`, `ground.gd` override): the "NavMap3D/NavRegion3D RIDs leaked" is gone.
-- **Grenadier**: no hand grenades from the armory; AI grenadiers rearm shells and rounds at a locker
-  (`_resupply_possible`); the stack breacher is re-chosen when it can't open a wall; the launcher's friendly check
-  counts downed allies; no rifle fire until the trigger is released after a launcher shot (`_gl_latch`); kit counts
-  ride in snapshot flags (bits 8-12) so other players see spent shells.
-- **Gameplay**: a wrecked armory blocks every resupply mark; faction 2 EMPs keep the 1.8 s fuse; supply shuttles that
-  come home loaded give their crew, troops and supplies back (`_return_cargo`); boarders with `retreat_to` run for
-  the exit before fighting (`character._think2`); `mrap.gd` no longer spams `get_meta("escort", null)` errors.
-- **Campaign saves**: research lives in `Campaign.research`/`researching` (saved; `G.reset` points `G.research[1]` at
-  it). Salvage cache ids are compared as ints and every cache draws its random numbers before the "taken" check
-  (taking one no longer moves the others). Spreaders skip player outposts. Fleet ships keep their interior
-  `variant` (`_ship(..., want_variant)`) and their hangar (`e["hangar"]`, `match.restore_hangar`). Surface captures
-  are recorded (`spawn_team` meta). Mini dropships out (and followers) go back to their ship's record when the
-  scene goes, and are saved as docked (`minidrop.owed_to`, `Campaign.to_dict`). DEPLOY VEHICLES takes each vehicle
-  off the bay as it rolls out. Miners count while you're on a planet in their system and go with a lost station.
-  New fighters/bombers are delivered only in the station's system (else they wait in its queue). City buildings
-  are sized to stay off the sidewalks. The dead `_deliveries` stub is gone.
-- **Multiplayer**: a client's `vessel_process` only animates (charges, captures, infection and swarmers are the
-  host's). Client fighter hits reach the host (vessel index or net id). Breached walls are in the slow sync
-  (`walls`). A client's breaching round and EMP are visual only; puppets show the EMP twitch from flag 128.
-  Auto-reload is sent to the host. E on a client sends "use" (the host defuses, sets demo charges, kicks doors,
-  plants charges, resupplies) and runs `player_use` locally to mirror its own kit; purge and sabotage are sent too.
-  The helm is networked: "helm" action to take/leave it, `_helm_in` streams throttle/turn/aim/fire at 20 Hz, and the
-  lock rides in the slow sync. The pause menu doesn't pause the tree in multiplayer. Lobby buttons show your real
-  side and role.
-- **Tests/docs**: `tests/compile.gd` reports failures and exits 1. `tests/campaign_test.gd` gives `_city` a city site
-  (it used to crash there and fail the gravemind check). START_HERE, HANDOFF.md (roadmap, first-person controller),
-  both READMEs, the F1 help (Up/Down for decks) and `godot_demo/HANDOFF.md` (now a pointer here) were corrected.
-  `scripts/player.gd` is marked unused (it holds the only EVA movement code).
-
-## Working locally on the user's Windows PC
-For a session running on the user's PC (Claude desktop app, Code tab, Environment: Local). The cloud setup further
-down is for Linux containers and doesn't apply. The user's Windows profile folder has spaces in it: quote every path.
-
-- **Repos** (both cloned in the user's `Documents`):
-  - `Documents\Unnamed-RTS` is this fork. A fresh clone is on `main`, so run `git fetch origin` and
-    `git checkout handoff-tasks` first, and work only there.
-  - `Documents\StarshipDemo-windows` holds builds. If it's missing, clone
-    `https://github.com/cghath/StarshipDemo-windows.git` next to it.
-  - Git is Git for Windows (2.55), so Claude's Bash tool runs in Git Bash. `git push` uses the user's own GitHub
-    login: the first push may open a browser window to sign in.
-- **Godot 4.5.1**: download `https://github.com/godotengine/godot/releases/download/4.5.1-stable/Godot_v4.5.1-stable_win64.exe.zip`
-  into a tools folder outside the repo, e.g. `Documents\tools\godot`, and extract it.
-  - Use `Godot_v4.5.1-stable_win64_console.exe` for commands, since it prints output to the terminal.
-  - The plain `.exe` is the editor.
-  - First run: `--headless --path godot_demo --import` (about a minute), then the compile check from the top of this file.
-- **Run the game** (opens a window, which is what the user wants for playtesting): `<godot console exe> --path godot_demo`.
-  - Editor: add `-e`.
-  - The headless tests run the same as in the cloud: `-- --grenadiertest`, `-- --selftest`.
-  - `--weaponshots` needs no Xvfb here, but it opens a window and takes over the screen for a few minutes:
-    ask first.
-- **Windows build from this PC**:
-  1. Export templates go in `%APPDATA%\Godot\export_templates\4.5.1.stable\`. Get them from the `.tpz` named under
-     "Windows build" below (1.3 GB, a zip). Only `templates\version.txt` and the `windows_*_x86_64*.exe` files are needed.
-  2. Export with the line at the top of this file.
-  3. To test locally, just run `godot_demo\build\windows\StarshipDemo.exe`. No splitting is needed.
-  4. To publish to `StarshipDemo-windows`:
-     - Split with Git Bash's `split` (the command under "Windows build" below).
-     - Copy `PLAY.bat` from the newest build folder there, and update its part count, the `copy /b` list and the
-       SHA-256 (`Get-FileHash StarshipDemo.exe -Algorithm SHA256`).
-     - Add a `<date>_<commit>/` folder with the parts, `PLAY.bat` and a README, plus a row in the repo README.
-     - Push to its `main`. Keep every file under 100 MB.
 
 ## Cloud container setup (no Godot preinstalled)
 - Download: `curl -sSL -o g.zip https://github.com/godotengine/godot/releases/download/4.5.1-stable/Godot_v4.5.1-stable_linux.x86_64.zip && unzip g.zip` (keep it outside the repo, e.g. a scratch dir).
@@ -120,13 +17,6 @@ down is for Linux containers and doesn't apply. The user's Windows profile folde
   Use `--only BattleRifle`, `--only BullpupGL`, `--only kit` (matches gun or pose names).
 - Headless match tests need no Xvfb: `$GODOT --headless --path godot_demo res://match.tscn -- --selftest`
   (a few minutes, ends "SELFTEST RESULT: PASS") and `-- --grenadiertest` (about a minute, "GRENADIER TEST DONE 0").
-- Windows build: the export needs Godot's export templates. Download
-  `https://github.com/godotengine/godot/releases/download/4.5.1-stable/Godot_v4.5.1-stable_export_templates.tpz` (1.3 GB),
-  unzip only `templates/version.txt` and `templates/windows_*_x86_64*.exe` into
-  `~/.local/share/godot/export_templates/4.5.1.stable/`, delete the .tpz, then run the Export line above from `godot_demo`.
-  Check the pack with `$GODOT --headless --main-pack build/windows/StarshipDemo.exe res://match.tscn -- --grenadiertest`.
-  Split with `split -b 28M --numeric-suffixes=1 -a 1 StarshipDemo.exe StarshipDemo.part`. PLAY.bat joins the parts with
-  `copy /b`, checks the SHA-256 with `certutil`, and starts the game. Session 3 built commit dd88742 this way (5 parts).
 - Ask the user before launching the game under Xvfb; they stopped one such run in session 2. In session 3 they said
   to go ahead with weaponshots re-runs without asking each time.
 
@@ -225,8 +115,7 @@ down is for Linux containers and doesn't apply. The user's Windows profile folde
 3. **Earlier report**: the infected visuals, the T station layout and the cities are unverified in play.
 4. **Grenadier follow-ups**:
    - Playtest it: B cycling, the launcher's arc at range, and AI grenadiers in a boarding action.
-   - ~~Send `gl_ammo`/`breach_ammo` in snapshots~~ (done in the audit fixes).
-   - The player's breaching round opens whatever it sticks near (not tied to a chosen door).
+   - Optionally send `gl_ammo`/`breach_ammo` in snapshots so other peers see the spent shells.
 5. **Friendly-fire safety for all friendly AI (new, from the user's playtest notes, session 4).** Directive: cut blue-on-blue way down.
    - Grenade safety: when a frag, EMP or launcher shell has been thrown or fired into a room, friendlies stay out of
      that room until it detonates, then enter. `squad._start_clear` already holds the clearing squad until
@@ -277,8 +166,7 @@ down is for Linux containers and doesn't apply. The user's Windows profile folde
      - Riders sit visibly and the player can walk inside, look out, and exit down the ramp or hatch
        (`RampExit` / `ExitPoint`).
      - Keep riders parented to the craft so they move with it.
-   - **Supply ship landing and cargo loading on the ground.** (The audit found a first version already in:
-     `match.gd` `land`, `campaign/depot.gd` UNLOAD/LOAD CARGO, `bays.gd` ramps. Check what's missing before building.)
+   - **Supply ship landing and cargo loading on the ground.**
      - The supply ship (SMALL_SUPPORT) lands on a planet LZ or pad (`surface.gd` layout, `match.ground_y`).
      - It drops its ramp, and depot cargo or salvage crates (`depot.gd`, caches) can be carried or driven aboard and
        flown up to a station.
@@ -294,8 +182,8 @@ down is for Linux containers and doesn't apply. The user's Windows profile folde
      - Have AI targeting and strategic orders (`ai.gd`, ship target picking, outpost raids) only use units in that
        team's "vis", or last-seen positions for "known".
    - **Ground minimap**: on planets, vehicles, troops and outposts aren't drawn on the minimap (`minimap.gd` only
-     draws vessels, fighters, pods and missiles). ~~Enemy missiles drawn through the fog~~ (fixed in the audit
-     fixes: `minimap.gd` checks `visible`).
+     draws vessels, fighters, pods and missiles). Enemy missiles are drawn even when the fog hides them: check
+     `visible` or `fog.state_of` as fighters and pods already do.
    - **Fog shading and last-seen state**:
      - No darkened overlay for areas outside sensor range: shade the minimap and add a world-space fog plane or
        post effect on planets and in the RTS view.
@@ -306,5 +194,3 @@ down is for Linux containers and doesn't apply. The user's Windows profile folde
        outposts, vehicles and landed ships a radar ring.
      - Inside a visible enemy ship every crew member is shown. Hide enemy occupants that none of your people
        aboard (or a camera or sensor) has line of sight to, with a short last-seen marker.
-9. **Playtest the audit fixes** (the "Done in session 4" section above), especially campaign save/load (research,
-   caches, hangars, mini dropships) and multiplayer (helm, E actions, walls, fighters).

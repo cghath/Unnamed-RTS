@@ -3,7 +3,7 @@
 ## What's in this zip
 - `godot_demo/`: the game (a Godot 4.5.1 project). Open `godot_demo/project.godot` in Godot 4.5.1.
 - `blender/`, `tools/`, `models_obj/`, `data/`, `economy/`, `godot/`: the asset generators and source data the game's models were built from.
-- `HANDOFF_LATEST.md`: where development stopped, what's left, and how each remaining feature should be designed. (`godot_demo/HANDOFF.md` only points to it.)
+- `HANDOFF_LATEST.md`: where development stopped, what's left, and how each remaining feature should be designed.
 - `README.md`: the kit overview. `godot_demo/README.md` covers the game's controls and features.
 
 ## Run it
