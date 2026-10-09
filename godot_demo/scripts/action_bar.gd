@@ -30,6 +30,7 @@ func _process(_dt: float) -> void:
 		ch.queue_free()
 	if not ships.is_empty():
 		_b("BOARD (B)", func(): cmd.cmd_board())
+		_b("EVA BOARD", func(): cmd.cmd_board("eva"))
 		_b("FIGHTERS (L)", func(): cmd.cmd_fighters())
 		_b("RESUPPLY (U)", func():
 			for s in cmd.selection:

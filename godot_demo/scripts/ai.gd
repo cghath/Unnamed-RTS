@@ -122,6 +122,8 @@ func _rival(team: int) -> void:
 		var shields_down: bool = tgt.get("shields") != null and tgt.shields <= tgt.max_shields * 0.15
 		if big and s.troops >= 8 and d < 1400.0 and shields_down and randf() < 0.4:
 			s.start_boarding(tgt, "shuttle" if s.can_shuttle(tgt) and randf() < 0.4 else "pods")
+		elif s.troops >= 6 and s.can_eva(tgt) and s.boarding.is_empty() and randf() < 0.3:
+			s.start_boarding(tgt, "eva")             # close enough to cross on thruster packs
 
 
 func _soldiers(team: int) -> int:

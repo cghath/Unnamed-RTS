@@ -27,6 +27,7 @@ var _look_t := 0.0
 var _look_text := ""
 var _help := true
 var _pending := ""             # "board": the next right click picks a pod target
+var _pending_kind := "pods"     # (...and how they go: pods, eva)
 var chase_yaw := 0.0           # piloting: the chase camera
 var chase_pitch := 0.25
 var chase_dist := 0.0
@@ -988,7 +989,7 @@ func order_at(pos: Vector2, queue: bool) -> void:
 		var hit := G.ray(from, from + dir * 12000.0, [], G.LAYER_WORLD | G.LAYER_DOOR)
 		var spot: Vector3 = hit.position if not hit.is_empty() else picked.global_position
 		for s in ships:
-			G.match_node.command("board", [G.vessels.find(s), G.vessels.find(picked), "pods", spot])
+			G.match_node.command("board", [G.vessels.find(s), G.vessels.find(picked), _pending_kind, spot])
 		return
 	_pending = ""
 	for s in ships:
@@ -1085,15 +1086,16 @@ func _name(u: Node) -> String:
 	return u.display_name if u.get("display_name") != null else "Fighter"
 
 
-func cmd_board() -> void:
+func cmd_board(kind_: String = "pods") -> void:
 	for s in selection:
 		if is_instance_valid(s) and s.has_method("launch_pods") and s.team == TEAM:
 			var t: Node = s.attack_target
+			_pending_kind = kind_
 			if t and is_instance_valid(t) and not t.destroyed:
-				G.match_node.command("board", [G.vessels.find(s), G.vessels.find(t)])
+				G.match_node.command("board", [G.vessels.find(s), G.vessels.find(t), kind_])
 				return
 			_pending = "board"
-			log_event("Right-click an enemy ship or station to send boarding pods", TEAM)
+			log_event("Right-click an enemy ship or station to send %s" % ("an EVA team across" if kind_ == "eva" else "boarding pods"), TEAM)
 			return
 
 
@@ -1237,8 +1239,21 @@ func interact() -> void:
 	if v.kind == "ship" and v.team == c.team and v.get("boarding") != null and not v.boarding.is_empty() \
 			and c.mustered != v and v.near_muster(c):
 		G.match_node.command("join_board", [c.get_meta("net_id", 0), G.vessels.find(v)])
-		log_event("You're going: stay at the %s for launch" % ("pod bay" if v.boarding["kind"] == "pods" else "hangar"), TEAM)
+		log_event("You're going: stay at the %s for launch" % {"pods": "pod bay", "eva": "airlock"}.get(v.boarding["kind"], "hangar"), TEAM)
 		return
+	if c.eva_cycle.is_empty() and not G.is_client():
+		if c.eva_out:
+			var ne: Array = c.eva_entry_near()
+			if not ne.is_empty():
+				var cut: bool = G.enemies(c.team, ne[0].team)
+				c.eva_begin("cut" if cut else "in", ne[0], ne[1])
+				log_event("Cutting through the %s's hull..." % ne[0].display_name if cut else "Cycling the airlock...", TEAM)
+			return
+		var ex: Array = c.eva_exit_entry()
+		if not ex.is_empty():
+			c.eva_begin("out", v, ex)
+			log_event("Cycling the airlock: inner door shut, venting... (%s s of suit air)" % int(c.suit_air), TEAM)
+			return
 	# on a client the host does the same for our body there (defusing, doors, charges, the
 	# armory); we run it here too so our own magazines and kit match
 	if G.is_client():
@@ -1299,6 +1314,14 @@ func _look_prompt() -> String:
 		var lk: String = ("LOCK %s  ·  " % pv.lock.display_name) if pv.get("lock") and is_instance_valid(pv.lock) else ""
 		var aim: String = ("aiming at %s  ·  " % t.display_name) if t and t != pv else ""
 		return lk + aim + "T lock  ·  M missiles  ·  B pods  ·  N shuttle  ·  1 attack  2 form on me  3 hold  4 board  ·  E leave"
+	if not c.eva_cycle.is_empty():
+		return "%s  %d s" % ["Cutting through the hull" if c.eva_cycle["kind"] == "cut" else "Cycling the airlock", ceili(c.eva_cycle["t"])]
+	if c.eva_out:
+		var ne: Array = c.eva_entry_near()
+		var how := "EVA  ·  WASD thrust where you look  ·  Space up  C down  ·  V burn  ·  suit air %d s" % int(c.suit_air)
+		if not ne.is_empty():
+			return ("E  cut in through the %s's hull  ·  " if G.enemies(c.team, ne[0].team) else "E  cycle the airlock into the %s  ·  ") % ne[0].display_name + how
+		return how
 	var nv := _vehicle_near(c)
 	if nv:
 		return "E  drive the %s" % nv.display_name
@@ -1323,6 +1346,8 @@ func _look_prompt() -> String:
 	var med: String = c.medical_prompt()
 	if med != "":
 		return med
+	if not c.eva_exit_entry().is_empty():
+		return "E  go out the %s (EVA, %d s of suit air)" % ["airlock" if String(c.eva_exit_entry()[3]).contains("Airlock") else "EVA hatch", int(c.suit_air)]
 	if v.elevator_at(c.position) >= 0:
 		return "E  elevator"
 	if v.team == c.team:

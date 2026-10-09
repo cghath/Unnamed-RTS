@@ -100,6 +100,14 @@ func _ready() -> void:
 	_sphere.rings = 6
 
 
+## Quit the game: silence the sound first and give the audio thread a moment to drop what it
+## was mixing (quitting mid-sound leaks the playbacks: "ObjectDB instances leaked at exit").
+func quit(code: int = 0) -> void:
+	if sfx:
+		sfx.silence()
+	get_tree().create_timer(0.15, true, false, true).timeout.connect(func(): get_tree().quit(code))
+
+
 func stat(k: String, n: int = 1) -> void:
 	if not profiling and k.begins_with("us_"):
 		return

@@ -87,4 +87,4 @@ func _physics_process(dt: float) -> void:
 func _done() -> void:
 	print("RIDE TEST DONE %d" % fails)
 	set_physics_process(false)
-	get_tree().quit()
+	G.quit()

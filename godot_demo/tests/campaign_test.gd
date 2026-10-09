@@ -445,7 +445,7 @@ func _report() -> void:
 	for f in fails:
 		print("CAMPTEST FAIL: ", f)
 	print("CAMPTEST RESULT: %s (%d problems)" % ["PASS" if fails.is_empty() else "FAIL", fails.size()])
-	get_tree().quit(0 if fails.is_empty() else 1)
+	G.quit(0 if fails.is_empty() else 1)
 
 
 # ------------------------------------------------------------------ frame-rate probe (--perf)
@@ -491,4 +491,4 @@ func _perf(tt: float) -> void:
 		for v in G.vehicles:
 			if is_instance_valid(v) and v.team == 4:
 				print("PERF %s y %.1f ground %.1f path %d/%d" % [v.kind, v.global_position.y, G.match_node.ground_y(v.global_position.x, v.global_position.z), v.path_i, v.path.size()])
-		get_tree().quit()
+		G.quit()

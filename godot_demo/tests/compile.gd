@@ -15,4 +15,4 @@ func _ready() -> void:
 		print("COMPILE FAILED %d" % fails)
 	else:
 		print("COMPILE DONE")
-	get_tree().quit(1 if fails > 0 else 0)
+	G.quit(1 if fails > 0 else 0)

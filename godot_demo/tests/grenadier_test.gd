@@ -282,4 +282,4 @@ func wall_vessel() -> Node:
 func _done() -> void:
 	print("GRENADIER TEST DONE %d" % fails)
 	set_physics_process(false)
-	get_tree().quit()
+	G.quit()

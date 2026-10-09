@@ -709,6 +709,8 @@ func refresh_fps(c: Node, look_text: String) -> void:
 	set_bar(vit_hp, c.hp / c.max_hp, _hp_col(c))
 	vit_hp_text.text = "%d" % c.hp if c.state == "alive" else "DOWN"
 	vit_armor.text = "ARMOR %d%%" % int((c.dr + G.dr_bonus(c.team)) * 100.0)
+	if c.eva_out or c.suit_air < c.suit_max() - 0.5:
+		vit_armor.text += "  ·  %sAIR %d s" % ["" if c.suit_air > 10.0 else "!! ", int(c.suit_air)]
 	set_bar(exo_bar, c.exo / c.exo_max(), Color(0.5, 0.8, 1.0))
 	if c.armed and c.gl_mode:
 		var left: int = c.breach_ammo if c.gl_breach else c.gl_ammo

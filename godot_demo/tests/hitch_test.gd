@@ -63,4 +63,4 @@ func _process(dt: float) -> void:
 				_check(Engine.max_physics_steps_per_frame <= 3, "physics catch-up is capped (%d steps a frame)" % Engine.max_physics_steps_per_frame)
 				print("HITCH TEST DONE %d" % fails)
 				set_process(false)
-				get_tree().quit()
+				G.quit()

@@ -229,6 +229,8 @@ func _ready() -> void:
 		add_child(load("res://tests/fog_test.gd").new())
 	elif "--ridetest" in args:
 		add_child(load("res://tests/ride_test.gd").new())
+	elif "--evatest" in args:
+		add_child(load("res://tests/eva_test.gd").new())
 	elif "--breachtest" in args:
 		add_child(load("res://tests/breach_test.gd").new())
 	elif "--opstest" in args:
@@ -706,7 +708,8 @@ func run_command(team: int, what: String, args: Array, peer: int = 0) -> void:
 					G.say("%s already has a boarding party mustering" % s3.display_name, team)
 				elif not s3.start_boarding(t3, kind_):
 					G.say("%s can't board %s: %s" % [s3.display_name, t3.display_name, "the shuttle needs a hangar, 4+ boarders, range 2.6 km and is on a 60 s cooldown"
-						if kind_ == "shuttle" else "needs to be within 1.5 km, with 4+ boarders aboard"], team)
+						if kind_ == "shuttle" else ("an EVA crossing needs an airlock, 4+ boarders and under %d m of open space between the hulls" % int(s3.EVA_RANGE)
+						if kind_ == "eva" else "needs to be within 1.5 km, with 4+ boarders aboard")], team)
 		"missiles":
 			var s6: Node = V.call(args[0])
 			var t6: Node = V.call(args[1])
