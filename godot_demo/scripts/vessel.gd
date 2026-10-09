@@ -490,6 +490,22 @@ func _exit_tree() -> void:
 	_wall_links.clear()
 
 
+## The navigation map and region are server-side: free them with the vessel, or every
+## reload (jumps, landings, zone switches) leaves another active map behind.
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_PREDELETE:
+		_free_nav()
+
+
+func _free_nav() -> void:
+	if nav_region.is_valid():
+		NavigationServer3D.free_rid(nav_region)
+		nav_region = RID()
+	if nav_map.is_valid():
+		NavigationServer3D.free_rid(nav_map)
+		nav_map = RID()
+
+
 func _door_cell(p: Vector3) -> Vector3i:
 	return Vector3i(floori(p.x / 4.0), floori(p.y / 4.0), floori(p.z / 4.0))
 

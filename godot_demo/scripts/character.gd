@@ -56,6 +56,7 @@ var breach_rounds: Array = []     # ...the breaching-round models in the hip sle
 var gl_mode := false              # grenadier in direct control: the trigger fires the launcher (B cycles)
 var gl_breach := false            # ...loaded with a breaching round instead of a frag shell
 var _gl_cd := 0.0                 # launcher: loading the next shell (AI: also holding off between shots)
+var _gl_latch := false            # the trigger is still held from a launcher shot (no rifle fire yet)
 var armed := false
 var geared := 0                   # crew: 0 none, 1 ready locker, 2 armory
 var purging := false              # scientist using a purge emitter
@@ -1246,6 +1247,9 @@ func _brain_duty() -> void:
 	if armed and mag <= 0 and spare.is_empty():
 		_resupply()
 		return
+	if role == "grenadier" and gl_ammo <= 0 and breach_ammo <= 0 and _resupply_possible():
+		_resupply()                                       # launcher shells and breaching rounds
+		return
 	if armed and mag < int(wstats.get("ammo_per_load", 30)) / 3 and not spare.is_empty() and reload_t < 0.0:
 		reload_t = float(wstats.get("reload_s", 2.0))
 	# 4. in a squad: hold your slot around the leader (the leader runs the squad's orders)
@@ -1542,6 +1546,13 @@ func _finish_gear_up() -> void:
 	G.say("%s geared up at the %s" % [display, "armory" if armory else "ready locker"], team)
 
 
+## Somewhere aboard to rearm: our own ship, with supplies and a working armory or locker.
+func _resupply_possible() -> bool:
+	if vessel == null or vessel.team != team or vessel.supplies < 1.0 or vessel.room_down("armory"):
+		return false
+	return not (vessel.marks_like("Armory_*_Resupply") + vessel.marks_like("ReadyLocker_*") + vessel.marks_like("*_ReadyLocker")).is_empty()
+
+
 func _resupply() -> void:
 	if vessel.team != team or vessel.supplies < 1.0 or vessel.room_down("armory"):
 		return
@@ -1555,6 +1566,10 @@ func _resupply() -> void:
 		mag = int(wstats.get("ammo_per_load", 30))
 		vessel.supplies = maxf(0.0, vessel.supplies - 1.0)
 		top_up_pens(true)
+		if role == "grenadier":
+			gl_ammo = GL_ROUNDS
+			breach_ammo = BREACH_ROUNDS
+			kit_refresh()
 	else:
 		go(lp, true)
 
@@ -1804,13 +1819,14 @@ func _ai_launcher() -> bool:
 		return false
 	var others := 0
 	for o in G.characters:
-		if not is_instance_valid(o) or o == target or o == self or o.state != "alive":
+		if not is_instance_valid(o) or o == target or o == self or o.state == "dead":
 			continue
 		if o.global_position.distance_to(tp) > 4.5:
 			continue
 		if not G.enemies(team, o.team):
-			return false                                  # a friend would be in the burst
-		others += 1
+			return false                                  # a friend (downed ones too) would be in the burst
+		if o.state == "alive":
+			others += 1
 	var ic = target.get("in_cover")
 	var covered: bool = (ic is Array and not (ic as Array).is_empty()) or target.get("crouch") == true
 	if others < 1 and not covered:
@@ -1938,9 +1954,12 @@ func _player_physics(dt: float) -> void:
 			fire_launcher(gfrom, gd)
 		look_pitch = clampf(look_pitch + deg_to_rad(3.5), -1.45, 1.45)
 		kick = 1.0
+		_gl_latch = true                                  # no rifle fire until the trigger is let go
 		if (breach_ammo if gl_breach else gl_ammo) <= 0:
 			_cycle_launcher()
-	if Input.is_action_pressed("fire") and can_fire and not gl_mode and G.commander:
+	if _gl_latch and not Input.is_action_pressed("fire"):
+		_gl_latch = false
+	if Input.is_action_pressed("fire") and can_fire and not gl_mode and not _gl_latch and G.commander:
 		if mag > 0:
 			var rpm: float = float(wstats.get("rpm", 300))
 			fire_t = 60.0 / rpm
@@ -2019,7 +2038,7 @@ func player_use(hit: Dictionary) -> String:
 		return "Elevator called to deck %d" % my_deck
 	# gear up at a locker or armory on our own vessel
 	if vessel.team == team and vessel.room_down("armory"):
-		for s in vessel.marks_like("Armory_*_Resupply") + vessel.marks_like("*_ReadyLocker"):
+		for s in vessel.marks_like("Armory_*_Resupply") + vessel.marks_like("Armory_*_Counter") + vessel.marks_like("ReadyLocker_*") + vessel.marks_like("*_ReadyLocker"):
 			if position.distance_to(vessel.local_of(s)) < 3.0:
 				return "The armory is wrecked: engineers have to repair it first"
 	if vessel.team == team:
@@ -2031,8 +2050,9 @@ func player_use(hit: Dictionary) -> String:
 				spare = ["re_1", "re_2", "re_3"]
 				for slot in ["MagSlot_1", "MagSlot_2", "MagSlot_3", "MagSlot_4", "MagSlot_5", "MagSlot_6"]:
 					rig.show_slot(slot, true)
-				while grenades.size() < 2:
-					grenades.append("armory_grenade_%d" % grenades.size())
+				if role != "grenadier":                   # grenadiers carry no hand grenades
+					while grenades.size() < 2:
+						grenades.append("armory_grenade_%d" % grenades.size())
 				top_up_pens(true)
 				if role == "breacher":
 					while charges.size() < 2:

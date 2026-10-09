@@ -29,7 +29,7 @@ func launch(from: Vector3, to: Vector3, who: Node, fac: int) -> void:
 	var d := to - from
 	var t: float = clamp(d.length() / 14.0, 0.4, 1.6)
 	vel = d / t + Vector3.UP * 0.5 * 9.8 * t
-	if fac == 2:
+	if fac == 2 and not emp:
 		fuse = 2.0
 
 
