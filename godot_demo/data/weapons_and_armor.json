@@ -59,13 +59,12 @@
         "ammo_item": "F1_AssaultRifle_Mag"
       },
       "battle_rifle": {
-        "damage": 30.0,
+        "damage": 24.0,
         "pellets": 1,
-        "rpm": 450,
-        "ammo_per_load": 36,
-        "reload_s": 2.4,
-        "range_m": 90,
-        "burst": 3,
+        "rpm": 780,
+        "ammo_per_load": 32,
+        "reload_s": 2.3,
+        "range_m": 45,
         "model": "F1_BattleRifle",
         "type": "ballistic",
         "ammo_item": "F1_BattleRifle_Mag"
@@ -139,13 +138,12 @@
         "ammo_item": "F2_PlasmaRifle_Cell"
       },
       "battle_rifle": {
-        "damage": 39.0,
+        "damage": 31.2,
         "pellets": 1,
-        "rpm": 450,
-        "ammo_per_load": 36,
-        "reload_s": 2.4,
-        "range_m": 90,
-        "burst": 3,
+        "rpm": 780,
+        "ammo_per_load": 32,
+        "reload_s": 2.3,
+        "range_m": 45,
         "model": "F2_PulseCarbine",
         "type": "energy",
         "ammo_item": "F2_PulseCarbine_Cell"

@@ -1009,7 +1009,7 @@ ARMOR_DR = {           # base damage reduction per piece (heavy faction values)
 
 WEAPON_CLASSES = {     # base stats before the faction damage multiplier (placeholders to tune)
     "rifle":        dict(damage=20, pellets=1, rpm=650, ammo_per_load=36, reload_s=2.2, range_m=60),
-    "battle_rifle": dict(damage=30, pellets=1, rpm=450, ammo_per_load=36, reload_s=2.4, range_m=90, burst=3),
+    "battle_rifle": dict(damage=24, pellets=1, rpm=780, ammo_per_load=32, reload_s=2.3, range_m=45),   # CQB bullpup
     "smg":          dict(damage=14, pellets=1, rpm=900, ammo_per_load=48, reload_s=1.8, range_m=30),
     "shotgun":      dict(damage=12, pellets=8, rpm=70, ammo_per_load=8, reload_s=2.6, range_m=12),
     "sniper":       dict(damage=110, pellets=1, rpm=40, ammo_per_load=5, reload_s=3.0, range_m=300),

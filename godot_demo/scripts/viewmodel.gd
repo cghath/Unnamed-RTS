@@ -180,7 +180,7 @@ func _build(c: Node) -> void:
 	elif mdl.contains("Sniper") or mdl.contains("BeamRifle"):
 		kind = "scope"
 		zoom = 6.0
-	elif mdl.contains("BattleRifle") or mdl.contains("PulseCarbine"):
+	elif mdl.contains("PulseCarbine"):
 		kind = "scope"
 		zoom = 3.0
 	_make_sight(c)

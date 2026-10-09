@@ -215,7 +215,9 @@ func give_weapon(model: String) -> void:
 	var file := model
 	if faction == 3:
 		file = "P_" + model.substr(3)
-	rig.set_weapon("res://models/weapons/weapon_%s.glb" % file)
+	# a gun built in Godot (tests/make_bullpup.gd) replaces the exported .glb of the same name
+	var scn := "res://models/weapons/weapon_%s.tscn" % file
+	rig.set_weapon(scn if ResourceLoader.exists(scn) else "res://models/weapons/weapon_%s.glb" % file)
 	mag = int(wstats.get("ammo_per_load", 30))
 	armed = true
 
