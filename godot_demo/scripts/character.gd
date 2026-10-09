@@ -53,7 +53,8 @@ var gl_ammo := 0                  # grenadier: 40 mm shells left (on the chest b
 var breach_ammo := 0              # grenadier: breaching rounds left (in the pack-side holders)
 var gl_rounds: Array = []         # ...the shell models on the bandolier, one hidden per shot
 var breach_rounds: Array = []     # ...the breaching-round models in the holders
-var gl_mode := false              # grenadier in direct control: the trigger fires the launcher (B toggles)
+var gl_mode := false              # grenadier in direct control: the trigger fires the launcher (B cycles)
+var gl_breach := false            # ...loaded with a breaching round instead of a frag shell
 var _gl_cd := 0.0                 # launcher: loading the next shell (AI: also holding off between shots)
 var armed := false
 var geared := 0                   # crew: 0 none, 1 ready locker, 2 armory
@@ -1285,6 +1286,9 @@ func _follow_squad() -> void:
 	# the squad's breacher at a stacked door kicks it in or sets the charge
 	if not squad.stack_door.is_empty() and squad.stack_breacher() == self:
 		var dc: Vector3 = squad.stack_door["center"]
+		if role == "grenadier" and breach_ammo > 0 and _gl_cd <= 0.0 and squad.stack_door.get("kind", "door") != "door" \
+				and G.enemies(team, vessel.team) and _breach_shot(squad.stack_door):
+			return
 		if Vector2(position.x - dc.x, position.z - dc.z).length() < 1.7 and absf(position.y + 1.3 - dc.y) < 1.5:
 			stop()
 			if G.enemies(team, vessel.team):
@@ -1724,6 +1728,45 @@ func fire_launcher(from: Vector3, dir: Vector3) -> Node3D:
 	return gr
 
 
+## Fire a breaching round from the launcher. `aim` is the door/wall dict it's meant for.
+func fire_breach_round(from: Vector3, dir: Vector3, aim: Dictionary = {}) -> Node3D:
+	if breach_ammo <= 0:
+		return null
+	breach_ammo -= 1
+	kit_refresh()
+	var st: Dictionary = G.data.get("items", {}).get("BreachRound", {})
+	_gl_cd = float(G.data.get("items", {}).get("GLShell", {}).get("reload_s", 1.6))
+	rig.recoil = 1.0
+	var r := BREACH_ROUND.new()
+	get_tree().root.add_child(r)
+	r.fire(from, dir, self, st, aim)
+	G.flash(from + dir * 0.2, Color(1.0, 0.75, 0.4), 1.6, 2.0, 0.06)
+	if G.sfx:
+		G.sfx.play("shotgun", from, -4.0 if self == G.possessed else -10.0)
+	return r
+
+
+## AI grenadier as the squad's breacher: from 12 m or less with a clear line, fire a breaching
+## round at the stacked wall or door instead of walking up to it. True when it fired.
+func _breach_shot(d: Dictionary) -> bool:
+	var dw: Vector3 = vessel.to_global(d["center"])
+	var from := _gl_muzzle()
+	if from.distance_to(dw) > 12.0:
+		return false
+	var hit := G.ray(from, dw, [get_rid()], G.LAYER_WORLD | G.LAYER_DOOR)
+	if not hit.is_empty() and (hit.position as Vector3).distance_to(dw) > 1.2:
+		return false                                      # something else in the way
+	stop()
+	var to_d: Vector3 = (d["center"] as Vector3) - position
+	if Vector2(to_d.x, to_d.z).length() > 0.1:
+		rotation.y = atan2(-to_d.x, -to_d.z)
+	if fire_breach_round(from, (dw - from).normalized(), d) == null:
+		return false
+	d["charged"] = true                                   # the rest of the stack waits for it
+	G.say("%s fired a breaching round aboard %s" % [display, vessel.display_name], team)
+	return true
+
+
 ## The launcher's muzzle in the world (the gun's GLMuzzle marker), else just below the eye.
 func _gl_muzzle() -> Vector3:
 	if rig.weapon:
@@ -1731,6 +1774,18 @@ func _gl_muzzle() -> Vector3:
 		if m:
 			return m.global_position
 	return eye() + Vector3.DOWN * 0.3
+
+
+## B: rifle -> launcher (frag) -> launcher (breaching round) -> rifle, skipping what's run out.
+func _cycle_launcher() -> void:
+	if not gl_mode:
+		gl_mode = gl_ammo > 0 or breach_ammo > 0
+		gl_breach = gl_ammo <= 0
+	elif not gl_breach and breach_ammo > 0:
+		gl_breach = true
+	else:
+		gl_mode = false
+		gl_breach = false
 
 
 ## AI grenadier: a shell into a group of hostiles or onto one in cover, 8-35 m off, with no
@@ -1865,18 +1920,21 @@ func _player_physics(dt: float) -> void:
 	kick = move_toward(kick, 0.0, dt * 6.0)
 	var can_fire := armed and fire_t <= 0.0 and reload_t < 0.0 and not sprint and slide_t <= 0.0
 	if role == "grenadier" and Input.is_action_just_pressed("launcher") and armed:
-		gl_mode = not gl_mode and gl_ammo > 0
+		_cycle_launcher()
 	if gl_mode and Input.is_action_just_pressed("fire") and armed and _gl_cd <= 0.0 and not sprint and slide_t <= 0.0 and G.commander:
 		var gcam: Camera3D = G.commander.fps_cam
 		var gd := -gcam.global_transform.basis.z
 		var gfrom: Vector3 = gcam.global_position + gd * 0.5 + Vector3.DOWN * 0.12
 		if G.is_client():
-			G.network.send_action(self, "gl", [gfrom, gd])
-		fire_launcher(gfrom, gd)
+			G.network.send_action(self, "breach" if gl_breach else "gl", [gfrom, gd])
+		if gl_breach:
+			fire_breach_round(gfrom, gd)
+		else:
+			fire_launcher(gfrom, gd)
 		look_pitch = clampf(look_pitch + deg_to_rad(3.5), -1.45, 1.45)
 		kick = 1.0
-		if gl_ammo <= 0:
-			gl_mode = false
+		if (breach_ammo if gl_breach else gl_ammo) <= 0:
+			_cycle_launcher()
 	if Input.is_action_pressed("fire") and can_fire and not gl_mode and G.commander:
 		if mag > 0:
 			var rpm: float = float(wstats.get("rpm", 300))

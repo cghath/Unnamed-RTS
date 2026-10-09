@@ -7,6 +7,113 @@ extends Node3D
 
 const BODY_R := 0.02
 
+var by: Node = null               # who fired it
+var aim := {}                     # the door or wall it was fired at (its "charged" flag is ours)
+var vel := Vector3.ZERO
+var model: Node3D
+var stuck := false
+var vessel: Node = null           # the ship it stuck to (it rides along)
+var _st := {}
+var _t := 0.0
+var _spin := 1.0
+var _spark := 0.0
+var _life := 3.0
+
+
+## Fire from `from` along `dir` (stats: the "BreachRound" item). `aim_at` is the door/wall dict
+## it's meant for, if any: it gets its "charged" flag back if the round fails.
+func fire(from: Vector3, dir: Vector3, who: Node, st: Dictionary, aim_at: Dictionary = {}) -> void:
+	by = who
+	aim = aim_at
+	_st = st
+	global_position = from
+	vel = dir.normalized() * float(st.get("speed_m_s", 40.0))
+	_spin = float(st.get("spin_s", 1.0))
+	model = build_model()
+	add_child(model)
+	model.basis = Basis.looking_at(-vel.normalized(), Vector3.UP if absf(vel.normalized().y) < 0.99 else Vector3.BACK)
+
+
+func _physics_process(dt: float) -> void:
+	_t += dt
+	if not stuck:
+		set_fins(model, _t / 0.12)
+		var nxt := global_position + vel * dt               # flies straight: no drop over breaching ranges
+		var hit := G.ray(global_position, nxt, [], G.LAYER_WORLD | G.LAYER_DOOR)
+		if hit.is_empty():
+			global_position = nxt
+			_life -= dt
+			if _life <= 0.0:
+				_fail()
+			return
+		# bite in: nose on the surface, then ride with the ship
+		stuck = true
+		global_position = (hit.position as Vector3) - vel.normalized() * 0.065
+		vessel = _vessel_of(hit.collider)
+		if vessel:
+			reparent(vessel, true)
+		return
+	# the hole saw spins up and throws sparks, then the round goes off
+	var crown: Node3D = model.get_meta("crown")
+	crown.rotate_object_local(Vector3.BACK, dt * minf(_t * 60.0, 45.0))
+	_spark -= dt
+	if _spark <= 0.0:
+		_spark = 0.07
+		var nose: Vector3 = model.global_transform * Vector3(0, 0, 0.07)
+		G.flash(nose, Color(1.0, 0.62, 0.2), 1.6, 1.8, 0.05)
+		if G.sfx and randf() < 0.3:
+			G.sfx.play("ciws", nose, -16.0)
+	_spin -= dt
+	if _spin <= 0.0:
+		_go_off()
+
+
+func _go_off() -> void:
+	var nose: Vector3 = model.global_transform * Vector3(0, 0, 0.07)
+	var d := {}
+	if vessel and is_instance_valid(vessel):
+		var reach: float = float(_st.get("reach_m", 1.5))
+		var p: Vector3 = vessel.to_local(nose)
+		var at_floor := p - Vector3(0, 1.2, 0)            # door_near / wall_near take a standing position
+		if not aim.is_empty() and not aim["breached"] and (aim["center"] as Vector3).distance_to(p) < reach + 1.0:
+			d = aim
+		elif vessel.has_method("wall_near"):
+			d = vessel.wall_near(at_floor, reach)
+		if d.is_empty() and vessel.has_method("door_near"):
+			d = vessel.door_near(at_floor, reach)
+			if not d.is_empty() and d["breached"]:
+				d = {}
+	if d.is_empty():
+		_fail()
+		return
+	# blow it inward, away from whoever fired
+	var nrm: Vector3 = d["n"]
+	var from_side: Vector3 = vessel.to_local(by.global_position) if by and is_instance_valid(by) else vessel.to_local(global_position - vel)
+	var push := nrm * (1.0 if ((d["center"] as Vector3) - from_side).dot(nrm) >= 0.0 else -1.0)
+	push.y = 0.0
+	vessel.breach_door(d, by if by and is_instance_valid(by) else null, push)
+	if not aim.is_empty() and not aim["breached"]:
+		aim["charged"] = false                           # opened something else: the target is free again
+	G.say("Breaching round: %s opened" % ("wall" if d["kind"] == "wall" else "door"), by.team if by and is_instance_valid(by) else 1)
+	queue_free()
+
+
+## Nothing to breach: a small blast where it is, and the target is free to try again.
+func _fail() -> void:
+	G.blast(model.global_transform * Vector3(0, 0, 0.07), float(_st.get("radius_m", 1.5)), float(_st.get("damage", 40.0)), by)
+	if not aim.is_empty() and not aim["breached"]:
+		aim["charged"] = false
+	queue_free()
+
+
+static func _vessel_of(n: Object) -> Node:
+	var x: Node = n as Node
+	while x != null:
+		if x in G.vessels:
+			return x
+		x = x.get_parent()
+	return null
+
 
 ## The round's model. Its meta "fins" holds the four fin hinges (see set_fins) and "crown"
 ## the hole-saw node, which spins about +z.

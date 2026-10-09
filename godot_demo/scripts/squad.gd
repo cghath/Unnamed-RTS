@@ -412,12 +412,15 @@ func stack_breacher() -> Node:
 		var sc := 0
 		if stack_door.get("kind", "door") == "door":
 			sc = {"heavy": 4, "breacher": 3, "rifleman": 2}.get(m.role, 1)
+		elif m.role == "grenadier" and m.breach_ammo > 0:
+			sc = 4                                        # a breaching round from range
 		elif not m.charges.is_empty():
 			sc = 5 if m.role == "breacher" else 3
 		if sc > bs:
 			bs = sc
 			best = m
-	if stack_door.get("kind", "door") != "door" and best != null and best.charges.is_empty():
+	if stack_door.get("kind", "door") != "door" and best != null and best.charges.is_empty() \
+			and not (best.role == "grenadier" and best.breach_ammo > 0):
 		best = null
 	stack_door["breacher"] = best
 	return best

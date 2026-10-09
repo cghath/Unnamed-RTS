@@ -611,6 +611,9 @@ func _action(id: int, what: String, args: Array) -> void:
 		"gl":
 			if c.role == "grenadier":
 				c.fire_launcher(args[0], args[1])
+		"breach":
+			if c.role == "grenadier":
+				c.fire_breach_round(args[0], args[1])
 		"medpen":
 			if not c.medpens.is_empty():
 				c.rig.show_slot(c.medpens.pop_back(), false)

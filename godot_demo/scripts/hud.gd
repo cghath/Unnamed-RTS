@@ -324,7 +324,7 @@ func _build_help() -> void:
 		[right, "Direct control", [["WASD · mouse", "move · aim"], ["Shift · C · Space", "run · crouch · jump"],
 			["Left mouse", "fire"], ["R", "reload from your chest rig"], ["G", "grenade"], ["Q", "medpen"],
 			["E", "use: revive, elevator, locker, sabotage, breach, purge"], ["Tab", "back to command"],
-			["B", "grenadier: 40 mm launcher on / off"], ["Goal", "capture or destroy the Ascendancy Spire's command core"]]],
+			["B", "grenadier: launcher, breaching round, rifle"], ["Goal", "capture or destroy the Ascendancy Spire's command core"]]],
 	]
 	for s in sections:
 		_lbl(s[0], s[1].to_upper(), 12, Color(0.5, 0.8, 1.0))
@@ -693,10 +693,11 @@ func refresh_fps(c: Node, look_text: String) -> void:
 	vit_armor.text = "ARMOR %d%%" % int((c.dr + G.dr_bonus(c.team)) * 100.0)
 	set_bar(exo_bar, c.exo / c.exo_max(), Color(0.5, 0.8, 1.0))
 	if c.armed and c.gl_mode:
-		wpn_name.text = "40MM LAUNCHER"
-		wpn_ammo.text = "%d" % c.gl_ammo
-		wpn_mags.text = "loading" if c._gl_cd > 0.0 else "B: back to the rifle"
-		wpn_ammo.add_theme_color_override("font_color", WARN if c.gl_ammo <= 1 else TEXT)
+		var left: int = c.breach_ammo if c.gl_breach else c.gl_ammo
+		wpn_name.text = "BREACHING ROUND" if c.gl_breach else "40MM LAUNCHER"
+		wpn_ammo.text = "%d" % left
+		wpn_mags.text = "loading" if c._gl_cd > 0.0 else "B: next"
+		wpn_ammo.add_theme_color_override("font_color", WARN if left <= 1 else TEXT)
 	elif c.armed:
 		wpn_name.text = c.weapon_model.substr(3).capitalize().to_upper()
 		wpn_ammo.text = "%d" % c.mag
