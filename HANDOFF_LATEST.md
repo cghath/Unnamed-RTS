@@ -150,11 +150,8 @@ GDScript warnings count as errors: give explicit types when reading from a Dicti
      Check `Engine.get_frames_per_second` before and after.
 7. **Next roadmap items (from the original roadmap in the root `HANDOFF.md`).** The rest of that roadmap is done:
    the core ship (`match.deploy_station`), player outposts with a build menu (N, `outposts.gd`), breachable walls,
-   player driving and fog of war/radar.
-   - **Two-storey hangar.** Larger ships (MEDIUM and up) get a hangar spanning two decks: pads on the floor, a gallery
-     or catwalk on the upper deck with ramps or a lift, and pads for fighters/shuttles on both levels.
-     Hulls come from `blender/ship_generator.py`; regenerate the GLBs and re-bake nav (`res://nav/`).
-     `ship.pads`, the shuttle landing (`shuttle._pick_landing`) and the fighter scramble must use the new pads.
+   player driving and fog of war/radar (basic; gaps in item 8).
+   The two-storey hangar is deferred (the user picked these three for now).
    - **Zero-g / EVA and airlocks.**
      - The `eva_boarder` role already exists. Add a zero-g movement mode for characters outside a hull or in a
        depressurised zone: 6-DOF thrust with the exo energy, no gravity, magnetic boots on hull surfaces.
@@ -175,3 +172,25 @@ GDScript warnings count as errors: give explicit types when reading from a Dicti
        flown up to a station.
      - Reuse the vehicle bay ramp logic (`bays.gd`, `load_vehicles`) and the Darter logistics runs (`logistics.gd`)
        for automatic hauling.
+8. **Fog of war and radar gaps (session 4).** What works now (`fog.gd`): enemy vessels, fighters, pods, missiles,
+   vehicles, outposts, caches and ground troops are hidden outside sensor range. Vessels within twice the sensor
+   range show as "UNKNOWN CONTACT" (minimap "?" blip). Stations and outposts stay on the map once seen, and fogged
+   units can't be picked (`commander.gd` ~line 795). Still missing:
+   - **AI fog**: only the player's side is fogged; enemy AI sides know where everything is.
+     - Run the same eyes and sensor pass per AI team: generalise `fog.gd` from `G.player_team` to a per-team `state`
+       and `known`.
+     - Have AI targeting and strategic orders (`ai.gd`, ship target picking, outpost raids) only use units in that
+       team's "vis", or last-seen positions for "known".
+   - **Ground minimap**: on planets, vehicles, troops and outposts aren't drawn on the minimap (`minimap.gd` only
+     draws vessels, fighters, pods and missiles). Enemy missiles are drawn even when the fog hides them: check
+     `visible` or `fog.state_of` as fighters and pods already do.
+   - **Fog shading and last-seen state**:
+     - No darkened overlay for areas outside sensor range: shade the minimap and add a world-space fog plane or
+       post effect on planets and in the RTS view.
+     - Known stations and outposts show live: snapshot hp, team and position when they leave sight, show that
+       ghost until seen again.
+   - **Ground radar and interior sight**:
+     - On planets the ground eyes have radar 0, so there are no unknown-contact blips beyond eyesight. Give
+       outposts, vehicles and landed ships a radar ring.
+     - Inside a visible enemy ship every crew member is shown. Hide enemy occupants that none of your people
+       aboard (or a camera or sensor) has line of sight to, with a short last-seen marker.
