@@ -7,6 +7,8 @@ extends SceneTree
 ##
 ## Godot axes: +z toward the muzzle, +y up. The grip sits at the origin like every other gun;
 ## the magazine goes in behind it (a bullpup), so the whole gun is only about 0.75 m long.
+## The Sight marker sits on top of a plain mount on the rail; the first-person holo sight is
+## added there by viewmodel.gd.
 
 const MATS := ["WBody", "WAccent", "WDark", "Optic", "WPanel"]
 
@@ -44,7 +46,7 @@ func _save(tag: String) -> void:
 	root.add_child(mag)
 	mag.owner = root
 	var marks := {"Grip": Vector3(0, -0.06, -0.01), "SupportHand": Vector3(0, 0.0, 0.29),
-		"Muzzle": Vector3(0, 0.05, 0.42), "Sight": Vector3(0, 0.15, 0.05), "MagWell": Vector3(0, -0.02, -0.165)}
+		"Muzzle": Vector3(0, 0.05, 0.42), "Sight": Vector3(0, 0.12, 0.05), "MagWell": Vector3(0, -0.02, -0.165)}
 	for k in marks:
 		var n := Node3D.new()
 		n.name = k
@@ -89,15 +91,10 @@ func _body(mats: Dictionary) -> ArrayMesh:
 	_box("WDark", Vector3(-0.045, 0.05, 0.12), Vector3(-0.035, 0.07, 0.16))            # charging handle
 	_cyl("WDark", Vector3(0, 0.05, 0.36), 0.012, 0.03)                                 # barrel
 	_cyl("WDark", Vector3(0, 0.05, 0.375), 0.019, 0.045)                               # flash hider
-	# top rail and a holographic sight
+	# top rail and a sight mount: viewmodel.gd puts its own holo sight on top of the mount
+	# (on the Sight marker), as it does for every rifle, so the model has no sight of its own
 	_box("WDark", Vector3(-0.015, 0.09, -0.12), Vector3(0.015, 0.103, 0.3))
 	_box("WDark", Vector3(-0.022, 0.103, 0.0), Vector3(0.022, 0.12, 0.09))
-	for sx in [-1.0, 1.0]:
-		var a: float = sx * 0.018
-		var b: float = sx * 0.024
-		_box("WDark", Vector3(minf(a, b), 0.12, 0.03), Vector3(maxf(a, b), 0.18, 0.08))
-	_box("WDark", Vector3(-0.024, 0.175, 0.03), Vector3(0.024, 0.185, 0.08))
-	_box("Optic", Vector3(-0.018, 0.12, 0.06), Vector3(0.018, 0.175, 0.063))
 	return _commit(mats)
 
 

@@ -1,5 +1,6 @@
 extends Node
-## First-person weapon pictures:  godot --path . res://match.tscn -- --weaponshots <folder>
+## First-person weapon pictures:  godot --path . res://match.tscn -- --weaponshots [--only <text>] <folder>
+## --only keeps the shots whose gun name contains <text> (e.g. --only BattleRifle).
 ## Each gun type: at the hip looking level, up and down; aimed down the sights.
 ## "tp_*" shots look at the soldier from outside (third person) to check the hands and stock.
 
@@ -23,6 +24,11 @@ func _ready() -> void:
 	for pose in ["tp_side", "tp_left", "tp_front", "tp_top", "tp_ads", "tp_reload"]:
 		shots.append(["F1_BattleRifle", pose])
 	shots.append(["F1_AssaultRifle", "tp_side"])
+	var args := OS.get_cmdline_user_args()
+	var only := args.find("--only")
+	if only >= 0 and only + 1 < args.size() - 1:
+		var key: String = args[only + 1]
+		shots = shots.filter(func(s: Array) -> bool: return String(s[0]).contains(key))
 	process_priority = 1000                 # after the commander has placed its camera
 
 
