@@ -1,6 +1,7 @@
 extends Node
 ## First-person weapon pictures:  godot --path . res://match.tscn -- --weaponshots <folder>
 ## Each gun type: at the hip looking level, up and down; aimed down the sights.
+## "tp_*" shots look at the soldier from outside (third person) to check the hands and stock.
 
 var out := ""
 var t := 0.0
@@ -18,6 +19,11 @@ func _ready() -> void:
 			shots.append([m, pose])
 	shots.append(["F1_AssaultRifle", "reload"])
 	shots.append(["F1_AssaultRifle", "sprint"])
+	shots.append(["F1_BattleRifle", "reload"])
+	for pose in ["tp_side", "tp_left", "tp_front", "tp_top", "tp_ads", "tp_reload"]:
+		shots.append(["F1_BattleRifle", pose])
+	shots.append(["F1_AssaultRifle", "tp_side"])
+	process_priority = 1000                 # after the commander has placed its camera
 
 
 func _physics_process(dt: float) -> void:
@@ -65,10 +71,34 @@ var busy := false
 
 func _pose() -> void:
 	var s: Array = shots[i]
-	c.set_meta("force_ads", s[1] == "ads")
+	var tp: bool = s[1].begins_with("tp_")
+	c.rig.set_first_person(not tp)
+	c.set_meta("force_ads", s[1] in ["ads", "tp_ads"])
 	c.look_pitch = {"up": 0.95, "down": -0.95}.get(s[1], 0.0)
-	if s[1] == "reload" and c.reload_t < 0.5:
+	if s[1] in ["reload", "tp_reload"] and c.reload_t < 0.5:
 		c.reload_t = 1.2
+
+
+## Third-person shots: move the commander's camera off the soldier once it has been placed.
+func _process(_dt: float) -> void:
+	if c == null or i >= shots.size() or not shots[i][1].begins_with("tp_"):
+		return
+	G.commander.viewmodel.visible = false
+	var cam: Camera3D = G.commander.fps_cam
+	var yb := Basis(Vector3.UP, c.global_rotation.y)
+	var fwd := -yb.z
+	var right := yb.x
+	var at: Vector3 = c.global_position + Vector3.UP * 1.3 + fwd * 0.25
+	var from: Vector3 = {
+		"tp_side": at + right * 1.3,
+		"tp_left": at - right * 1.3,
+		"tp_front": at + fwd * 1.4 + right * 0.5,
+		"tp_top": at + Vector3.UP * 1.0 + right * 0.4 - fwd * 0.3,
+		"tp_ads": at + right * 1.1 + fwd * 0.3,
+		"tp_reload": at + right * 0.9 + fwd * 0.7 - Vector3.UP * 0.2,
+	}[shots[i][1]]
+	cam.fov = 50.0
+	cam.look_at_from_position(from, at)
 
 
 func _snap() -> void:
