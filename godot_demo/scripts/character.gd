@@ -49,10 +49,10 @@ var emps: Array = []              # EMP grenades (slot names)
 var stun_t := 0.0                 # > 0: staggered and blinded by an EMP
 var charges: Array = []
 var revive_kit := 0
-var gl_ammo := 0                  # grenadier: 40 mm shells left (on the chest bandolier)
-var breach_ammo := 0              # grenadier: breaching rounds left (in the pack-side holders)
-var gl_rounds: Array = []         # ...the shell models on the bandolier, one hidden per shot
-var breach_rounds: Array = []     # ...the breaching-round models in the holders
+var gl_ammo := 0                  # grenadier: 40 mm shells left (on the belt, right hip)
+var breach_ammo := 0              # grenadier: breaching rounds left (a sleeve on each hip)
+var gl_rounds: Array = []         # ...the shell models on the belt, one hidden per shot
+var breach_rounds: Array = []     # ...the breaching-round models in the hip sleeves
 var gl_mode := false              # grenadier in direct control: the trigger fires the launcher (B cycles)
 var gl_breach := false            # ...loaded with a breaching round instead of a frag shell
 var _gl_cd := 0.0                 # launcher: loading the next shell (AI: also holding off between shots)
@@ -239,69 +239,74 @@ const GL_ROUNDS := 6
 const BREACH_ROUNDS := 2
 
 
-## A bandolier of 40 mm shells across the chest (left shoulder to right ribs) and two breaching
-## rounds in holders on the pack's sides. Measured off the chest armour, so it fits both factions.
-## Hung on the UpperChest bone (bones have identity rest rotation, so a node's local position is
-## its model-space position minus the bone's). Named "_mesh" so first person hides them like the
-## rest of the chest.
+## The 40 mm shells ride upright in loops on the belt, in an arc round the right hip from the
+## front to the side, and a breaching round stands in a sleeve on each hip (the right one behind
+## the shells). Measured off the hips mesh (belt included), so it fits both factions. Hung on the
+## Hips bone (bones have identity rest rotation, so a node's local position is its model-space
+## position minus the bone's). The rifleman model's hip grenade pouches are hidden: grenadiers
+## carry no hand grenades.
 func _grenadier_kit() -> void:
 	gl_ammo = GL_ROUNDS
 	breach_ammo = BREACH_ROUNDS
-	if not rig.b.has("UpperChest"):
+	for sl in ["GrenadeSlot_1", "GrenadeSlot_2"]:
+		rig.show_slot(sl, false)
+	if not rig.b.has("Hips"):
 		return
-	var bone: Node3D = rig.b["UpperChest"]
-	var bone_pos: Vector3 = rig._model_pos("UpperChest")
-	var chest := AABB(bone_pos + Vector3(-0.22, -0.18, -0.22), Vector3(0.44, 0.38, 0.42))
-	var cm: Node = bone.find_child("UpperChest_mesh", false, false)
-	if cm is MeshInstance3D:
-		chest = _model_aabb(cm)
-	var front: float = chest.end.z
-	var mags: Node = rig.model.find_child("Slot_MagSlot_1", true, false)
-	if mags is MeshInstance3D:
-		front = maxf(front, _model_aabb(mags).end.z)
-	var hw: float = chest.size.x * 0.5
+	var bone: Node3D = rig.b["Hips"]
+	var bone_pos: Vector3 = rig._model_pos("Hips")
+	var hips := AABB(bone_pos + Vector3(-0.2, -0.07, -0.1), Vector3(0.4, 0.17, 0.25))
+	var hm: Node = bone.find_child("Hips_mesh", false, false)
+	if hm is MeshInstance3D:
+		hips = _model_aabb(hm)
+	# an ellipse just outside the belt; angles from the front (+z) round toward the right (-x)
+	var mid := Vector3(0.0, hips.position.y + hips.size.y * 0.45, (hips.position.z + hips.end.z) * 0.5)
+	var ax: float = hips.size.x * 0.5 + 0.024
+	var az: float = hips.size.z * 0.5 + 0.024
+	var on_belt := func(deg: float) -> Vector3:
+		var a := deg_to_rad(deg)
+		return mid + Vector3(-sin(a) * ax, 0.0, cos(a) * az)
 	var webbing := StandardMaterial3D.new()
 	webbing.albedo_color = Color(0.15, 0.14, 0.11)
 	webbing.roughness = 0.9
-	# the bandolier
-	var a := Vector3(hw * 0.62, chest.end.y - 0.05, front + 0.007)
-	var b := Vector3(-hw * 0.62, chest.position.y + 0.07, front + 0.007)
-	var band := Node3D.new()
-	band.name = "Bandolier_mesh"
-	band.position = (a + b) * 0.5 - bone_pos
-	band.rotation.z = atan2(a.y - b.y, a.x - b.x)     # local +x up the strap, so +y (the noses) points up
-	bone.add_child(band)
-	var strap := MeshInstance3D.new()
-	var sb := BoxMesh.new()
-	sb.size = Vector3(a.distance_to(b) + 0.08, 0.05, 0.01)
-	strap.mesh = sb
-	strap.material_override = webbing
-	band.add_child(strap)
+	var kit := Node3D.new()
+	kit.name = "GrenadierBelt"
+	bone.add_child(kit)
+	var loop := BoxMesh.new()
+	loop.size = Vector3(0.05, 0.022, 0.046)
 	gl_rounds.clear()
 	for i in GL_ROUNDS:
+		var deg: float = lerpf(28.0, 112.0, float(i) / (GL_ROUNDS - 1))
+		var at: Vector3 = on_belt.call(deg)
+		var turn := Basis(Vector3.UP, -deg_to_rad(deg))            # face out from the hip
+		var lp := MeshInstance3D.new()
+		lp.mesh = loop
+		lp.material_override = webbing
+		lp.basis = turn
+		lp.position = at - bone_pos + Vector3(0, -0.012, 0)
+		kit.add_child(lp)
 		var sh: Node3D = GRENADE.shell_model()
-		sh.position = Vector3((i - (GL_ROUNDS - 1) * 0.5) * 0.046, 0.004, 0.025)
-		sh.rotation.x = -PI * 0.5                    # nose along the strap's "up" side
-		band.add_child(sh)
+		sh.basis = turn * Basis(Vector3.RIGHT, -PI * 0.5)          # nose up
+		sh.position = at - bone_pos + Vector3(0, 0.004, 0)
+		kit.add_child(sh)
 		gl_rounds.append(sh)
-	# the breaching rounds, nose up in open sleeves on the pack's back corners
-	var holders := Node3D.new()
-	holders.name = "BreachHolders_mesh"
-	bone.add_child(holders)
+	# the breaching rounds: right hip behind the shells, left hip
 	breach_rounds.clear()
 	var sleeve := BoxMesh.new()
 	sleeve.size = Vector3(0.05, 0.085, 0.05)
-	for side in [-1.0, 1.0]:
-		var at := Vector3(side * (hw - 0.05), (chest.position.y + chest.end.y) * 0.5 - 0.04, chest.position.z + 0.07)
+	for deg in [146.0, -100.0]:
+		var at: Vector3 = on_belt.call(deg)
+		at += Vector3(at.x - mid.x, 0.0, at.z - mid.z).normalized() * 0.01      # a little proud of the shells
+		var turn := Basis(Vector3.UP, -deg_to_rad(deg))
 		var sl := MeshInstance3D.new()
 		sl.mesh = sleeve
 		sl.material_override = webbing
-		sl.position = at - bone_pos
-		holders.add_child(sl)
+		sl.basis = turn
+		sl.position = at - bone_pos + Vector3(0, -0.02, 0)
+		kit.add_child(sl)
 		var r: Node3D = BREACH_ROUND.build_model()
-		r.position = at - bone_pos + Vector3(0, 0.05, 0)
-		r.rotation.x = -PI * 0.5                     # nose up
-		holders.add_child(r)
+		r.basis = turn * Basis(Vector3.RIGHT, -PI * 0.5)           # nose up
+		r.position = at - bone_pos + Vector3(0, 0.03, 0)
+		kit.add_child(r)
 		breach_rounds.append(r)
 	kit_refresh()
 
@@ -1819,7 +1824,7 @@ func _ai_launcher() -> bool:
 	if not G.ray(from, from + dir * 3.0, [get_rid()], G.LAYER_WORLD | G.LAYER_DOOR).is_empty():
 		return false                                      # the first stretch is blocked
 	fire_launcher(from, dir)
-	_gl_cd = maxf(_gl_cd, randf_range(5.0, 8.0))          # don't empty the bandolier in one go
+	_gl_cd = maxf(_gl_cd, randf_range(5.0, 8.0))          # don't empty the belt in one go
 	return true
 
 

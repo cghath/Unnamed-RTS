@@ -26,8 +26,8 @@ func _ready() -> void:
 	shots.append(["F1_AssaultRifle", "tp_side"])
 	for pose in ["hip", "ads", "reload", "tp_side", "tp_left", "tp_front"]:
 		shots.append(["F1_BullpupGL", pose])
-	shots.append(["F1_BullpupGL", "tp_kit_front"])       # the grenadier's bandolier and pack holders
-	shots.append(["F1_BullpupGL", "tp_kit_back"])
+	for pose in ["tp_kit_front", "tp_kit_right", "tp_kit_back"]:   # the grenadier's belt
+		shots.append(["F1_BullpupGL", pose])
 	shots.append(["F2_BullpupGL", "hip"])
 	shots.append(["F2_BullpupGL", "tp_side"])
 	var args := OS.get_cmdline_user_args()
@@ -88,8 +88,6 @@ func _pose() -> void:
 		c.gl_ammo = 4                            # two shells fired, one breaching round used
 		c.breach_ammo = 1
 		c.kit_refresh()
-	if s[1].begins_with("tp_kit") and c.rig.weapon != null:
-		c.rig.set_weapon("")                     # arms down, so the chest shows (the next gun puts it back)
 	var tp: bool = s[1].begins_with("tp_")
 	c.rig.set_first_person(not tp)
 	c.set_meta("force_ads", s[1] in ["ads", "tp_ads"])
@@ -108,6 +106,8 @@ func _process(_dt: float) -> void:
 	var fwd := -yb.z
 	var right := yb.x
 	var at: Vector3 = c.global_position + Vector3.UP * 1.3 + fwd * 0.25
+	if shots[i][1].begins_with("tp_kit"):
+		at = c.global_position + Vector3.UP * 0.98                  # the belt
 	var from: Vector3 = {
 		"tp_side": at + right * 1.3,
 		"tp_left": at - right * 1.3,
@@ -115,8 +115,9 @@ func _process(_dt: float) -> void:
 		"tp_top": at + Vector3.UP * 1.0 + right * 0.4 - fwd * 0.3,
 		"tp_ads": at + right * 1.1 + fwd * 0.3,
 		"tp_reload": at + right * 0.9 + fwd * 0.7 - Vector3.UP * 0.2,
-		"tp_kit_front": at + fwd * 1.1 - right * 0.35 + Vector3.UP * 0.1,
-		"tp_kit_back": at - fwd * 1.3 + right * 0.5 + Vector3.UP * 0.2,
+		"tp_kit_front": at + fwd * 1.6 + right * 0.45 - Vector3.UP * 0.1,      # under the gun
+		"tp_kit_right": at + right * 1.0 + fwd * 0.2 + Vector3.UP * 0.15,
+		"tp_kit_back": at - fwd * 1.0 + right * 0.4 + Vector3.UP * 0.3,
 	}[shots[i][1]]
 	cam.fov = 50.0
 	cam.look_at_from_position(from, at)

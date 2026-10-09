@@ -84,7 +84,7 @@ func _fly_shell(dt: float) -> void:
 
 
 ## A 40 mm launcher shell (brass case, olive warhead with a yellow band), axis +z, nose forward,
-## about 0.08 m long. Shown on the grenadier's bandolier and flown as the launched round.
+## about 0.08 m long. Shown on the grenadier's belt and flown as the launched round.
 static func shell_model() -> Node3D:
 	var root := Node3D.new()
 	root.name = "Shell40"

@@ -35,10 +35,12 @@ GDScript warnings count as errors: give explicit types when reading from a Dicti
   - Model: `tests/make_bullpup.gd` also writes `weapon_F1/F2/P_BullpupGL.tscn`: the bullpup with a 40 mm tube under
     the shroud. SupportHand moves onto the tube (0,-0.07,0.25); new GLMuzzle marker (0,-0.07,0.385). F2 borrows the
     PulseCarbine's materials and gets a glowing cell for a magazine.
-  - Kit (`character._grenadier_kit`): a bandolier with 6 x 40 mm shells from the left shoulder to the right ribs, and
-    2 breaching rounds standing in sleeves on the pack's back corners. Hung on UpperChest and measured off the chest
-    mesh. `gl_ammo`/`breach_ammo` count them, `kit_refresh()` hides the spent ones, and the armory refills both.
-    Named `*_mesh` so first person hides them. Shell model: `grenade.gd shell_model()`; round model:
+  - Kit (`character._grenadier_kit`): 6 x 40 mm shells upright in loops on the belt, in an arc round the right hip
+    from the front to the side, and a breaching round in a sleeve on each hip (the right one behind the shells).
+    The user moved it from a chest bandolier to the belt. Hung on Hips and measured off the hips mesh; the rifleman
+    model's hip grenade pouches are hidden (grenadiers carry no hand grenades). `gl_ammo`/`breach_ammo` count them,
+    `kit_refresh()` hides the spent ones, and the armory refills both.
+    Shell model: `grenade.gd shell_model()`; round model:
     `breach_round.gd build_model()`.
   - Launcher frag (`grenade.gd fire_shell`, `character.fire_launcher`): 50 m/s, bursts on impact (world, door or
     character) once it has flown 4 m to arm; before that it's a dud (no blast). 85 damage, 4 m radius, 1.6 s between
@@ -55,7 +57,7 @@ GDScript warnings count as errors: give explicit types when reading from a Dicti
     picture of a round drilling a wall. `tests/grenadier_test.gd` (26 checks) passes; `--selftest` passes.
   - Not checked / open:
     - Nobody has played a grenadier yet, and nobody has looked at the F2 kit.
-    - Kit counts and bandolier visibility aren't in network snapshots, so other peers see a full kit.
+    - Kit counts and which shells show on the belt aren't in network snapshots, so other peers see a full kit.
     - The player's breaching round isn't tied to a door: it opens whatever it sticks near.
 
 ## Done in session 2 (branch handoff-tasks)

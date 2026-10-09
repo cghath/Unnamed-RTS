@@ -2,7 +2,7 @@ extends Node3D
 ## A breaching round for the grenadier's launcher (like Ash's in Siege): a finned dark-grey
 ## cylinder with a red band and a hole-saw crown on the nose. Four curved fins lie folded along
 ## the body and flip out when it's fired.
-## The model is built here so the pack holders (character.gd) and the projectile share it.
+## The model is built here so the belt sleeves (character.gd) and the projectile share it.
 ## Its axis is +z, nose forward; it is about 0.14 m long.
 
 const BODY_R := 0.02

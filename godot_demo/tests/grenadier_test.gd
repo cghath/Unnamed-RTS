@@ -68,8 +68,8 @@ func _physics_process(dt: float) -> void:
 			G.match_node.ai.attack_after = 99999.0
 			_check(c.weapon_model == ("F2_BullpupGL" if c.faction == 2 else "F1_BullpupGL"), "carries the BullpupGL (%s)" % c.weapon_model)
 			_check(c.spare.size() == 4 and c.medpens.size() >= 1, "4 spare mags (%d), a medpen" % c.spare.size())
-			_check(c.gl_ammo == 6 and c.gl_rounds.size() == 6, "6 shells on the bandolier")
-			_check(c.breach_ammo == 2 and c.breach_rounds.size() == 2, "2 breaching rounds on the pack")
+			_check(c.gl_ammo == 6 and c.gl_rounds.size() == 6, "6 shells on the belt")
+			_check(c.breach_ammo == 2 and c.breach_rounds.size() == 2, "2 breaching rounds on the hips")
 			_check(c.rig.weapon != null and c.rig.weapon.find_child("GLMuzzle", true, false) != null, "the gun has a GLMuzzle")
 			foe = G.match_node.spawn_character(v, v.snap_local(base + Vector3(0, 0, -6)), 2, 2, "rifleman")
 			foe.rotation.y = 0.0
@@ -86,7 +86,7 @@ func _physics_process(dt: float) -> void:
 			var shown := 0
 			for n in c.gl_rounds:
 				shown += 1 if (n as Node3D).visible else 0
-			_check(shown == 5, "the bandolier shows 5 shells (%d)" % shown)
+			_check(shown == 5, "the belt shows 5 shells (%d)" % shown)
 			step = 2
 			_wait = 1.2
 		2:
@@ -187,7 +187,7 @@ func _physics_process(dt: float) -> void:
 				var shown := 0
 				for n in g2.breach_rounds:
 					shown += 1 if (n as Node3D).visible else 0
-				_check(shown == 1, "one round left in the pack holders (%d)" % shown)
+				_check(shown == 1, "one round left on the hips (%d)" % shown)
 				step = 5
 				_wait = 0.55
 				_g2 = g2
