@@ -12,8 +12,51 @@ GDScript warnings count as errors: give explicit types when reading from a Dicti
 - First run: `$GODOT --headless --path godot_demo --import` (about a minute), then the compile check.
 - Rendering works under Xvfb with the compatibility renderer:
   `xvfb-run -a -s "-screen 0 1280x720x24" $GODOT --path godot_demo --resolution 1280x720 --rendering-driver opengl3 <scene> ...`
-  First-person gun pictures: `... res://match.tscn -- --weaponshots <out folder>` (tests/weapon_shots.gd, about 26 shots).
-- Ask the user before launching the game windowed; they stopped one such run in session 2.
+  First-person gun pictures: `... res://match.tscn -- --weaponshots [--only <text>] <out folder>` (tests/weapon_shots.gd).
+  Rendering is software (llvmpipe): about 15 s a shot, so the full list (~45 shots) takes over 10 minutes.
+  Use `--only BattleRifle`, `--only BullpupGL`, `--only kit` (matches gun or pose names).
+- Headless match tests need no Xvfb: `$GODOT --headless --path godot_demo res://match.tscn -- --selftest`
+  (a few minutes, ends "SELFTEST RESULT: PASS") and `-- --grenadiertest` (about a minute, "GRENADIER TEST DONE 0").
+- Ask the user before launching the game under Xvfb; they stopped one such run in session 2. In session 3 they said
+  to go ahead with weaponshots re-runs without asking each time.
+
+## Done in session 3 (branch handoff-tasks)
+- **Bullpup (task 2) finished**: see the session 2 entry below; the fix was trimming its own sight to a mount.
+- **Grenadier replaces marksman (#29): done.** Automated tests and renders only; nobody has played it yet.
+  - Decisions from the user: B switches to the launcher (V stays dash); marksman removed outright, including its data
+    and its tighter AI aim; the BullpupGL has the bullpup's stats with about 15% less recoil (KICK 0.77 vs 0.9).
+  - Role lists: grenadier sits where marksman was everywhere (character, match, ship, station, squad,
+    minidrop, commander CLASSES, HUD blurb, README, `tools/export_characters_glb.py`).
+  - Data: `blender/character_generator.py` is the source; it runs in plain Python (`python3 -I` from `blender/`,
+    `combat_data()`), and both JSON copies were regenerated from it (everything else came out identical).
+    New: role `grenadier` (rifleman armour, BullpupGL + sidearm, 4 mags, 1 pistol mag, 1 medpen), weapon class
+    `bullpup_gl` (F1_BullpupGL / F2_BullpupGL), items `GLShell` and `BreachRound` (launcher stats).
+    There's no char_*_grenadier.glb: `setup()` falls back to the rifleman model (same armour).
+  - Model: `tests/make_bullpup.gd` also writes `weapon_F1/F2/P_BullpupGL.tscn`: the bullpup with a 40 mm tube under
+    the shroud. SupportHand moves onto the tube (0,-0.07,0.25); new GLMuzzle marker (0,-0.07,0.385). F2 borrows the
+    PulseCarbine's materials and gets a glowing cell for a magazine.
+  - Kit (`character._grenadier_kit`): a bandolier with 6 x 40 mm shells from the left shoulder to the right ribs, and
+    2 breaching rounds standing in sleeves on the pack's back corners. Hung on UpperChest and measured off the chest
+    mesh. `gl_ammo`/`breach_ammo` count them, `kit_refresh()` hides the spent ones, and the armory refills both.
+    Named `*_mesh` so first person hides them. Shell model: `grenade.gd shell_model()`; round model:
+    `breach_round.gd build_model()`.
+  - Launcher frag (`grenade.gd fire_shell`, `character.fire_launcher`): 50 m/s, bursts on impact (world, door or
+    character) once it has flown 4 m to arm; before that it's a dud (no blast). 85 damage, 4 m radius, 1.6 s between
+    shells. AI (`_ai_launcher`, from `_ai_fire`): 8-35 m, the target must have another hostile within 4.5 m or be in
+    cover, no friendly near the burst, a ballistic lob (`_lob`), then 5-8 s before the next.
+  - Breaching round (`breach_round.gd`): flies straight, sticks to the first wall or door and reparents to that ship,
+    the crown spins and sparks for 1 s, then `vessel.breach_door()` on the aimed or nearest wall/door within 1.5 m
+    (secure included). Otherwise it's a small blast, and the target's "charged" flag is released.
+    AI: `squad.stack_breacher` scores a grenadier with rounds 4 for non-"door" kinds (a breacher with charges 5).
+    In `_follow_squad` it fires from 12 m or less with a clear line (`_breach_shot`) and sets "charged".
+  - Player: B ("launcher" action) cycles rifle -> launcher frag -> breaching round -> rifle, skipping empty ones.
+    HUD shows the mode and counts; F1 help lists B. Network actions "gl" and "breach".
+  - Checked: weaponshots of the BullpupGL (F1 first and third person, F2 hip and side), the kit front/back (F1), and a
+    picture of a round drilling a wall. `tests/grenadier_test.gd` (26 checks) passes; `--selftest` passes.
+  - Not checked / open:
+    - Nobody has played a grenadier yet, and nobody has looked at the F2 kit.
+    - Kit counts and bandolier visibility aren't in network snapshots, so other peers see a full kit.
+    - The player's breaching round isn't tied to a door: it opens whatever it sticks near.
 
 ## Done in session 2 (branch handoff-tasks)
 - **EMP screen static (task 1): done, compiled, overlay rendered and looked at.**
@@ -65,20 +108,9 @@ GDScript warnings count as errors: give explicit types when reading from a Dicti
 
 ## Still to do
 1. ~~Finish the bullpup check~~ (done in session 3).
-2. **Grenadier role replaces marksman (#29).**
-   - Rename "marksman" in every role list: `character.COMBAT_ROLES`, `match.gd` (lines ~59, REQ_ROLES, ~1388), `ship.gd` BOARD_ROLES and drop lists, `station.gd` SQUAD, `squad.gd` `_promote`, `campaign/minidrop.gd`, `commander.gd` CLASSES, `hud.gd` role blurbs, and `G.TECH`/HUD text if any.
-   - Role data:
-     - Add `grenadier` to `roles` in the JSON for factions 1 and 2. Copy the rifleman's armor pieces.
-     - Primary: the bullpup with an underslung grenade launcher. Make a separate model, `<fac>_BullpupGL` (bullpup plus a tube under the barrel), with its own weapon class entry and stats.
-     - Kit: 4 mags, 1 pistol mag, 1 medpen.
-     - There's no char_*_grenadier.glb, so `setup()` falls back to the rifleman model.
-   - Kit visuals (procedural, in `character.setup`):
-     - Bones have identity rest rotation. Attach with `node.position = model_space_pos - rig._model_pos(bone)`.
-     - UpperChest front is at z ≈ 0.21, mags at y 1.3-1.5. Hips are at y 1.0. The back pack is around z -0.25.
-     - Add a diagonal chest bandolier with 6 × 40 mm shells (`gl_rounds`, hide one per shot) and 2 breaching rounds in holders on the pack sides (`breach_rounds`, hide as used).
-   - GL frag: reuse `grenade.gd` with higher velocity and impact detonation (add an `impact` flag). AI fires at 8-35 m at clustered or covered targets. Player: a key toggles GL. Note B is bound to "board" in `commander._inputs` (check whether it does anything in FPS before reusing it).
-   - Breaching round (Ash, R6-style), new `breach_round.gd`:
-     - Look: finned cylinder (dark grey, ~0.14 m long) with a red band. The nose is a serrated hole-saw cup crown: a ring plus about 10 small teeth. Four curved fins lie folded along the body and flip out on firing.
-     - Behaviour: flies straight and sticks to the first world or door surface. The crown spins and sparks for ~1 s, then it calls `vessel.breach_door(d, by, push)` on a `wall_near`/`door_near` within 1.5 m (secure doors included). Otherwise it's a small `G.blast`.
-     - AI: in `squad.stack_breacher`, a grenadier with rounds scores 4 for non-"door" kinds (a charge-carrying breacher scores 5). In `character._follow_squad`, a grenadier breacher stops at ≤12 m with line of sight and fires instead of walking up. Set `stack_door["charged"] = true` so others wait.
+2. ~~Grenadier role replaces marksman (#29)~~ (done in session 3, see above; needs a playtest).
 3. **Earlier report**: the infected visuals, the T station layout and the cities are unverified in play.
+4. **Grenadier follow-ups**:
+   - Playtest it: B cycling, the launcher's arc at range, and AI grenadiers in a boarding action.
+   - Render the F2 kit: spawn an F2 grenadier, or extend weapon_shots, which only looks at a flag1 rifleman.
+   - Optionally send `gl_ammo`/`breach_ammo` in snapshots so other peers see the spent shells.
