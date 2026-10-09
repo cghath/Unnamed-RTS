@@ -116,3 +116,35 @@ GDScript warnings count as errors: give explicit types when reading from a Dicti
 4. **Grenadier follow-ups**:
    - Playtest it: B cycling, the launcher's arc at range, and AI grenadiers in a boarding action.
    - Optionally send `gl_ammo`/`breach_ammo` in snapshots so other peers see the spent shells.
+5. **Friendly-fire safety for all friendly AI (new, from the user's playtest notes, session 4).** Directive: cut blue-on-blue way down.
+   - Grenade safety: when a frag, EMP or launcher shell has been thrown or fired into a room, friendlies stay out of
+     that room until it detonates, then enter. `squad._start_clear` already holds the clearing squad until
+     `clear.go_at`. Generalise it: register every live grenade/shell (position, room/zone via `vessel.zone_at`,
+     fuse end) and have pathing and slot choice for every friendly of that team avoid the zone and a blast radius
+     around it until it goes off (fuse 2.6 s frag, 1.8 s EMP, impact for 40 mm shells).
+     Also gate the throwers: no frag, EMP or launcher shot if a friendly is within the blast radius of the aim point
+     (the launcher already checks this, `_ai_launcher`). Extend the check to `_throw_grenade` callers: AI grenade at
+     `character.gd` ~line 1021, squad order 0, and `_start_clear`.
+   - Line of fire: before an AI fires, check the shot line (muzzle to target) for friendlies within ~0.6 m of the
+     segment (use `vessel.near_occupants` along it). If one is in the way, hold fire and side-step or crouch to
+     clear the line instead. The player's shots stay as they are.
+   - Passing in a fight: when moving past a friendly who is engaging (has a target and line of sight), prefer to
+     pass behind them, on the side away from their target, not across their muzzle. One way is to offset the
+     waypoint or add a temporary nav avoidance. Also apply it to `squad.bound_point` and `_slot_at` choices.
+6. **Performance (new, session 4).**
+   - Frame rate drops across the board near abandoned cities. Suspects: `campaign/ruins.gd` `_city` builds hundreds
+     of separate MeshInstance3D boxes per building (walls, slabs, debris, lamps, cars), with no merging, no
+     MultiMesh and no visibility ranges.
+     - Fix: merge static city geometry per block into one ArrayMesh (SurfaceTool append, grouped by material) or use
+       MultiMesh for repeated props.
+     - Set `visibility_range_end` on small props.
+     - Check the shadow casting count. Profile with `--camptest --perf` near a city first to confirm.
+   - On planets, after alt-tabbing out and back in, the frame rate drops sharply and stays low. Suspects:
+     - the first-frame catch-up of the physics or `_process` timers after a long frame (cap delta: set
+       `Engine.max_physics_steps_per_frame` low, and clamp `dt` in the big ticks)
+     - the fog, ground and AI ticks all running at once after the pause
+     - something rebuilt on focus or resize, e.g. the pause menu's `_apply_quality` or viewport scaling being
+       reapplied
+     - the window regaining focus at a different resolution
+     Reproduce: run on a planet, minimise for 30 s, restore, and watch `us_*` stats (G.stat) and the Godot monitor.
+     Check `Engine.get_frames_per_second` before and after.
