@@ -247,6 +247,8 @@ func _physics_process(dt: float) -> void:
 				load("res://scripts/campaign/ruins.gd")._city(G.match_node, Lc,
 					load("res://scripts/campaign/surface.gd")._terrain_params(G.match_node.system), rr)
 				report["city_cover_points"] = G.match_node.ground_cover.size() - cov0
+				report["city_meshes_folded"] = int(G.stats.get("city_meshes_folded", 0))
+				report["city_meshes_merged"] = int(G.stats.get("city_meshes_merged", 0))
 				var gnd: Node3D = G.match_node.ground
 				report["ground_nav"] = gnd != null and gnd.nav_ok()
 				report["city"] = not G.match_node.city.is_empty()
