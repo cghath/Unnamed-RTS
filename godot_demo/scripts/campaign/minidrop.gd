@@ -70,7 +70,7 @@ func _start_loading() -> void:
 	up_at.y = m.ground_y(up_at.x, up_at.z)
 	_elev.global_position = up_at
 	# people: out of the dropship's ramp, on foot
-	var roles: Array = ["squad_leader", "rifleman", "rifleman", "medic", "breacher", "heavy", "marksman", "rifleman"]
+	var roles: Array = ["squad_leader", "rifleman", "rifleman", "medic", "breacher", "heavy", "grenadier", "rifleman"]
 	for i in troops:
 		var c: Node = m.spawn_character(m.ground, m.ground.snap_local(m.ground.to_local(foot + side * (i % 3 - 1) * 1.5)), team, G.team_fac(team), roles[i % roles.size()])
 		c.order = {"type": "move", "pos": m.ground.snap_local(m.ground.to_local(tail)), "vessel": m.ground}
@@ -281,7 +281,7 @@ func _unload() -> void:
 		v.rotation.y = rotation.y + PI
 		v.order_move(foot + back * 25.0 + global_basis.x * (i * 8.0))
 	if troops > 0:
-		var roles: Array = ["squad_leader", "rifleman", "rifleman", "medic", "breacher", "heavy", "marksman", "rifleman"].slice(0, troops)
+		var roles: Array = ["squad_leader", "rifleman", "rifleman", "medic", "breacher", "heavy", "grenadier", "rifleman"].slice(0, troops)
 		m.spawn_squad(m.ground, m.ground.snap_local(m.ground.to_local(foot + back * 6.0)), team, G.team_fac(team), roles, false)
 	G.say("Mini dropship down: %d troops%s" % [troops, (" and %d vehicle%s" % [cargo.size(), "" if cargo.size() == 1 else "s"]) if not cargo.is_empty() else ""], team)
 	G.stat("minidrop_landings")

@@ -56,7 +56,7 @@ const SHIP_CREW := {
 	"SMALL_FRIGATE": ["bridge_officer", "engineer", "cargo_handler", "security", "rifleman", "medic"],
 }
 const STATION_CREW := ["bridge_officer", "engineer", "engineer", "cargo_handler", "medical_officer", "scientist",
-	"security", "squad_leader", "rifleman", "rifleman", "medic", "breacher", "heavy", "marksman"]
+	"security", "squad_leader", "rifleman", "rifleman", "medic", "breacher", "heavy", "grenadier"]
 const DROP_CREW := ["bridge_officer", "engineer", "cargo_handler", "security", "medic"]
 const PIRATE_MINE_CREW := ["engineer", "cargo_handler", "rifleman", "rifleman", "heavy"]
 const SUPPORT_CREW := ["bridge_officer", "pilot", "engineer", "cargo_handler", "cargo_handler", "cargo_handler",
@@ -219,6 +219,8 @@ func _ready() -> void:
 		add_child(load("res://tests/logistics_test.gd").new())
 	elif "--squadtest" in args:
 		add_child(load("res://tests/squad_test.gd").new())
+	elif "--grenadiertest" in args:
+		add_child(load("res://tests/grenadier_test.gd").new())
 	elif "--breachtest" in args:
 		add_child(load("res://tests/breach_test.gd").new())
 	elif "--opstest" in args:
@@ -856,7 +858,7 @@ func squad_command(c: Node, op: String, p: Vector3) -> void:
 
 
 const REQ_COST := {"alloys": 300.0, "cores": 4.0}
-const REQ_ROLES := ["rifleman", "rifleman", "medic", "heavy", "breacher", "marksman"]
+const REQ_ROLES := ["rifleman", "rifleman", "medic", "heavy", "breacher", "grenadier"]
 var _req_cd := {}                  # team -> seconds until the next reinforcement
 
 
@@ -1389,7 +1391,7 @@ func deploy_troops(s: Node) -> int:
 		return 0
 	var n: int = mini(8, s.troops)
 	s.troops -= n
-	var roles: Array = ["squad_leader", "rifleman", "rifleman", "medic", "breacher", "heavy", "marksman", "rifleman"].slice(0, n)
+	var roles: Array = ["squad_leader", "rifleman", "rifleman", "medic", "breacher", "heavy", "grenadier", "rifleman"].slice(0, n)
 	var side: Vector3 = s.global_basis.x * (s.aabb.size.x * 0.5 + 25.0)
 	var p: Vector3 = ground.near_local(ground.to_local(s.global_position + side), 15.0)
 	spawn_squad(ground, p, s.team, G.team_fac(s.team), roles, false)

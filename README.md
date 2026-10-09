@@ -55,7 +55,7 @@ Every SMALL to XL ship has:
 Damage taken = weapon damage × attacker's damage multiplier × (1 − target's damage reduction). Total damage reduction is capped at 60%. For example, a faction 2 plasma rifle hits a faction 1 rifleman for 13, and a faction 1 assault rifle hits a faction 2 rifleman for 14.5.
 
 **Roles and uniforms:** each faction has the same 14 roles, and every role wears its own uniform.
-- Combat roles in armor: rifleman, breacher, medic, heavy, marksman, squad leader, EVA boarder, and drop trooper (in dark armor).
+- Combat roles in armor: rifleman, breacher, medic, heavy, grenadier, squad leader, EVA boarder, and drop trooper (in dark armor).
 - Ship crew in department coveralls with no combat gear: pilot (flight suit), bridge officer (coat and cap), engineer (orange coverall, tool belt), cargo handler (yellow coverall, hi-vis harness), medical officer (white coat, medpens), scientist (teal hazmat suit, purge-emitter pack) and security (vest, SMG).
 - Crew gear up at the ships' armories and ready lockers.
 

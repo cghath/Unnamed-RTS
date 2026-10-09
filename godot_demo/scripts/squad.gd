@@ -66,7 +66,7 @@ func _promote() -> void:
 	for c in members:
 		if c.state != "alive":
 			continue
-		var s: int = {"squad_leader": 5, "rifleman": 3, "marksman": 2, "breacher": 2, "heavy": 2, "medic": 1}.get(c.role, 1)
+		var s: int = {"squad_leader": 5, "rifleman": 3, "grenadier": 2, "breacher": 2, "heavy": 2, "medic": 1}.get(c.role, 1)
 		if c == G.possessed or c.owner_peer != 0:
 			s = 10                                      # a player always leads
 		if s > score:
@@ -412,12 +412,15 @@ func stack_breacher() -> Node:
 		var sc := 0
 		if stack_door.get("kind", "door") == "door":
 			sc = {"heavy": 4, "breacher": 3, "rifleman": 2}.get(m.role, 1)
+		elif m.role == "grenadier" and m.breach_ammo > 0:
+			sc = 4                                        # a breaching round from range
 		elif not m.charges.is_empty():
 			sc = 5 if m.role == "breacher" else 3
 		if sc > bs:
 			bs = sc
 			best = m
-	if stack_door.get("kind", "door") != "door" and best != null and best.charges.is_empty():
+	if stack_door.get("kind", "door") != "door" and best != null and best.charges.is_empty() \
+			and not (best.role == "grenadier" and best.breach_ammo > 0):
 		best = null
 	stack_door["breacher"] = best
 	return best

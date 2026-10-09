@@ -59,16 +59,26 @@
         "ammo_item": "F1_AssaultRifle_Mag"
       },
       "battle_rifle": {
-        "damage": 30.0,
+        "damage": 24.0,
         "pellets": 1,
-        "rpm": 450,
-        "ammo_per_load": 36,
-        "reload_s": 2.4,
-        "range_m": 90,
-        "burst": 3,
+        "rpm": 780,
+        "ammo_per_load": 32,
+        "reload_s": 2.3,
+        "range_m": 45,
         "model": "F1_BattleRifle",
         "type": "ballistic",
         "ammo_item": "F1_BattleRifle_Mag"
+      },
+      "bullpup_gl": {
+        "damage": 24.0,
+        "pellets": 1,
+        "rpm": 780,
+        "ammo_per_load": 32,
+        "reload_s": 2.3,
+        "range_m": 45,
+        "model": "F1_BullpupGL",
+        "type": "ballistic",
+        "ammo_item": "F1_BullpupGL_Mag"
       },
       "smg": {
         "damage": 14.0,
@@ -139,16 +149,26 @@
         "ammo_item": "F2_PlasmaRifle_Cell"
       },
       "battle_rifle": {
-        "damage": 39.0,
+        "damage": 31.2,
         "pellets": 1,
-        "rpm": 450,
-        "ammo_per_load": 36,
-        "reload_s": 2.4,
-        "range_m": 90,
-        "burst": 3,
+        "rpm": 780,
+        "ammo_per_load": 32,
+        "reload_s": 2.3,
+        "range_m": 45,
         "model": "F2_PulseCarbine",
         "type": "energy",
         "ammo_item": "F2_PulseCarbine_Cell"
+      },
+      "bullpup_gl": {
+        "damage": 31.2,
+        "pellets": 1,
+        "rpm": 780,
+        "ammo_per_load": 32,
+        "reload_s": 2.3,
+        "range_m": 45,
+        "model": "F2_BullpupGL",
+        "type": "energy",
+        "ammo_item": "F2_BullpupGL_Cell"
       },
       "smg": {
         "damage": 18.2,
@@ -219,6 +239,24 @@
       "radius_m": 4.0,
       "fuse_s": 2.0,
       "sticks": true
+    },
+    "GLShell": {
+      "damage": 85,
+      "radius_m": 4.0,
+      "speed_m_s": 50,
+      "arm_m": 4.0,
+      "reload_s": 1.6,
+      "carried": 6,
+      "note": "Grenadier's 40 mm launcher: bursts on impact once it has flown arm_m."
+    },
+    "BreachRound": {
+      "speed_m_s": 40,
+      "spin_s": 1.0,
+      "reach_m": 1.5,
+      "damage": 40,
+      "radius_m": 1.5,
+      "carried": 2,
+      "note": "Grenadier's hole-saw round: sticks, drills, then breaches a wall or door within reach_m."
     },
     "Medpen": {
       "heal": 40,
@@ -360,29 +398,30 @@
         },
         "damage_reduction": 0.5
       },
-      "marksman": {
+      "grenadier": {
         "department": "combat",
         "pieces": [
           "Helmet_Combat",
-          "Chest_Medium",
-          "Pauldrons_Light",
+          "Chest_Heavy",
+          "Pauldrons_Heavy",
           "Bracers",
           "Thigh_Plates",
           "Shin_Plates",
           "Belt_Combat",
-          "Rig_Mags"
+          "Rig_Mags",
+          "Pack_Assault"
         ],
-        "primary": "F1_Sniper",
-        "secondary": "F1_SMG",
+        "primary": "F1_BullpupGL",
+        "secondary": "F1_Magnum",
         "inventory": {
-          "MagSlot_1": "F1_Sniper_Mag",
-          "MagSlot_2": "F1_Sniper_Mag",
-          "MagSlot_3": "F1_SMG_Mag",
-          "MagSlot_4": "F1_SMG_Mag",
-          "GrenadeSlot_1": "F1_FragGrenade",
+          "MagSlot_1": "F1_BullpupGL_Mag",
+          "MagSlot_2": "F1_BullpupGL_Mag",
+          "MagSlot_3": "F1_BullpupGL_Mag",
+          "MagSlot_4": "F1_BullpupGL_Mag",
+          "MagSlot_5": "F1_Magnum_Mag",
           "MedpenSlot_1": "F1_Medpen"
         },
-        "damage_reduction": 0.39
+        "damage_reduction": 0.5
       },
       "squad_leader": {
         "department": "combat",
@@ -671,29 +710,30 @@
         },
         "damage_reduction": 0.275
       },
-      "marksman": {
+      "grenadier": {
         "department": "combat",
         "pieces": [
           "Helmet_Combat",
-          "Chest_Medium",
-          "Pauldrons_Light",
+          "Chest_Heavy",
+          "Pauldrons_Heavy",
           "Bracers",
           "Thigh_Plates",
           "Shin_Plates",
           "Belt_Combat",
-          "Rig_Mags"
+          "Rig_Mags",
+          "Pack_Assault"
         ],
-        "primary": "F2_BeamRifle",
-        "secondary": "F2_EnergySMG",
+        "primary": "F2_BullpupGL",
+        "secondary": "F2_PlasmaPistol",
         "inventory": {
-          "MagSlot_1": "F2_BeamRifle_Cell",
-          "MagSlot_2": "F2_BeamRifle_Cell",
-          "MagSlot_3": "F2_EnergySMG_Cell",
-          "MagSlot_4": "F2_EnergySMG_Cell",
-          "GrenadeSlot_1": "F2_PlasmaGrenade",
+          "MagSlot_1": "F2_BullpupGL_Cell",
+          "MagSlot_2": "F2_BullpupGL_Cell",
+          "MagSlot_3": "F2_BullpupGL_Cell",
+          "MagSlot_4": "F2_BullpupGL_Cell",
+          "MagSlot_5": "F2_PlasmaPistol_Cell",
           "MedpenSlot_1": "F2_Medpen"
         },
-        "damage_reduction": 0.215
+        "damage_reduction": 0.275
       },
       "squad_leader": {
         "department": "combat",

@@ -324,7 +324,7 @@ func _build_help() -> void:
 		[right, "Direct control", [["WASD · mouse", "move · aim"], ["Shift · C · Space", "run · crouch · jump"],
 			["Left mouse", "fire"], ["R", "reload from your chest rig"], ["G", "grenade"], ["Q", "medpen"],
 			["E", "use: revive, elevator, locker, sabotage, breach, purge"], ["Tab", "back to command"],
-			["", ""], ["Goal", "capture or destroy the Ascendancy Spire's command core"]]],
+			["B", "grenadier: launcher, breaching round, rifle"], ["Goal", "capture or destroy the Ascendancy Spire's command core"]]],
 	]
 	for s in sections:
 		_lbl(s[0], s[1].to_upper(), 12, Color(0.5, 0.8, 1.0))
@@ -692,7 +692,13 @@ func refresh_fps(c: Node, look_text: String) -> void:
 	vit_hp_text.text = "%d" % c.hp if c.state == "alive" else "DOWN"
 	vit_armor.text = "ARMOR %d%%" % int((c.dr + G.dr_bonus(c.team)) * 100.0)
 	set_bar(exo_bar, c.exo / c.exo_max(), Color(0.5, 0.8, 1.0))
-	if c.armed:
+	if c.armed and c.gl_mode:
+		var left: int = c.breach_ammo if c.gl_breach else c.gl_ammo
+		wpn_name.text = "BREACHING ROUND" if c.gl_breach else "40MM LAUNCHER"
+		wpn_ammo.text = "%d" % left
+		wpn_mags.text = "loading" if c._gl_cd > 0.0 else "B: next"
+		wpn_ammo.add_theme_color_override("font_color", WARN if left <= 1 else TEXT)
+	elif c.armed:
 		wpn_name.text = c.weapon_model.substr(3).capitalize().to_upper()
 		wpn_ammo.text = "%d" % c.mag
 		wpn_mags.text = "/ %d mag%s" % [c.spare.size(), "" if c.spare.size() == 1 else "s"]
@@ -703,7 +709,7 @@ func refresh_fps(c: Node, look_text: String) -> void:
 		wpn_mags.text = "gear up at a locker (E)"
 	wpn_kit.text = "GRENADES %d    REVIVE PENS %d    CHARGES %d%s%s%s" % [c.grenades.size(), c.medpens.size(), c.charges.size(),
 		"    PURGE %s" % ("ON" if c.purging else "off") if c.role == "scientist" else "",
-		"    REVIVE GUN %d" % c.revive_gun if c.role == "medic" else "",
+		"    REVIVE GUN %d" % c.revive_gun if c.role == "medic" else ("    40MM %d    BREACH %d" % [c.gl_ammo, c.breach_ammo] if c.role == "grenadier" else ""),
 		"    CARRYING %s" % c.hauling.display if c.hauling != null and is_instance_valid(c.hauling) else ""]
 	var act := ""
 	var frac := 0.0
@@ -873,7 +879,7 @@ const CLASS_INFO := {
 	"breacher": "Shotgun and 2 breaching charges: blows locked doors and sabotages modules.",
 	"medic": "SMG, 8 revive pens and a revive gun (8 shots, 14 m). Brings the downed back.",
 	"heavy": "LMG or arc cannon. Holds corridors.",
-	"marksman": "Long rifle and an SMG backup.",
+	"grenadier": "Bullpup with an underslung 40 mm launcher (B), 6 shells and 2 breaching rounds.",
 	"eva_boarder": "Vacuum suit and mag boots, SMG and a charge.",
 	"pilot": "Flight suit and a sidearm. Spawns by the hangar: E at a fighter to launch.",
 	"engineer": "Unarmed. Repairs hull damage and sabotaged modules (gear up at a locker).",

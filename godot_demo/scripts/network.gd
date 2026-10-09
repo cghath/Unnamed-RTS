@@ -245,7 +245,8 @@ func _send_snapshot() -> void:
 		if not is_instance_valid(c):
 			continue
 		var flags := (1 if c.crouch else 0) | (2 if c.rig.aiming else 0) | (4 if c.working else 0) | (8 if c.carrying else 0) \
-			| (16 if c.revive_t >= 0.0 else 0) | (32 if c.reload_t >= 0.0 else 0) | (64 if c.piloting else 0)
+			| (16 if c.revive_t >= 0.0 else 0) | (32 if c.reload_t >= 0.0 else 0) | (64 if c.piloting else 0) \
+			| (128 if c.stun_t > 0.0 else 0)
 		# riding a pod or shuttle: the mag field carries the craft's id (negative) instead
 		var mag_or_ride: float = c.mag if c.riding == null or not is_instance_valid(c.riding) else -float(c.riding.get_meta("net_id", 0))
 		cs.append_array([c.get_meta("net_id", 0), c.position.x, c.position.y, c.position.z, c.rotation.y,
@@ -310,6 +311,11 @@ func _snapshot(vs: PackedFloat32Array, cs: PackedFloat32Array, fs: PackedFloat32
 		elif st == "alive" and c.state == "downed":
 			c.revive(null)
 		if c == G.possessed:
+			# EMP'd on the host: stun our own body too (once per pulse, on the flag's rising edge)
+			var stunned := int(cs[k + 8]) & 128 != 0
+			if stunned and not c.get_meta("net_stun", false):
+				c.stun(2.0)
+			c.set_meta("net_stun", stunned)
 			var ride := int(cs[k + 10])
 			if ride < 0:
 				c.riding = G.net_ids.get(-ride)
@@ -601,7 +607,13 @@ func _action(id: int, what: String, args: Array) -> void:
 			if c.reload_t < 0.0 and not c.spare.is_empty():
 				c.reload_t = float(c.wstats.get("reload_s", 2.0))
 		"grenade":
-			c._throw_grenade(args[0])
+			c._throw_grenade(args[0], args.size() > 1 and bool(args[1]))
+		"gl":
+			if c.role == "grenadier":
+				c.fire_launcher(args[0], args[1])
+		"breach":
+			if c.role == "grenadier":
+				c.fire_breach_round(args[0], args[1])
 		"medpen":
 			if not c.medpens.is_empty():
 				c.rig.show_slot(c.medpens.pop_back(), false)

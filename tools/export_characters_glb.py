@@ -146,7 +146,7 @@ def main():
             export_weapon(fac, cls_, os.path.join(out, "weapons", f"weapon_{cg.WEAPONS[fac][cls_][0]}.glb"))
         for item, meshes in cg.items(fac).items():
             export_item(fac, item, meshes, os.path.join(out, "items", f"item_{item}.glb"))
-    for role in ("rifleman", "heavy", "breacher", "marksman", "squad_leader", "medic", "engineer", "pilot",
+    for role in ("rifleman", "heavy", "breacher", "grenadier", "squad_leader", "medic", "engineer", "pilot",
                  "cargo_handler", "security"):                      # pirates: faction 1 bodies, scrap colors
         export_character(1, role, os.path.join(out, "characters", f"char_P_{role}.glb"), pal_id=3)
         n += 1
