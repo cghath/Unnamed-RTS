@@ -286,6 +286,21 @@ func _physics_process(dt: float) -> void:
 					report["depot_crates"] = (G.match_node.get_meta("depot_crates", []) as Array).size()
 					G.match_node.DEPOT.tick(G.match_node)
 					report["depot_load"] = G.match_node.DEPOT.load_cargo(G.match_node, sh0[0])
+					# salvage a ship takes rides in its hold, and pays out at a station
+					var fc := Node3D.new()
+					fc.set_meta("cache", "cores")
+					fc.set_meta("city", "test_city")
+					fc.set_meta("cache_id", 0)
+					G.match_node.add_child(fc)
+					G.match_node.caches.append(fc)
+					G.match_node._take_cache(fc, sh0[0])
+					var sfe: Dictionary = c.fleet_entry(int(sh0[0].get_meta("fleet_id", -1)))
+					report["salvage_in_hold"] = int((sfe.get("salvage", {}) as Dictionary).get("cores", 0))
+					var cores0: float = float(c.stores.get("cores", 0.0))
+					report["salvage_delivered"] = G.match_node.deliver_salvage(sh0[0], sh0[0])
+					report["salvage_cores_gained"] = float(c.stores.get("cores", 0.0)) - cores0
+					report["salvage_hold_after"] = (sfe.get("salvage", {}) as Dictionary).size()
+					c.world.erase("test_city")
 					sh0[0].cls = "SMALL_DROP_FRIGATE"
 					G.match_node.post_perimeter_guards()
 					report["perimeter_guards"] = G.match_node.ground.occupants.filter(func(o): return is_instance_valid(o) and o.has_meta("perimeter")).size()
@@ -409,6 +424,8 @@ func _report() -> void:
 		fails.append("vehicles (deployed %s, path %s)" % [report.get("vehicles_deployed"), report.get("vehicle_path")])
 	if report.has("landed_on") and report.get("minidrop_boarding", 0) < 2:
 		fails.append("mini dropship loading (%s, %s boarding)" % [report.get("minidrop"), report.get("minidrop_boarding")])
+	if report.has("landed_on") and (report.get("salvage_in_hold", 0) != 1 or report.get("salvage_delivered", 0) != 1 			or report.get("salvage_cores_gained", 0.0) < 3.9 or report.get("salvage_hold_after", 1) != 0):
+		fails.append("salvage hold (in hold %s, delivered %s, cores +%s)" % [report.get("salvage_in_hold"), report.get("salvage_delivered"), report.get("salvage_cores_gained")])
 	if report.has("landed_on") and (report.get("depot_crates", 0) < 6 or not "loading" in String(report.get("depot_load", ""))):
 		fails.append("ground cargo (%s / %s)" % [report.get("depot_unload"), report.get("depot_load")])
 	if report.has("landed_on") and report.get("drive_moved", 0.0) < 2.0:

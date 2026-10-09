@@ -116,6 +116,7 @@ var kick := 0.0                    # recoil the camera still has to climb
 var piloting: Node = null          # the ship or fighter this player is flying
 var fog_hidden := false           # out of the player's sight on open ground (fog.gd)
 var riding: Node = null            # the boarding pod or shuttle carrying us
+var ride_seat: Node3D = null       # ...and the seat we sit in (shown seated there, riding along)
 var mustered: Node = null          # the ship whose boarding party we joined (waiting at the bay)
 var gunning := {}                  # the player in a gunner's seat: {ship, idx}
 # ---- multiplayer
@@ -467,13 +468,27 @@ func embark(craft: Node) -> void:
 	elev = {}
 	working = false
 	carrying = false
-	visible = false
 	collision_layer = 0
+	ride_seat = craft.seat_for(self) if craft.has_method("seat_for") else null
+	visible = ride_seat != null                        # seated where people can see us, else out of sight
+
+
+## Riding: sit in our seat, facing across the cabin (or forward, in a seat on the centre line).
+func _sit_in(seat: Node3D) -> void:
+	var craft: Node3D = riding
+	var up: Vector3 = craft.global_basis.y.normalized()
+	var sl: Vector3 = craft.to_local(seat.global_position)
+	var face: Vector3 = (craft.to_global(Vector3(0, sl.y, sl.z)) - seat.global_position) if absf(sl.x) > 0.3 else -craft.global_basis.z
+	if face.length() < 0.01:
+		face = -craft.global_basis.z
+	global_transform = Transform3D(Basis.looking_at(face.normalized(), up), seat.global_position - up * 0.45)
 
 
 ## Step out of a pod or shuttle into vessel v at local position lp.
 func disembark_to(v: Node3D, lp: Vector3) -> void:
 	riding = null
+	ride_seat = null
+	rotation = Vector3(0, rotation.y, 0)              # (stood up out of the seat)
 	visible = true
 	collision_layer = G.LAYER_CHAR
 	if v != vessel:
@@ -718,6 +733,8 @@ func _phys(dt: float) -> void:
 		return
 	if riding != null:
 		velocity = Vector3.ZERO
+		if ride_seat != null and is_instance_valid(ride_seat) and is_instance_valid(riding):
+			_sit_in(ride_seat)
 		_timers(dt)
 		return
 	# EMP'd: staggered and blind for a moment (no moving, no shooting, no seeing). A client's
@@ -776,7 +793,8 @@ func _process(dt: float) -> void:
 		return
 	# hide people above the commander's cutaway
 	var cut: float = G.cut_height                       # (reading the shader global back is very slow)
-	var show_: bool = (global_position.y < cut - 0.4 or vessel.kind == "ground") and riding == null and not fog_hidden
+	var seated: bool = riding != null and ride_seat != null and is_instance_valid(ride_seat)
+	var show_: bool = (global_position.y < cut - 0.4 or vessel.kind == "ground" or seated) and (riding == null or seated) and not fog_hidden
 	rig.visible = show_
 	if not show_:
 		return
@@ -787,7 +805,7 @@ func _process(dt: float) -> void:
 	rig.speed = Vector3(velocity.x, 0, velocity.z).length() if not G.is_client() or self == G.possessed else net_speed
 	rig.crouch = crouch or slide_t > 0.0
 	rig.ads = ads and self == G.possessed
-	rig.mode = "dead" if state == "dead" else ("downed" if state == "downed" else ("seated" if piloting else _anim_mode()))
+	rig.mode = "dead" if state == "dead" else ("downed" if state == "downed" else ("seated" if piloting or seated else _anim_mode()))
 	if reload_t >= 0.0:
 		rig.reload = 1.0 - reload_t / max(0.1, float(wstats.get("reload_s", 2.0)))
 	else:
