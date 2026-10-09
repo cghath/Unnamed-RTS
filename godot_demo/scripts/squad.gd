@@ -66,7 +66,7 @@ func _promote() -> void:
 	for c in members:
 		if c.state != "alive":
 			continue
-		var s: int = {"squad_leader": 5, "rifleman": 3, "marksman": 2, "breacher": 2, "heavy": 2, "medic": 1}.get(c.role, 1)
+		var s: int = {"squad_leader": 5, "rifleman": 3, "grenadier": 2, "breacher": 2, "heavy": 2, "medic": 1}.get(c.role, 1)
 		if c == G.possessed or c.owner_peer != 0:
 			s = 10                                      # a player always leads
 		if s > score:

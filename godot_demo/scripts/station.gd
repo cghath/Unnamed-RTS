@@ -10,7 +10,7 @@ const CODES := {"CMD": "command_core", "OUT": "outpost_core", "RCT": "reactor", 
 	"SHD": "shield_generator", "COM": "comm_relay", "GCR": "ground_core", "DRL": "surface_drill",
 	"GBT": "ground_battery", "PAD": "landing_pads"}
 const BOLT_SPEED := 700.0
-const SQUAD := ["squad_leader", "rifleman", "rifleman", "breacher", "medic", "heavy", "marksman", "rifleman"]
+const SQUAD := ["squad_leader", "rifleman", "rifleman", "breacher", "medic", "heavy", "grenadier", "rifleman"]
 
 var modules := {}                  # code -> {name, hull, max, armor, state, team, center (local)}
 var root_code := ""

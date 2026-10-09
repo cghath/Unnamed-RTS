@@ -1235,7 +1235,7 @@ func _look_prompt() -> String:
 
 # ------------------------------------------------------------------ deploying as a soldier
 
-const CLASSES := ["rifleman", "squad_leader", "breacher", "medic", "heavy", "marksman", "eva_boarder", "pilot",
+const CLASSES := ["rifleman", "squad_leader", "breacher", "medic", "heavy", "grenadier", "eva_boarder", "pilot",
 	"engineer", "scientist"]
 
 

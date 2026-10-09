@@ -13,7 +13,7 @@ const MISSILE_RANGE := 2600.0
 const SHUTTLE_RANGE := 2600.0
 const MUSTER_HUMAN := 30.0          # seconds people get to reach the pods / shuttle
 const MUSTER_AI := 6.0              # an all-AI side just loads up
-const BOARD_ROLES := ["squad_leader", "rifleman", "breacher", "medic", "rifleman", "heavy", "rifleman", "marksman",
+const BOARD_ROLES := ["squad_leader", "rifleman", "breacher", "medic", "rifleman", "heavy", "rifleman", "grenadier",
 	"rifleman", "breacher", "rifleman", "medic"]
 const STATS := {
 	"XL": {"hull": 30000.0, "shields": 11000.0, "speed": 30.0, "turn": 0.12, "troops": 48},
@@ -978,7 +978,7 @@ func _launch_pods() -> void:
 	for c in saved:
 		if c == G.possessed and G.commander:
 			G.commander.release()
-		if c.role in ["rifleman", "squad_leader", "medic", "breacher", "heavy", "marksman", "drop_trooper", "security"]:
+		if c.role in ["rifleman", "squad_leader", "medic", "breacher", "heavy", "grenadier", "drop_trooper", "security"]:
 			soldiers += 1
 		if G.match_node:
 			G.match_node.logistics._remove_person(c)
@@ -1321,7 +1321,7 @@ func launch_drop_pods(v: Node, n: int = 6, spot: Vector3 = Vector3.INF) -> int:
 		return 0
 	var fired := 0
 	var roles := ["squad_leader", "drop_trooper", "drop_trooper", "medic", "drop_trooper", "breacher", "drop_trooper",
-		"heavy", "drop_trooper", "marksman", "drop_trooper", "drop_trooper"]
+		"heavy", "drop_trooper", "grenadier", "drop_trooper", "drop_trooper"]
 	for rack in drop_racks:
 		if fired >= n or troops <= 0:
 			break
@@ -1350,7 +1350,7 @@ func _ground_drop(spot: Vector3, n: int) -> int:
 		return 0
 	var gnd: Node3D = m.ground
 	var roles := ["squad_leader", "drop_trooper", "drop_trooper", "medic", "drop_trooper", "breacher", "drop_trooper",
-		"heavy", "drop_trooper", "marksman", "drop_trooper", "drop_trooper"]
+		"heavy", "drop_trooper", "grenadier", "drop_trooper", "drop_trooper"]
 	var sq: RefCounted = m.new_squad(team, gnd)
 	var sid := randi() % 100000
 	var fired := 0

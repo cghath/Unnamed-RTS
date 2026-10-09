@@ -873,7 +873,7 @@ const CLASS_INFO := {
 	"breacher": "Shotgun and 2 breaching charges: blows locked doors and sabotages modules.",
 	"medic": "SMG, 8 revive pens and a revive gun (8 shots, 14 m). Brings the downed back.",
 	"heavy": "LMG or arc cannon. Holds corridors.",
-	"marksman": "Long rifle and an SMG backup.",
+	"grenadier": "Bullpup with an underslung 40 mm launcher (B), 6 shells and 2 breaching rounds.",
 	"eva_boarder": "Vacuum suit and mag boots, SMG and a charge.",
 	"pilot": "Flight suit and a sidearm. Spawns by the hangar: E at a fighter to launch.",
 	"engineer": "Unarmed. Repairs hull damage and sabotaged modules (gear up at a locker).",

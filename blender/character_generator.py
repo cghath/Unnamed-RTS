@@ -15,7 +15,7 @@ ROLES & UNIFORMS
   Every role wears a different uniform. Combat roles wear armor; ship crew
   wear department coveralls and carry no combat gear (they gear up at the
   ships' armories and ready lockers). Combat: rifleman, breacher, medic,
-  heavy, marksman, squad_leader, eva_boarder, drop_trooper. Crew: pilot,
+  heavy, grenadier, squad_leader, eva_boarder, drop_trooper. Crew: pilot,
   bridge_officer, engineer, cargo_handler, medical_officer, scientist, security.
   Scientists carry purge emitters: the only thing that clears the infection.
 
@@ -571,11 +571,11 @@ ROLES = {
                           primary="heavy", secondary="pistol",
                           inventory={"MagSlot_5": "primary_ammo", "MagSlot_6": "primary_ammo", "GrenadeSlot_1": "grenade",
                                      "MedpenSlot_1": "medpen"}),
-    "marksman":      dict(dept="combat", pieces=["Helmet_Combat", "Chest_Medium", "Pauldrons_Light", "Bracers",
-                          "Thigh_Plates", "Shin_Plates", "Belt_Combat", "Rig_Mags"],
-                          primary="sniper", secondary="smg",
-                          inventory={"MagSlot_1": "primary_ammo", "MagSlot_2": "primary_ammo", "MagSlot_3": "secondary_ammo",
-                                     "MagSlot_4": "secondary_ammo", "GrenadeSlot_1": "grenade", "MedpenSlot_1": "medpen"}),
+    "grenadier":     dict(dept="combat", pieces=["Helmet_Combat", "Chest_Heavy", "Pauldrons_Heavy", "Bracers",
+                          "Thigh_Plates", "Shin_Plates", "Belt_Combat", "Rig_Mags", "Pack_Assault"],
+                          primary="bullpup_gl", secondary="pistol",
+                          inventory={"MagSlot_1": "primary_ammo", "MagSlot_2": "primary_ammo", "MagSlot_3": "primary_ammo",
+                                     "MagSlot_4": "primary_ammo", "MagSlot_5": "secondary_ammo", "MedpenSlot_1": "medpen"}),
     "squad_leader":  dict(dept="combat", pieces=["Helmet_Combat", "Chest_Heavy", "Pauldrons_Heavy", "Bracers",
                           "Thigh_Plates", "Shin_Plates", "Belt_Combat", "Rig_Mags", "Pack_Radio"],
                           primary="battle_rifle", secondary="pistol",
@@ -913,10 +913,14 @@ def w_arc_cannon():                         # heavy energy weapon with coil ring
 
 
 WEAPONS = {   # faction -> weapon class -> (model name, builder)
+    # bullpup_gl: the real model is built in Godot (godot_demo/tests/make_bullpup.gd writes a .tscn that
+    # replaces the .glb); the builder here only gives the exporters a placeholder.
     1: {"rifle": ("F1_AssaultRifle", w_assault_rifle), "battle_rifle": ("F1_BattleRifle", w_battle_rifle),
+        "bullpup_gl": ("F1_BullpupGL", w_battle_rifle),
         "smg": ("F1_SMG", w_smg), "shotgun": ("F1_Shotgun", w_shotgun), "sniper": ("F1_Sniper", w_sniper),
         "pistol": ("F1_Magnum", w_magnum), "heavy": ("F1_LMG", w_lmg)},
     2: {"rifle": ("F2_PlasmaRifle", w_plasma_rifle), "battle_rifle": ("F2_PulseCarbine", w_pulse_carbine),
+        "bullpup_gl": ("F2_BullpupGL", w_pulse_carbine),
         "smg": ("F2_EnergySMG", w_energy_smg), "shotgun": ("F2_ScatterGun", w_scatter_gun),
         "sniper": ("F2_BeamRifle", w_beam_rifle), "pistol": ("F2_PlasmaPistol", w_plasma_pistol),
         "heavy": ("F2_ArcCannon", w_arc_cannon)},
@@ -1010,6 +1014,7 @@ ARMOR_DR = {           # base damage reduction per piece (heavy faction values)
 WEAPON_CLASSES = {     # base stats before the faction damage multiplier (placeholders to tune)
     "rifle":        dict(damage=20, pellets=1, rpm=650, ammo_per_load=36, reload_s=2.2, range_m=60),
     "battle_rifle": dict(damage=24, pellets=1, rpm=780, ammo_per_load=32, reload_s=2.3, range_m=45),   # CQB bullpup
+    "bullpup_gl":   dict(damage=24, pellets=1, rpm=780, ammo_per_load=32, reload_s=2.3, range_m=45),   # + 40 mm launcher
     "smg":          dict(damage=14, pellets=1, rpm=900, ammo_per_load=48, reload_s=1.8, range_m=30),
     "shotgun":      dict(damage=12, pellets=8, rpm=70, ammo_per_load=8, reload_s=2.6, range_m=12),
     "sniper":       dict(damage=110, pellets=1, rpm=40, ammo_per_load=5, reload_s=3.0, range_m=300),

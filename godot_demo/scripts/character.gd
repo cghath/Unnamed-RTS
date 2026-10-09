@@ -7,7 +7,7 @@ extends CharacterBody3D
 
 const RIG := preload("res://scripts/rig.gd")
 const BODY_SHADER := preload("res://shaders/infected_body.gdshader")
-const COMBAT_ROLES := ["rifleman", "breacher", "medic", "heavy", "marksman", "squad_leader", "eva_boarder", "drop_trooper"]
+const COMBAT_ROLES := ["rifleman", "breacher", "medic", "heavy", "grenadier", "squad_leader", "eva_boarder", "drop_trooper"]
 const JOBS := {
 	"bridge_officer": ["Bridge_*", "*CMD_ControlConsole", "*CMD_Operations", "*GCR_ControlConsole"],
 	"pilot": ["Hangar_LandingPad_*", "*_CrewRoom", "PlayerSpawn_*"],
@@ -127,7 +127,7 @@ var carried_by: Node = null        # (downed) who is hauling us
 var on_bed := false                # (downed) laid on a medbay bed, being treated
 var _haul_to := Vector3.INF        # vessel space: where we're taking them (beside a bed, or a medic)
 var _haul_bed := Vector3.INF       # vessel space: the bed's mattress (INF: hand over to a medic)
-const KICK := {"rifle": 0.55, "battle_rifle": 0.9, "smg": 0.38, "shotgun": 3.2, "sniper": 4.5, "pistol": 1.3, "heavy": 0.5}
+const KICK := {"rifle": 0.55, "battle_rifle": 0.9, "bullpup_gl": 0.77, "smg": 0.38, "shotgun": 3.2, "sniper": 4.5, "pistol": 1.3, "heavy": 0.5}
 
 
 # ------------------------------------------------------------------ creation
@@ -1501,8 +1501,6 @@ func _ai_fire(dt: float) -> void:
 		burst = 0
 		fire_t += randf_range(0.35, 0.8)
 	var spread := 1.2
-	if role == "marksman":
-		spread = 0.4
 	if velocity.length() > 0.5:
 		spread += 1.5
 	if team == 4:
@@ -1553,7 +1551,7 @@ func fire(from: Vector3, dir: Vector3, mult: float = 1.0) -> void:
 		col = Color(0.55, 1.0, 0.45)
 	G.flash(muzzle, col, 3.0, 4.0, 0.05)
 	if G.sfx:
-		G.sfx.play("energy" if energy else weapon_class().replace("battle_rifle", "rifle"), muzzle, 0.0 if self == G.possessed else -6.0)
+		G.sfx.play("energy" if energy else weapon_class().replace("battle_rifle", "rifle").replace("bullpup_gl", "rifle"), muzzle, 0.0 if self == G.possessed else -6.0)
 	var pellets: int = int(wstats.get("pellets", 1))
 	var dmg: float = shot_damage() * mult * G.dmg_mult(team)
 	var rng_m: float = float(wstats.get("range_m", 60)) * 2.0
@@ -2188,7 +2186,7 @@ func _off_duty() -> void:
 
 # ---- time to kill: each weapon class is tuned so a steady burst on an unarmoured target
 # takes about this long (misses and armour stretch it): SMG ~5 s, assault rifle ~3.5-4 s.
-const TTK := {"smg": 4.0, "rifle": 3.0, "battle_rifle": 2.6, "heavy": 2.8, "pistol": 3.4, "shotgun": 1.1, "sniper": 1.6}
+const TTK := {"smg": 4.0, "rifle": 3.0, "battle_rifle": 2.6, "bullpup_gl": 2.6, "heavy": 2.8, "pistol": 3.4, "shotgun": 1.1, "sniper": 1.6}
 static var _wclass := {}
 
 
