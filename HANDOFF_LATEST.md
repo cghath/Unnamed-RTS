@@ -56,7 +56,8 @@ GDScript warnings count as errors: give explicit types when reading from a Dicti
   - Checked: weaponshots of the BullpupGL (F1 first and third person, F2 hip and side), the kit front/back (F1), and a
     picture of a round drilling a wall. `tests/grenadier_test.gd` (26 checks) passes; `--selftest` passes.
   - Not checked / open:
-    - Nobody has played a grenadier yet, and nobody has looked at the F2 kit.
+    - Nobody has played a grenadier yet. The F2 kit has been rendered (`--weaponshots --only kit` swaps in a real F2
+      grenadier) and fits its narrower hips.
     - Kit counts and which shells show on the belt aren't in network snapshots, so other peers see a full kit.
     - The player's breaching round isn't tied to a door: it opens whatever it sticks near.
 
@@ -114,5 +115,4 @@ GDScript warnings count as errors: give explicit types when reading from a Dicti
 3. **Earlier report**: the infected visuals, the T station layout and the cities are unverified in play.
 4. **Grenadier follow-ups**:
    - Playtest it: B cycling, the launcher's arc at range, and AI grenadiers in a boarding action.
-   - Render the F2 kit: spawn an F2 grenadier, or extend weapon_shots, which only looks at a flag1 rifleman.
    - Optionally send `gl_ammo`/`breach_ammo` in snapshots so other peers see the spent shells.

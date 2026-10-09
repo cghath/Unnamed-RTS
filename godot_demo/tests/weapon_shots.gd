@@ -30,6 +30,8 @@ func _ready() -> void:
 		shots.append(["F1_BullpupGL", pose])
 	shots.append(["F2_BullpupGL", "hip"])
 	shots.append(["F2_BullpupGL", "tp_side"])
+	for pose in ["tp_kit_front", "tp_kit_right", "tp_kit_back"]:   # a real faction 2 grenadier (full kit)
+		shots.append(["F2_BullpupGL", pose])
 	var args := OS.get_cmdline_user_args()
 	var only := args.find("--only")
 	if only >= 0 and only + 1 < args.size() - 1:
@@ -72,6 +74,8 @@ func _physics_process(dt: float) -> void:
 	if i >= shots.size():
 		get_tree().quit()
 		return
+	if shots[i][1].begins_with("tp_kit") and String(shots[i][0]).begins_with("F2") and c.faction != 2:
+		_swap_in_f2_grenadier()
 	if c.weapon_model != shots[i][0]:
 		c.give_weapon(shots[i][0])
 	_pose()
@@ -79,6 +83,19 @@ func _physics_process(dt: float) -> void:
 
 
 var busy := false
+
+
+## Faction 2's kit is built for its own body, so look at a real F2 grenadier: spawned where the
+## rifleman stood, taken over, and the rifleman hidden.
+func _swap_in_f2_grenadier() -> void:
+	var g: Node = G.match_node.spawn_character(c.vessel, c.position, c.team, 2, "grenadier")
+	g.rotation.y = c.rotation.y
+	g.look_yaw = c.look_yaw
+	G.commander.release()
+	c.visible = false
+	c.order = {"type": "hold", "pos": c.position, "vessel": c.vessel}
+	G.commander.possess(g)
+	c = g
 
 
 func _pose() -> void:
