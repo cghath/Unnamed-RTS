@@ -1,0 +1,1040 @@
+{
+  "damage_formula": "damage_taken = weapon_damage * attacker.damage_mult * (1 - target_damage_reduction)",
+  "dr_cap": 0.6,
+  "factions": {
+    "1": {
+      "name": "Heavy (ODST-like, ballistic)",
+      "damage_mult": 1.0,
+      "armor_mult": 1.0
+    },
+    "2": {
+      "name": "Sleek (BO3-like, energy)",
+      "damage_mult": 1.3,
+      "armor_mult": 0.55
+    }
+  },
+  "armor_pieces": {
+    "1": {
+      "Helmet_Combat": 0.1,
+      "Chest_Heavy": 0.22,
+      "Chest_Medium": 0.14,
+      "Vest_Light": 0.08,
+      "Pauldrons_Heavy": 0.06,
+      "Pauldrons_Light": 0.03,
+      "Bracers": 0.03,
+      "Thigh_Plates": 0.05,
+      "Shin_Plates": 0.04,
+      "Helmet_EVA": 0.06,
+      "EVA_Suit": 0.06,
+      "Boots_Mag": 0.01,
+      "Helmet_Pilot": 0.03
+    },
+    "2": {
+      "Helmet_Combat": 0.055,
+      "Chest_Heavy": 0.121,
+      "Chest_Medium": 0.077,
+      "Vest_Light": 0.044,
+      "Pauldrons_Heavy": 0.033,
+      "Pauldrons_Light": 0.017,
+      "Bracers": 0.017,
+      "Thigh_Plates": 0.028,
+      "Shin_Plates": 0.022,
+      "Helmet_EVA": 0.033,
+      "EVA_Suit": 0.033,
+      "Boots_Mag": 0.006,
+      "Helmet_Pilot": 0.017
+    }
+  },
+  "weapons": {
+    "1": {
+      "rifle": {
+        "damage": 20.0,
+        "pellets": 1,
+        "rpm": 650,
+        "ammo_per_load": 36,
+        "reload_s": 2.2,
+        "range_m": 60,
+        "model": "F1_AssaultRifle",
+        "type": "ballistic",
+        "ammo_item": "F1_AssaultRifle_Mag"
+      },
+      "battle_rifle": {
+        "damage": 30.0,
+        "pellets": 1,
+        "rpm": 450,
+        "ammo_per_load": 36,
+        "reload_s": 2.4,
+        "range_m": 90,
+        "burst": 3,
+        "model": "F1_BattleRifle",
+        "type": "ballistic",
+        "ammo_item": "F1_BattleRifle_Mag"
+      },
+      "smg": {
+        "damage": 14.0,
+        "pellets": 1,
+        "rpm": 900,
+        "ammo_per_load": 48,
+        "reload_s": 1.8,
+        "range_m": 30,
+        "model": "F1_SMG",
+        "type": "ballistic",
+        "ammo_item": "F1_SMG_Mag"
+      },
+      "shotgun": {
+        "damage": 12.0,
+        "pellets": 8,
+        "rpm": 70,
+        "ammo_per_load": 8,
+        "reload_s": 2.6,
+        "range_m": 12,
+        "model": "F1_Shotgun",
+        "type": "ballistic",
+        "ammo_item": "F1_Shotgun_Mag"
+      },
+      "sniper": {
+        "damage": 110.0,
+        "pellets": 1,
+        "rpm": 40,
+        "ammo_per_load": 5,
+        "reload_s": 3.0,
+        "range_m": 300,
+        "model": "F1_Sniper",
+        "type": "ballistic",
+        "ammo_item": "F1_Sniper_Mag"
+      },
+      "pistol": {
+        "damage": 35.0,
+        "pellets": 1,
+        "rpm": 200,
+        "ammo_per_load": 10,
+        "reload_s": 1.5,
+        "range_m": 40,
+        "model": "F1_Magnum",
+        "type": "ballistic",
+        "ammo_item": "F1_Magnum_Mag"
+      },
+      "heavy": {
+        "damage": 22.0,
+        "pellets": 1,
+        "rpm": 750,
+        "ammo_per_load": 100,
+        "reload_s": 5.0,
+        "range_m": 80,
+        "model": "F1_LMG",
+        "type": "ballistic",
+        "ammo_item": "F1_LMG_Mag"
+      }
+    },
+    "2": {
+      "rifle": {
+        "damage": 26.0,
+        "pellets": 1,
+        "rpm": 650,
+        "ammo_per_load": 36,
+        "reload_s": 2.2,
+        "range_m": 60,
+        "model": "F2_PlasmaRifle",
+        "type": "energy",
+        "ammo_item": "F2_PlasmaRifle_Cell"
+      },
+      "battle_rifle": {
+        "damage": 39.0,
+        "pellets": 1,
+        "rpm": 450,
+        "ammo_per_load": 36,
+        "reload_s": 2.4,
+        "range_m": 90,
+        "burst": 3,
+        "model": "F2_PulseCarbine",
+        "type": "energy",
+        "ammo_item": "F2_PulseCarbine_Cell"
+      },
+      "smg": {
+        "damage": 18.2,
+        "pellets": 1,
+        "rpm": 900,
+        "ammo_per_load": 48,
+        "reload_s": 1.8,
+        "range_m": 30,
+        "model": "F2_EnergySMG",
+        "type": "energy",
+        "ammo_item": "F2_EnergySMG_Cell"
+      },
+      "shotgun": {
+        "damage": 15.6,
+        "pellets": 8,
+        "rpm": 70,
+        "ammo_per_load": 8,
+        "reload_s": 2.6,
+        "range_m": 12,
+        "model": "F2_ScatterGun",
+        "type": "energy",
+        "ammo_item": "F2_ScatterGun_Cell"
+      },
+      "sniper": {
+        "damage": 143.0,
+        "pellets": 1,
+        "rpm": 40,
+        "ammo_per_load": 5,
+        "reload_s": 3.0,
+        "range_m": 300,
+        "model": "F2_BeamRifle",
+        "type": "energy",
+        "ammo_item": "F2_BeamRifle_Cell"
+      },
+      "pistol": {
+        "damage": 45.5,
+        "pellets": 1,
+        "rpm": 200,
+        "ammo_per_load": 10,
+        "reload_s": 1.5,
+        "range_m": 40,
+        "model": "F2_PlasmaPistol",
+        "type": "energy",
+        "ammo_item": "F2_PlasmaPistol_Cell"
+      },
+      "heavy": {
+        "damage": 78.0,
+        "pellets": 1,
+        "rpm": 60,
+        "ammo_per_load": 12,
+        "reload_s": 5.0,
+        "range_m": 80,
+        "splash_radius_m": 3.0,
+        "model": "F2_ArcCannon",
+        "type": "energy",
+        "ammo_item": "F2_ArcCannon_Cell"
+      }
+    }
+  },
+  "items": {
+    "FragGrenade": {
+      "damage": 90,
+      "radius_m": 5.0,
+      "fuse_s": 3.0
+    },
+    "PlasmaGrenade": {
+      "damage": 90,
+      "radius_m": 4.0,
+      "fuse_s": 2.0,
+      "sticks": true
+    },
+    "Medpen": {
+      "heal": 40,
+      "use_s": 1.0,
+      "stops_bleedout": true
+    },
+    "ReviveKit": {
+      "revive_s": 4.0,
+      "uses": 3,
+      "revive_health": 50
+    },
+    "BreachCharge": {
+      "damage": 150,
+      "radius_m": 3.0,
+      "fuse_s": 3.0,
+      "breaches": [
+        "BreachWall",
+        "BreachDoor",
+        "BlastDoor (2 charges)",
+        "Airlock outer door"
+      ]
+    },
+    "Tool": {
+      "repair_per_s": 10,
+      "opens": [
+        "locked doors (slow)"
+      ]
+    },
+    "PurgeEmitter": {
+      "radius_m": 4.0,
+      "clear_m2_per_s": 6.0,
+      "battery_s": 180,
+      "recharge_s": 60,
+      "note": "The ONLY way to remove the infection. Carried by scientists."
+    }
+  },
+  "roles": {
+    "1": {
+      "rifleman": {
+        "department": "combat",
+        "pieces": [
+          "Helmet_Combat",
+          "Chest_Heavy",
+          "Pauldrons_Heavy",
+          "Bracers",
+          "Thigh_Plates",
+          "Shin_Plates",
+          "Belt_Combat",
+          "Rig_Mags",
+          "Pack_Assault"
+        ],
+        "primary": "F1_AssaultRifle",
+        "secondary": "F1_Magnum",
+        "inventory": {
+          "MagSlot_1": "F1_AssaultRifle_Mag",
+          "MagSlot_2": "F1_AssaultRifle_Mag",
+          "MagSlot_3": "F1_AssaultRifle_Mag",
+          "MagSlot_4": "F1_AssaultRifle_Mag",
+          "MagSlot_5": "F1_Magnum_Mag",
+          "GrenadeSlot_1": "F1_FragGrenade",
+          "GrenadeSlot_2": "F1_FragGrenade",
+          "MedpenSlot_1": "F1_Medpen"
+        },
+        "damage_reduction": 0.5
+      },
+      "breacher": {
+        "department": "combat",
+        "pieces": [
+          "Helmet_Combat",
+          "Chest_Heavy",
+          "Pauldrons_Heavy",
+          "Bracers",
+          "Thigh_Plates",
+          "Shin_Plates",
+          "Belt_Combat",
+          "Rig_Mags",
+          "Pack_Breacher"
+        ],
+        "primary": "F1_Shotgun",
+        "secondary": "F1_Magnum",
+        "inventory": {
+          "MagSlot_1": "F1_Shotgun_Mag",
+          "MagSlot_2": "F1_Shotgun_Mag",
+          "MagSlot_3": "F1_Shotgun_Mag",
+          "MagSlot_5": "F1_Magnum_Mag",
+          "GrenadeSlot_1": "F1_FragGrenade",
+          "ChargeSlot_1": "F1_BreachCharge",
+          "ChargeSlot_2": "F1_BreachCharge",
+          "MedpenSlot_1": "F1_Medpen"
+        },
+        "damage_reduction": 0.5
+      },
+      "medic": {
+        "department": "combat",
+        "pieces": [
+          "Helmet_Combat",
+          "Chest_Medium",
+          "Pauldrons_Light",
+          "Bracers",
+          "Thigh_Plates",
+          "Shin_Plates",
+          "Belt_Combat",
+          "Strap_Medpens",
+          "Pack_Medic"
+        ],
+        "primary": "F1_SMG",
+        "secondary": "F1_Magnum",
+        "inventory": {
+          "MagSlot_5": "F1_SMG_Mag",
+          "MagSlot_6": "F1_SMG_Mag",
+          "MedpenSlot_1": "F1_Medpen",
+          "MedpenSlot_2": "F1_Medpen",
+          "MedpenSlot_3": "F1_Medpen",
+          "MedpenSlot_4": "F1_Medpen",
+          "ReviveKitSlot": "F1_ReviveKit",
+          "GrenadeSlot_1": "F1_FragGrenade"
+        },
+        "damage_reduction": 0.39
+      },
+      "heavy": {
+        "department": "combat",
+        "pieces": [
+          "Helmet_Combat",
+          "Chest_Heavy",
+          "Pauldrons_Heavy",
+          "Bracers",
+          "Thigh_Plates",
+          "Shin_Plates",
+          "Belt_Combat",
+          "Pack_Heavy"
+        ],
+        "primary": "F1_LMG",
+        "secondary": "F1_Magnum",
+        "inventory": {
+          "MagSlot_5": "F1_LMG_Mag",
+          "MagSlot_6": "F1_LMG_Mag",
+          "GrenadeSlot_1": "F1_FragGrenade",
+          "MedpenSlot_1": "F1_Medpen"
+        },
+        "damage_reduction": 0.5
+      },
+      "marksman": {
+        "department": "combat",
+        "pieces": [
+          "Helmet_Combat",
+          "Chest_Medium",
+          "Pauldrons_Light",
+          "Bracers",
+          "Thigh_Plates",
+          "Shin_Plates",
+          "Belt_Combat",
+          "Rig_Mags"
+        ],
+        "primary": "F1_Sniper",
+        "secondary": "F1_SMG",
+        "inventory": {
+          "MagSlot_1": "F1_Sniper_Mag",
+          "MagSlot_2": "F1_Sniper_Mag",
+          "MagSlot_3": "F1_SMG_Mag",
+          "MagSlot_4": "F1_SMG_Mag",
+          "GrenadeSlot_1": "F1_FragGrenade",
+          "MedpenSlot_1": "F1_Medpen"
+        },
+        "damage_reduction": 0.39
+      },
+      "squad_leader": {
+        "department": "combat",
+        "pieces": [
+          "Helmet_Combat",
+          "Chest_Heavy",
+          "Pauldrons_Heavy",
+          "Bracers",
+          "Thigh_Plates",
+          "Shin_Plates",
+          "Belt_Combat",
+          "Rig_Mags",
+          "Pack_Radio"
+        ],
+        "primary": "F1_BattleRifle",
+        "secondary": "F1_Magnum",
+        "inventory": {
+          "MagSlot_1": "F1_BattleRifle_Mag",
+          "MagSlot_2": "F1_BattleRifle_Mag",
+          "MagSlot_3": "F1_BattleRifle_Mag",
+          "MagSlot_5": "F1_Magnum_Mag",
+          "GrenadeSlot_1": "F1_FragGrenade",
+          "GrenadeSlot_3": "F1_FragGrenade",
+          "MedpenSlot_1": "F1_Medpen"
+        },
+        "damage_reduction": 0.5
+      },
+      "eva_boarder": {
+        "department": "combat",
+        "pieces": [
+          "Helmet_EVA",
+          "EVA_Suit",
+          "Chest_Medium",
+          "Pauldrons_Light",
+          "Boots_Mag",
+          "Belt_Combat",
+          "Rig_Mags",
+          "Pack_EVA"
+        ],
+        "primary": "F1_SMG",
+        "secondary": "F1_Magnum",
+        "inventory": {
+          "MagSlot_1": "F1_SMG_Mag",
+          "MagSlot_2": "F1_SMG_Mag",
+          "MagSlot_3": "F1_SMG_Mag",
+          "MagSlot_5": "F1_Magnum_Mag",
+          "GrenadeSlot_1": "F1_FragGrenade",
+          "ChargeSlot_1": "F1_BreachCharge",
+          "MedpenSlot_1": "F1_Medpen"
+        },
+        "damage_reduction": 0.3
+      },
+      "drop_trooper": {
+        "department": "combat",
+        "pieces": [
+          "Helmet_Combat_Dark",
+          "Chest_Heavy_Dark",
+          "Pauldrons_Heavy_Dark",
+          "Bracers_Dark",
+          "Thigh_Plates_Dark",
+          "Shin_Plates_Dark",
+          "Belt_Combat",
+          "Rig_Mags",
+          "Pack_Assault_Dark"
+        ],
+        "primary": "F1_BattleRifle",
+        "secondary": "F1_SMG",
+        "inventory": {
+          "MagSlot_1": "F1_BattleRifle_Mag",
+          "MagSlot_2": "F1_BattleRifle_Mag",
+          "MagSlot_3": "F1_BattleRifle_Mag",
+          "MagSlot_4": "F1_BattleRifle_Mag",
+          "MagSlot_5": "F1_SMG_Mag",
+          "MagSlot_6": "F1_SMG_Mag",
+          "GrenadeSlot_1": "F1_FragGrenade",
+          "GrenadeSlot_2": "F1_FragGrenade",
+          "MedpenSlot_1": "F1_Medpen"
+        },
+        "damage_reduction": 0.5
+      },
+      "pilot": {
+        "department": "flight",
+        "pieces": [
+          "Helmet_Pilot",
+          "FlightSuit",
+          "Vest_Light"
+        ],
+        "primary": null,
+        "secondary": "F1_Magnum",
+        "inventory": {
+          "MagSlot_5": "F1_Magnum_Mag"
+        },
+        "damage_reduction": 0.11
+      },
+      "bridge_officer": {
+        "department": "command",
+        "pieces": [
+          "Cap_Officer",
+          "OfficerCoat"
+        ],
+        "primary": null,
+        "secondary": "F1_Magnum",
+        "inventory": {},
+        "damage_reduction": 0.0
+      },
+      "engineer": {
+        "department": "engineering",
+        "pieces": [
+          "WeldVisor",
+          "Coverall_Engineering",
+          "ToolBelt"
+        ],
+        "primary": null,
+        "secondary": null,
+        "inventory": {
+          "ToolSlot": "F1_Tool"
+        },
+        "damage_reduction": 0.0
+      },
+      "cargo_handler": {
+        "department": "cargo",
+        "pieces": [
+          "Headset",
+          "Coverall_Cargo",
+          "CargoHarness"
+        ],
+        "primary": null,
+        "secondary": null,
+        "inventory": {},
+        "damage_reduction": 0.0
+      },
+      "medical_officer": {
+        "department": "medical",
+        "pieces": [
+          "Headset",
+          "MedCoat",
+          "Strap_Medpens"
+        ],
+        "primary": null,
+        "secondary": null,
+        "inventory": {
+          "MedpenSlot_1": "F1_Medpen",
+          "MedpenSlot_2": "F1_Medpen",
+          "MedpenSlot_3": "F1_Medpen",
+          "MedpenSlot_4": "F1_Medpen",
+          "ReviveKitSlot": "F1_ReviveKit"
+        },
+        "damage_reduction": 0.0
+      },
+      "scientist": {
+        "department": "science",
+        "pieces": [
+          "Helmet_Hazmat",
+          "Coverall_Science",
+          "ToolBelt",
+          "Pack_PurgeEmitter"
+        ],
+        "primary": null,
+        "secondary": null,
+        "inventory": {
+          "RightHandGrip": "F1_PurgeEmitter",
+          "MedpenSlot_1": "F1_Medpen"
+        },
+        "damage_reduction": 0.0
+      },
+      "security": {
+        "department": "security",
+        "pieces": [
+          "Helmet_Combat",
+          "Coverall_Security",
+          "Vest_Light",
+          "Pauldrons_Light",
+          "Belt_Combat"
+        ],
+        "primary": "F1_SMG",
+        "secondary": "F1_Magnum",
+        "inventory": {
+          "MagSlot_5": "F1_SMG_Mag",
+          "MagSlot_6": "F1_SMG_Mag",
+          "GrenadeSlot_1": "F1_FragGrenade"
+        },
+        "damage_reduction": 0.21
+      }
+    },
+    "2": {
+      "rifleman": {
+        "department": "combat",
+        "pieces": [
+          "Helmet_Combat",
+          "Chest_Heavy",
+          "Pauldrons_Heavy",
+          "Bracers",
+          "Thigh_Plates",
+          "Shin_Plates",
+          "Belt_Combat",
+          "Rig_Mags",
+          "Pack_Assault"
+        ],
+        "primary": "F2_PlasmaRifle",
+        "secondary": "F2_PlasmaPistol",
+        "inventory": {
+          "MagSlot_1": "F2_PlasmaRifle_Cell",
+          "MagSlot_2": "F2_PlasmaRifle_Cell",
+          "MagSlot_3": "F2_PlasmaRifle_Cell",
+          "MagSlot_4": "F2_PlasmaRifle_Cell",
+          "MagSlot_5": "F2_PlasmaPistol_Cell",
+          "GrenadeSlot_1": "F2_PlasmaGrenade",
+          "GrenadeSlot_2": "F2_PlasmaGrenade",
+          "MedpenSlot_1": "F2_Medpen"
+        },
+        "damage_reduction": 0.275
+      },
+      "breacher": {
+        "department": "combat",
+        "pieces": [
+          "Helmet_Combat",
+          "Chest_Heavy",
+          "Pauldrons_Heavy",
+          "Bracers",
+          "Thigh_Plates",
+          "Shin_Plates",
+          "Belt_Combat",
+          "Rig_Mags",
+          "Pack_Breacher"
+        ],
+        "primary": "F2_ScatterGun",
+        "secondary": "F2_PlasmaPistol",
+        "inventory": {
+          "MagSlot_1": "F2_ScatterGun_Cell",
+          "MagSlot_2": "F2_ScatterGun_Cell",
+          "MagSlot_3": "F2_ScatterGun_Cell",
+          "MagSlot_5": "F2_PlasmaPistol_Cell",
+          "GrenadeSlot_1": "F2_PlasmaGrenade",
+          "ChargeSlot_1": "F2_BreachCharge",
+          "ChargeSlot_2": "F2_BreachCharge",
+          "MedpenSlot_1": "F2_Medpen"
+        },
+        "damage_reduction": 0.275
+      },
+      "medic": {
+        "department": "combat",
+        "pieces": [
+          "Helmet_Combat",
+          "Chest_Medium",
+          "Pauldrons_Light",
+          "Bracers",
+          "Thigh_Plates",
+          "Shin_Plates",
+          "Belt_Combat",
+          "Strap_Medpens",
+          "Pack_Medic"
+        ],
+        "primary": "F2_EnergySMG",
+        "secondary": "F2_PlasmaPistol",
+        "inventory": {
+          "MagSlot_5": "F2_EnergySMG_Cell",
+          "MagSlot_6": "F2_EnergySMG_Cell",
+          "MedpenSlot_1": "F2_Medpen",
+          "MedpenSlot_2": "F2_Medpen",
+          "MedpenSlot_3": "F2_Medpen",
+          "MedpenSlot_4": "F2_Medpen",
+          "ReviveKitSlot": "F2_ReviveKit",
+          "GrenadeSlot_1": "F2_PlasmaGrenade"
+        },
+        "damage_reduction": 0.215
+      },
+      "heavy": {
+        "department": "combat",
+        "pieces": [
+          "Helmet_Combat",
+          "Chest_Heavy",
+          "Pauldrons_Heavy",
+          "Bracers",
+          "Thigh_Plates",
+          "Shin_Plates",
+          "Belt_Combat",
+          "Pack_Heavy"
+        ],
+        "primary": "F2_ArcCannon",
+        "secondary": "F2_PlasmaPistol",
+        "inventory": {
+          "MagSlot_5": "F2_ArcCannon_Cell",
+          "MagSlot_6": "F2_ArcCannon_Cell",
+          "GrenadeSlot_1": "F2_PlasmaGrenade",
+          "MedpenSlot_1": "F2_Medpen"
+        },
+        "damage_reduction": 0.275
+      },
+      "marksman": {
+        "department": "combat",
+        "pieces": [
+          "Helmet_Combat",
+          "Chest_Medium",
+          "Pauldrons_Light",
+          "Bracers",
+          "Thigh_Plates",
+          "Shin_Plates",
+          "Belt_Combat",
+          "Rig_Mags"
+        ],
+        "primary": "F2_BeamRifle",
+        "secondary": "F2_EnergySMG",
+        "inventory": {
+          "MagSlot_1": "F2_BeamRifle_Cell",
+          "MagSlot_2": "F2_BeamRifle_Cell",
+          "MagSlot_3": "F2_EnergySMG_Cell",
+          "MagSlot_4": "F2_EnergySMG_Cell",
+          "GrenadeSlot_1": "F2_PlasmaGrenade",
+          "MedpenSlot_1": "F2_Medpen"
+        },
+        "damage_reduction": 0.215
+      },
+      "squad_leader": {
+        "department": "combat",
+        "pieces": [
+          "Helmet_Combat",
+          "Chest_Heavy",
+          "Pauldrons_Heavy",
+          "Bracers",
+          "Thigh_Plates",
+          "Shin_Plates",
+          "Belt_Combat",
+          "Rig_Mags",
+          "Pack_Radio"
+        ],
+        "primary": "F2_PulseCarbine",
+        "secondary": "F2_PlasmaPistol",
+        "inventory": {
+          "MagSlot_1": "F2_PulseCarbine_Cell",
+          "MagSlot_2": "F2_PulseCarbine_Cell",
+          "MagSlot_3": "F2_PulseCarbine_Cell",
+          "MagSlot_5": "F2_PlasmaPistol_Cell",
+          "GrenadeSlot_1": "F2_PlasmaGrenade",
+          "GrenadeSlot_3": "F2_PlasmaGrenade",
+          "MedpenSlot_1": "F2_Medpen"
+        },
+        "damage_reduction": 0.275
+      },
+      "eva_boarder": {
+        "department": "combat",
+        "pieces": [
+          "Helmet_EVA",
+          "EVA_Suit",
+          "Chest_Medium",
+          "Pauldrons_Light",
+          "Boots_Mag",
+          "Belt_Combat",
+          "Rig_Mags",
+          "Pack_EVA"
+        ],
+        "primary": "F2_EnergySMG",
+        "secondary": "F2_PlasmaPistol",
+        "inventory": {
+          "MagSlot_1": "F2_EnergySMG_Cell",
+          "MagSlot_2": "F2_EnergySMG_Cell",
+          "MagSlot_3": "F2_EnergySMG_Cell",
+          "MagSlot_5": "F2_PlasmaPistol_Cell",
+          "GrenadeSlot_1": "F2_PlasmaGrenade",
+          "ChargeSlot_1": "F2_BreachCharge",
+          "MedpenSlot_1": "F2_Medpen"
+        },
+        "damage_reduction": 0.165
+      },
+      "drop_trooper": {
+        "department": "combat",
+        "pieces": [
+          "Helmet_Combat_Dark",
+          "Chest_Heavy_Dark",
+          "Pauldrons_Heavy_Dark",
+          "Bracers_Dark",
+          "Thigh_Plates_Dark",
+          "Shin_Plates_Dark",
+          "Belt_Combat",
+          "Rig_Mags",
+          "Pack_Assault_Dark"
+        ],
+        "primary": "F2_PulseCarbine",
+        "secondary": "F2_EnergySMG",
+        "inventory": {
+          "MagSlot_1": "F2_PulseCarbine_Cell",
+          "MagSlot_2": "F2_PulseCarbine_Cell",
+          "MagSlot_3": "F2_PulseCarbine_Cell",
+          "MagSlot_4": "F2_PulseCarbine_Cell",
+          "MagSlot_5": "F2_EnergySMG_Cell",
+          "MagSlot_6": "F2_EnergySMG_Cell",
+          "GrenadeSlot_1": "F2_PlasmaGrenade",
+          "GrenadeSlot_2": "F2_PlasmaGrenade",
+          "MedpenSlot_1": "F2_Medpen"
+        },
+        "damage_reduction": 0.275
+      },
+      "pilot": {
+        "department": "flight",
+        "pieces": [
+          "Helmet_Pilot",
+          "FlightSuit",
+          "Vest_Light"
+        ],
+        "primary": null,
+        "secondary": "F2_PlasmaPistol",
+        "inventory": {
+          "MagSlot_5": "F2_PlasmaPistol_Cell"
+        },
+        "damage_reduction": 0.061
+      },
+      "bridge_officer": {
+        "department": "command",
+        "pieces": [
+          "Cap_Officer",
+          "OfficerCoat"
+        ],
+        "primary": null,
+        "secondary": "F2_PlasmaPistol",
+        "inventory": {},
+        "damage_reduction": 0.0
+      },
+      "engineer": {
+        "department": "engineering",
+        "pieces": [
+          "WeldVisor",
+          "Coverall_Engineering",
+          "ToolBelt"
+        ],
+        "primary": null,
+        "secondary": null,
+        "inventory": {
+          "ToolSlot": "F2_Tool"
+        },
+        "damage_reduction": 0.0
+      },
+      "cargo_handler": {
+        "department": "cargo",
+        "pieces": [
+          "Headset",
+          "Coverall_Cargo",
+          "CargoHarness"
+        ],
+        "primary": null,
+        "secondary": null,
+        "inventory": {},
+        "damage_reduction": 0.0
+      },
+      "medical_officer": {
+        "department": "medical",
+        "pieces": [
+          "Headset",
+          "MedCoat",
+          "Strap_Medpens"
+        ],
+        "primary": null,
+        "secondary": null,
+        "inventory": {
+          "MedpenSlot_1": "F2_Medpen",
+          "MedpenSlot_2": "F2_Medpen",
+          "MedpenSlot_3": "F2_Medpen",
+          "MedpenSlot_4": "F2_Medpen",
+          "ReviveKitSlot": "F2_ReviveKit"
+        },
+        "damage_reduction": 0.0
+      },
+      "scientist": {
+        "department": "science",
+        "pieces": [
+          "Helmet_Hazmat",
+          "Coverall_Science",
+          "ToolBelt",
+          "Pack_PurgeEmitter"
+        ],
+        "primary": null,
+        "secondary": null,
+        "inventory": {
+          "RightHandGrip": "F2_PurgeEmitter",
+          "MedpenSlot_1": "F2_Medpen"
+        },
+        "damage_reduction": 0.0
+      },
+      "security": {
+        "department": "security",
+        "pieces": [
+          "Helmet_Combat",
+          "Coverall_Security",
+          "Vest_Light",
+          "Pauldrons_Light",
+          "Belt_Combat"
+        ],
+        "primary": "F2_EnergySMG",
+        "secondary": "F2_PlasmaPistol",
+        "inventory": {
+          "MagSlot_5": "F2_EnergySMG_Cell",
+          "MagSlot_6": "F2_EnergySMG_Cell",
+          "GrenadeSlot_1": "F2_PlasmaGrenade"
+        },
+        "damage_reduction": 0.116
+      }
+    }
+  },
+  "wardrobe_meshes": {
+    "1": {
+      "F1_Chassis": "",
+      "F1_ChassisJoints": "",
+      "F1_Eyes": "",
+      "F1_Helmet_Combat": "Helmet_Combat",
+      "F1_Helmet_Combat_Visor": "Helmet_Combat",
+      "F1_Helmet_EVA": "Helmet_EVA",
+      "F1_Helmet_EVA_Visor": "Helmet_EVA",
+      "F1_Helmet_EVA_Lamp": "Helmet_EVA",
+      "F1_Helmet_Pilot": "Helmet_Pilot",
+      "F1_Helmet_Pilot_Visor": "Helmet_Pilot",
+      "F1_Cap_Officer": "Cap_Officer",
+      "F1_Cap_Officer_Brim": "Cap_Officer",
+      "F1_Cap_Officer_Badge": "Cap_Officer",
+      "F1_Headset": "Headset",
+      "F1_WeldVisor": "WeldVisor",
+      "F1_WeldVisor_Plate": "WeldVisor",
+      "F1_Chest_Heavy": "Chest_Heavy",
+      "F1_Chest_Medium": "Chest_Medium",
+      "F1_Vest_Light": "Vest_Light",
+      "F1_Coverall_Engineering": "Coverall_Engineering",
+      "F1_Coverall_Engineering_Stripe": "Coverall_Engineering",
+      "F1_Coverall_Cargo": "Coverall_Cargo",
+      "F1_Coverall_Cargo_Stripe": "Coverall_Cargo",
+      "F1_FlightSuit": "FlightSuit",
+      "F1_FlightSuit_Stripe": "FlightSuit",
+      "F1_Coverall_Security": "Coverall_Security",
+      "F1_Coverall_Security_Stripe": "Coverall_Security",
+      "F1_EVA_Suit": "EVA_Suit",
+      "F1_EVA_Suit_Stripe": "EVA_Suit",
+      "F1_Coverall_Science": "Coverall_Science",
+      "F1_Coverall_Science_Stripe": "Coverall_Science",
+      "F1_OfficerCoat": "OfficerCoat",
+      "F1_OfficerCoat_Rank": "OfficerCoat",
+      "F1_MedCoat": "MedCoat",
+      "F1_MedCoat_Mark": "MedCoat",
+      "F1_Pauldrons_Heavy": "Pauldrons_Heavy",
+      "F1_Pauldrons_Light": "Pauldrons_Light",
+      "F1_Bracers": "Bracers",
+      "F1_Thigh_Plates": "Thigh_Plates",
+      "F1_Shin_Plates": "Shin_Plates",
+      "F1_Boots_Mag": "Boots_Mag",
+      "F1_Boots_Mag_Glow": "Boots_Mag",
+      "F1_Belt_Combat": "Belt_Combat",
+      "F1_ToolBelt": "ToolBelt",
+      "F1_Rig_Mags": "Rig_Mags",
+      "F1_Strap_Medpens": "Strap_Medpens",
+      "F1_Strap_Medpens_Mark": "Strap_Medpens",
+      "F1_CargoHarness": "CargoHarness",
+      "F1_CargoHarness_Reflect": "CargoHarness",
+      "F1_Pack_Assault": "Pack_Assault",
+      "F1_Pack_PurgeEmitter": "Pack_PurgeEmitter",
+      "F1_Pack_PurgeEmitter_Mast": "Pack_PurgeEmitter",
+      "F1_Pack_PurgeEmitter_Field": "Pack_PurgeEmitter",
+      "F1_Helmet_Hazmat": "Helmet_Hazmat",
+      "F1_Helmet_Hazmat_Visor": "Helmet_Hazmat",
+      "F1_Helmet_Hazmat_Filter": "Helmet_Hazmat",
+      "F1_Pack_Medic": "Pack_Medic",
+      "F1_Pack_Medic_Mark": "Pack_Medic",
+      "F1_Pack_Heavy": "Pack_Heavy",
+      "F1_Pack_Heavy_Feed": "Pack_Heavy",
+      "F1_Pack_EVA": "Pack_EVA",
+      "F1_Pack_EVA_Nozzles": "Pack_EVA",
+      "F1_Pack_EVA_Glow": "Pack_EVA",
+      "F1_Pack_Breacher": "Pack_Breacher",
+      "F1_Pack_Breacher_Rails": "Pack_Breacher",
+      "F1_Pack_Radio": "Pack_Radio",
+      "F1_Pack_Radio_Antenna": "Pack_Radio",
+      "F1_Helmet_Combat_Dark": "Helmet_Combat_Dark",
+      "F1_Helmet_Combat_Visor_Dark": "Helmet_Combat_Dark",
+      "F1_Chest_Heavy_Dark": "Chest_Heavy_Dark",
+      "F1_Pauldrons_Heavy_Dark": "Pauldrons_Heavy_Dark",
+      "F1_Bracers_Dark": "Bracers_Dark",
+      "F1_Thigh_Plates_Dark": "Thigh_Plates_Dark",
+      "F1_Shin_Plates_Dark": "Shin_Plates_Dark",
+      "F1_Pack_Assault_Dark": "Pack_Assault_Dark"
+    },
+    "2": {
+      "F2_Chassis": "",
+      "F2_ChassisJoints": "",
+      "F2_Eyes": "",
+      "F2_Helmet_Combat": "Helmet_Combat",
+      "F2_Helmet_Combat_Visor": "Helmet_Combat",
+      "F2_Helmet_EVA": "Helmet_EVA",
+      "F2_Helmet_EVA_Visor": "Helmet_EVA",
+      "F2_Helmet_EVA_Lamp": "Helmet_EVA",
+      "F2_Helmet_Pilot": "Helmet_Pilot",
+      "F2_Helmet_Pilot_Visor": "Helmet_Pilot",
+      "F2_Cap_Officer": "Cap_Officer",
+      "F2_Cap_Officer_Brim": "Cap_Officer",
+      "F2_Cap_Officer_Badge": "Cap_Officer",
+      "F2_Headset": "Headset",
+      "F2_WeldVisor": "WeldVisor",
+      "F2_WeldVisor_Plate": "WeldVisor",
+      "F2_Chest_Heavy": "Chest_Heavy",
+      "F2_Chest_Heavy_Light": "Chest_Heavy",
+      "F2_Chest_Medium": "Chest_Medium",
+      "F2_Vest_Light": "Vest_Light",
+      "F2_Coverall_Engineering": "Coverall_Engineering",
+      "F2_Coverall_Engineering_Stripe": "Coverall_Engineering",
+      "F2_Coverall_Cargo": "Coverall_Cargo",
+      "F2_Coverall_Cargo_Stripe": "Coverall_Cargo",
+      "F2_FlightSuit": "FlightSuit",
+      "F2_FlightSuit_Stripe": "FlightSuit",
+      "F2_Coverall_Security": "Coverall_Security",
+      "F2_Coverall_Security_Stripe": "Coverall_Security",
+      "F2_EVA_Suit": "EVA_Suit",
+      "F2_EVA_Suit_Stripe": "EVA_Suit",
+      "F2_Coverall_Science": "Coverall_Science",
+      "F2_Coverall_Science_Stripe": "Coverall_Science",
+      "F2_OfficerCoat": "OfficerCoat",
+      "F2_OfficerCoat_Rank": "OfficerCoat",
+      "F2_MedCoat": "MedCoat",
+      "F2_MedCoat_Mark": "MedCoat",
+      "F2_Pauldrons_Heavy": "Pauldrons_Heavy",
+      "F2_Pauldrons_Light": "Pauldrons_Light",
+      "F2_Bracers": "Bracers",
+      "F2_Thigh_Plates": "Thigh_Plates",
+      "F2_Shin_Plates": "Shin_Plates",
+      "F2_Boots_Mag": "Boots_Mag",
+      "F2_Boots_Mag_Glow": "Boots_Mag",
+      "F2_Belt_Combat": "Belt_Combat",
+      "F2_ToolBelt": "ToolBelt",
+      "F2_Rig_Mags": "Rig_Mags",
+      "F2_Strap_Medpens": "Strap_Medpens",
+      "F2_Strap_Medpens_Mark": "Strap_Medpens",
+      "F2_CargoHarness": "CargoHarness",
+      "F2_CargoHarness_Reflect": "CargoHarness",
+      "F2_Pack_Assault": "Pack_Assault",
+      "F2_Pack_PurgeEmitter": "Pack_PurgeEmitter",
+      "F2_Pack_PurgeEmitter_Mast": "Pack_PurgeEmitter",
+      "F2_Pack_PurgeEmitter_Field": "Pack_PurgeEmitter",
+      "F2_Helmet_Hazmat": "Helmet_Hazmat",
+      "F2_Helmet_Hazmat_Visor": "Helmet_Hazmat",
+      "F2_Helmet_Hazmat_Filter": "Helmet_Hazmat",
+      "F2_Pack_Medic": "Pack_Medic",
+      "F2_Pack_Medic_Mark": "Pack_Medic",
+      "F2_Pack_Heavy": "Pack_Heavy",
+      "F2_Pack_Heavy_Feed": "Pack_Heavy",
+      "F2_Pack_EVA": "Pack_EVA",
+      "F2_Pack_EVA_Nozzles": "Pack_EVA",
+      "F2_Pack_EVA_Glow": "Pack_EVA",
+      "F2_Pack_Breacher": "Pack_Breacher",
+      "F2_Pack_Breacher_Rails": "Pack_Breacher",
+      "F2_Pack_Radio": "Pack_Radio",
+      "F2_Pack_Radio_Antenna": "Pack_Radio",
+      "F2_Helmet_Combat_Dark": "Helmet_Combat_Dark",
+      "F2_Helmet_Combat_Visor_Dark": "Helmet_Combat_Dark",
+      "F2_Chest_Heavy_Dark": "Chest_Heavy_Dark",
+      "F2_Chest_Heavy_Light_Dark": "Chest_Heavy_Dark",
+      "F2_Pauldrons_Heavy_Dark": "Pauldrons_Heavy_Dark",
+      "F2_Bracers_Dark": "Bracers_Dark",
+      "F2_Thigh_Plates_Dark": "Thigh_Plates_Dark",
+      "F2_Shin_Plates_Dark": "Shin_Plates_Dark",
+      "F2_Pack_Assault_Dark": "Pack_Assault_Dark"
+    }
+  }
+}

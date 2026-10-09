@@ -1,0 +1,1308 @@
+{
+ "seed": 11,
+ "arena_radius_m": 3500.0,
+ "systems": [
+  {
+   "id": 0,
+   "name": "Zenon",
+   "star": "red dwarf",
+   "side": "F1",
+   "anchors": [
+    {
+     "kind": "large_asteroid",
+     "pos": [
+      -1931,
+      -233,
+      0
+     ],
+     "composition": "ice",
+     "size_km": 1.0,
+     "build_sites": 2
+    },
+    {
+     "kind": "gas_giant",
+     "pos": [
+      -474,
+      2653,
+      248
+     ],
+     "richness": 1.03
+    },
+    {
+     "kind": "asteroid_field",
+     "pos": [
+      154,
+      1197,
+      -215
+     ],
+     "resource": "crystals",
+     "richness": 0.83
+    }
+   ],
+   "map_pos": [
+    -6.85,
+    0.72
+   ],
+   "jump_points": [
+    {
+     "to": 1,
+     "lane_ly": 3.0,
+     "pos": [
+      3096,
+      -807,
+      0
+     ]
+    },
+    {
+     "to": 2,
+     "lane_ly": 2.5,
+     "pos": [
+      1610,
+      2765,
+      0
+     ]
+    },
+    {
+     "to": 4,
+     "lane_ly": 3.0,
+     "pos": [
+      -1708,
+      -2706,
+      0
+     ]
+    }
+   ],
+   "home": null,
+   "hops_from_F1_home": 1,
+   "hops_from_F2_home": 5,
+   "pirates": {
+    "tier": 1,
+    "power": 0.5,
+    "value": 3.98,
+    "ships": {
+     "XS_FIGHTER": 2
+    },
+    "flagship": null,
+    "installations": [
+     "ground_core"
+    ],
+    "shielded": false,
+    "abilities": [
+     "crystals",
+     "gas",
+     "large_asteroid"
+    ],
+    "garrison": 8,
+    "raids_neighbors": false,
+    "rebuilds_losses": false,
+    "loot": {
+     "alloys": 478,
+     "circuitry": 199
+    }
+   },
+   "controller": null
+  },
+  {
+   "id": 1,
+   "name": "Belves",
+   "star": "red dwarf",
+   "side": "F1",
+   "anchors": [
+    {
+     "kind": "large_asteroid",
+     "pos": [
+      1424,
+      -177,
+      -213
+     ],
+     "composition": "lithium",
+     "size_km": 0.7,
+     "build_sites": 3
+    },
+    {
+     "kind": "gas_giant",
+     "pos": [
+      2115,
+      836,
+      -161
+     ],
+     "richness": 1.19
+    },
+    {
+     "kind": "asteroid_field",
+     "pos": [
+      -1229,
+      683,
+      -53
+     ],
+     "resource": "ore",
+     "richness": 0.97
+    },
+    {
+     "kind": "asteroid_field",
+     "pos": [
+      -2251,
+      -1483,
+      -240
+     ],
+     "resource": "lithium",
+     "richness": 0.7
+    },
+    {
+     "kind": "asteroid_field",
+     "pos": [
+      497,
+      1872,
+      -242
+     ],
+     "resource": "ore",
+     "richness": 1.24
+    }
+   ],
+   "map_pos": [
+    -2.52,
+    -0.41
+   ],
+   "jump_points": [
+    {
+     "to": 0,
+     "lane_ly": 3.0,
+     "pos": [
+      -3096,
+      807,
+      0
+     ]
+    },
+    {
+     "to": 10,
+     "lane_ly": 3.0,
+     "pos": [
+      1982,
+      -2512,
+      0
+     ]
+    },
+    {
+     "to": 11,
+     "lane_ly": 3.5,
+     "pos": [
+      1700,
+      2711,
+      0
+     ]
+    },
+    {
+     "to": 2,
+     "lane_ly": 3.5,
+     "pos": [
+      -1814,
+      2636,
+      0
+     ]
+    }
+   ],
+   "home": null,
+   "hops_from_F1_home": 2,
+   "hops_from_F2_home": 4,
+   "pirates": {
+    "tier": 2,
+    "power": 5.0,
+    "value": 6.76,
+    "ships": {
+     "XS_FIGHTER": 4,
+     "SMALL_FRIGATE": 1
+    },
+    "flagship": null,
+    "installations": [
+     "defense_platform",
+     "ground_core",
+     "ground_battery"
+    ],
+    "shielded": false,
+    "abilities": [
+     "gas",
+     "large_asteroid",
+     "lithium",
+     "ore"
+    ],
+    "garrison": 48,
+    "raids_neighbors": true,
+    "rebuilds_losses": true,
+    "loot": {
+     "alloys": 811,
+     "circuitry": 338
+    }
+   },
+   "controller": null
+  },
+  {
+   "id": 2,
+   "name": "Tesri",
+   "star": "yellow",
+   "side": "F1",
+   "anchors": [
+    {
+     "kind": "asteroid_field",
+     "pos": [
+      -1926,
+      -679,
+      -56
+     ],
+     "resource": "ore",
+     "richness": 1.04
+    }
+   ],
+   "map_pos": [
+    -5.22,
+    3.52
+   ],
+   "jump_points": [
+    {
+     "to": 0,
+     "lane_ly": 2.5,
+     "pos": [
+      -1610,
+      -2765,
+      0
+     ]
+    },
+    {
+     "to": 3,
+     "lane_ly": 2.5,
+     "pos": [
+      2698,
+      1720,
+      0
+     ]
+    },
+    {
+     "to": 1,
+     "lane_ly": 3.5,
+     "pos": [
+      1814,
+      -2636,
+      0
+     ]
+    }
+   ],
+   "home": null,
+   "hops_from_F1_home": 2,
+   "hops_from_F2_home": 5,
+   "pirates": null,
+   "controller": null
+  },
+  {
+   "id": 3,
+   "name": "Quado",
+   "star": "neutron",
+   "side": "F1",
+   "anchors": [
+    {
+     "kind": "asteroid_field",
+     "pos": [
+      2394,
+      -1141,
+      -187
+     ],
+     "resource": "ice",
+     "richness": 1.04
+    },
+    {
+     "kind": "asteroid_field",
+     "pos": [
+      590,
+      2451,
+      124
+     ],
+     "resource": "ice",
+     "richness": 1.13
+    },
+    {
+     "kind": "asteroid_field",
+     "pos": [
+      -342,
+      1681,
+      237
+     ],
+     "resource": "ore",
+     "richness": 0.97
+    },
+    {
+     "kind": "derelict",
+     "pos": [
+      -2564,
+      -356,
+      45
+     ],
+     "ship_class": "SMALL",
+     "salvage": {
+      "alloys": 1280,
+      "circuitry": 480,
+      "crystals": 90
+     },
+     "infection_risk": 0.4,
+     "repairable": false
+    }
+   ],
+   "map_pos": [
+    -1.98,
+    5.58
+   ],
+   "jump_points": [
+    {
+     "to": 2,
+     "lane_ly": 2.5,
+     "pos": [
+      -2698,
+      -1720,
+      0
+     ]
+    },
+    {
+     "to": 11,
+     "lane_ly": 2.0,
+     "pos": [
+      2266,
+      -2259,
+      0
+     ]
+    },
+    {
+     "to": 8,
+     "lane_ly": 3.0,
+     "pos": [
+      3200,
+      0,
+      0
+     ]
+    }
+   ],
+   "home": null,
+   "hops_from_F1_home": 3,
+   "hops_from_F2_home": 4,
+   "pirates": {
+    "tier": 2,
+    "power": 4.5,
+    "value": 5.71,
+    "ships": {
+     "XS_FIGHTER": 4,
+     "SMALL_FRIGATE": 1
+    },
+    "flagship": "SMALL",
+    "installations": [
+     "defense_platform"
+    ],
+    "shielded": false,
+    "abilities": [
+     "derelict",
+     "ice",
+     "ore"
+    ],
+    "garrison": 16,
+    "raids_neighbors": false,
+    "rebuilds_losses": true,
+    "loot": {
+     "alloys": 684,
+     "circuitry": 285
+    }
+   },
+   "controller": null
+  },
+  {
+   "id": 4,
+   "name": "Vesbel",
+   "star": "yellow",
+   "side": "F1",
+   "anchors": [
+    {
+     "kind": "gas_giant",
+     "pos": [
+      1143,
+      514,
+      -182
+     ],
+     "richness": 1.0
+    },
+    {
+     "kind": "asteroid_field",
+     "pos": [
+      1978,
+      -838,
+      -185
+     ],
+     "resource": "ore",
+     "richness": 1.2
+    },
+    {
+     "kind": "asteroid_field",
+     "pos": [
+      2120,
+      1125,
+      222
+     ],
+     "resource": "ice",
+     "richness": 1.0
+    }
+   ],
+   "map_pos": [
+    -9.25,
+    -3.1
+   ],
+   "jump_points": [
+    {
+     "to": 0,
+     "lane_ly": 3.0,
+     "pos": [
+      1708,
+      2706,
+      0
+     ]
+    }
+   ],
+   "home": "F1",
+   "hops_from_F1_home": 0,
+   "hops_from_F2_home": 6,
+   "pirates": null,
+   "controller": "F1"
+  },
+  {
+   "id": 5,
+   "name": "Mirka",
+   "star": "red dwarf",
+   "side": "F2",
+   "anchors": [
+    {
+     "kind": "large_asteroid",
+     "pos": [
+      1931,
+      -233,
+      0
+     ],
+     "composition": "ice",
+     "size_km": 1.0,
+     "build_sites": 2
+    },
+    {
+     "kind": "gas_giant",
+     "pos": [
+      474,
+      2653,
+      248
+     ],
+     "richness": 1.03
+    },
+    {
+     "kind": "asteroid_field",
+     "pos": [
+      -154,
+      1197,
+      -215
+     ],
+     "resource": "crystals",
+     "richness": 0.83
+    }
+   ],
+   "map_pos": [
+    6.85,
+    0.72
+   ],
+   "jump_points": [
+    {
+     "to": 6,
+     "lane_ly": 3.0,
+     "pos": [
+      -3096,
+      -807,
+      0
+     ]
+    },
+    {
+     "to": 7,
+     "lane_ly": 2.5,
+     "pos": [
+      -1610,
+      2765,
+      0
+     ]
+    },
+    {
+     "to": 9,
+     "lane_ly": 3.0,
+     "pos": [
+      1708,
+      -2706,
+      0
+     ]
+    }
+   ],
+   "home": null,
+   "hops_from_F1_home": 5,
+   "hops_from_F2_home": 1,
+   "pirates": {
+    "tier": 1,
+    "power": 0.5,
+    "value": 3.98,
+    "ships": {
+     "XS_FIGHTER": 2
+    },
+    "flagship": null,
+    "installations": [
+     "ground_core"
+    ],
+    "shielded": false,
+    "abilities": [
+     "crystals",
+     "gas",
+     "large_asteroid"
+    ],
+    "garrison": 8,
+    "raids_neighbors": false,
+    "rebuilds_losses": false,
+    "loot": {
+     "alloys": 478,
+     "circuitry": 199
+    }
+   },
+   "controller": null
+  },
+  {
+   "id": 6,
+   "name": "Varnyeth",
+   "star": "red dwarf",
+   "side": "F2",
+   "anchors": [
+    {
+     "kind": "large_asteroid",
+     "pos": [
+      -1424,
+      -177,
+      -213
+     ],
+     "composition": "lithium",
+     "size_km": 0.7,
+     "build_sites": 3
+    },
+    {
+     "kind": "gas_giant",
+     "pos": [
+      -2115,
+      836,
+      -161
+     ],
+     "richness": 1.19
+    },
+    {
+     "kind": "asteroid_field",
+     "pos": [
+      1229,
+      683,
+      -53
+     ],
+     "resource": "ore",
+     "richness": 0.97
+    },
+    {
+     "kind": "asteroid_field",
+     "pos": [
+      2251,
+      -1483,
+      -240
+     ],
+     "resource": "lithium",
+     "richness": 0.7
+    },
+    {
+     "kind": "asteroid_field",
+     "pos": [
+      -497,
+      1872,
+      -242
+     ],
+     "resource": "ore",
+     "richness": 1.24
+    }
+   ],
+   "map_pos": [
+    2.52,
+    -0.41
+   ],
+   "jump_points": [
+    {
+     "to": 5,
+     "lane_ly": 3.0,
+     "pos": [
+      3096,
+      807,
+      0
+     ]
+    },
+    {
+     "to": 10,
+     "lane_ly": 3.0,
+     "pos": [
+      -1982,
+      -2512,
+      0
+     ]
+    },
+    {
+     "to": 11,
+     "lane_ly": 3.5,
+     "pos": [
+      -1700,
+      2711,
+      0
+     ]
+    },
+    {
+     "to": 7,
+     "lane_ly": 3.5,
+     "pos": [
+      1814,
+      2636,
+      0
+     ]
+    }
+   ],
+   "home": null,
+   "hops_from_F1_home": 4,
+   "hops_from_F2_home": 2,
+   "pirates": {
+    "tier": 2,
+    "power": 5.0,
+    "value": 6.76,
+    "ships": {
+     "XS_FIGHTER": 4,
+     "SMALL_FRIGATE": 1
+    },
+    "flagship": null,
+    "installations": [
+     "defense_platform",
+     "ground_core",
+     "ground_battery"
+    ],
+    "shielded": false,
+    "abilities": [
+     "gas",
+     "large_asteroid",
+     "lithium",
+     "ore"
+    ],
+    "garrison": 48,
+    "raids_neighbors": true,
+    "rebuilds_losses": true,
+    "loot": {
+     "alloys": 811,
+     "circuitry": 338
+    }
+   },
+   "controller": null
+  },
+  {
+   "id": 7,
+   "name": "Solethsa",
+   "star": "yellow",
+   "side": "F2",
+   "anchors": [
+    {
+     "kind": "asteroid_field",
+     "pos": [
+      1926,
+      -679,
+      -56
+     ],
+     "resource": "ore",
+     "richness": 1.04
+    }
+   ],
+   "map_pos": [
+    5.22,
+    3.52
+   ],
+   "jump_points": [
+    {
+     "to": 5,
+     "lane_ly": 2.5,
+     "pos": [
+      1610,
+      -2765,
+      0
+     ]
+    },
+    {
+     "to": 8,
+     "lane_ly": 2.5,
+     "pos": [
+      -2698,
+      1720,
+      0
+     ]
+    },
+    {
+     "to": 6,
+     "lane_ly": 3.5,
+     "pos": [
+      -1814,
+      -2636,
+      0
+     ]
+    }
+   ],
+   "home": null,
+   "hops_from_F1_home": 5,
+   "hops_from_F2_home": 2,
+   "pirates": null,
+   "controller": null
+  },
+  {
+   "id": 8,
+   "name": "Rika",
+   "star": "neutron",
+   "side": "F2",
+   "anchors": [
+    {
+     "kind": "asteroid_field",
+     "pos": [
+      -2394,
+      -1141,
+      -187
+     ],
+     "resource": "ice",
+     "richness": 1.04
+    },
+    {
+     "kind": "asteroid_field",
+     "pos": [
+      -590,
+      2451,
+      124
+     ],
+     "resource": "ice",
+     "richness": 1.13
+    },
+    {
+     "kind": "asteroid_field",
+     "pos": [
+      342,
+      1681,
+      237
+     ],
+     "resource": "ore",
+     "richness": 0.97
+    },
+    {
+     "kind": "derelict",
+     "pos": [
+      2564,
+      -356,
+      45
+     ],
+     "ship_class": "SMALL",
+     "salvage": {
+      "alloys": 1280,
+      "circuitry": 480,
+      "crystals": 90
+     },
+     "infection_risk": 0.4,
+     "repairable": false
+    }
+   ],
+   "map_pos": [
+    1.98,
+    5.58
+   ],
+   "jump_points": [
+    {
+     "to": 7,
+     "lane_ly": 2.5,
+     "pos": [
+      2698,
+      -1720,
+      0
+     ]
+    },
+    {
+     "to": 11,
+     "lane_ly": 2.0,
+     "pos": [
+      -2266,
+      -2259,
+      0
+     ]
+    },
+    {
+     "to": 3,
+     "lane_ly": 3.0,
+     "pos": [
+      -3200,
+      0,
+      0
+     ]
+    }
+   ],
+   "home": null,
+   "hops_from_F1_home": 4,
+   "hops_from_F2_home": 3,
+   "pirates": {
+    "tier": 2,
+    "power": 4.5,
+    "value": 5.71,
+    "ships": {
+     "XS_FIGHTER": 4,
+     "SMALL_FRIGATE": 1
+    },
+    "flagship": "SMALL",
+    "installations": [
+     "defense_platform"
+    ],
+    "shielded": false,
+    "abilities": [
+     "derelict",
+     "ice",
+     "ore"
+    ],
+    "garrison": 16,
+    "raids_neighbors": false,
+    "rebuilds_losses": true,
+    "loot": {
+     "alloys": 684,
+     "circuitry": 285
+    }
+   },
+   "controller": null
+  },
+  {
+   "id": 9,
+   "name": "Aurmir",
+   "star": "yellow",
+   "side": "F2",
+   "anchors": [
+    {
+     "kind": "gas_giant",
+     "pos": [
+      -1143,
+      514,
+      -182
+     ],
+     "richness": 1.0
+    },
+    {
+     "kind": "asteroid_field",
+     "pos": [
+      -1978,
+      -838,
+      -185
+     ],
+     "resource": "ore",
+     "richness": 1.2
+    },
+    {
+     "kind": "asteroid_field",
+     "pos": [
+      -2120,
+      1125,
+      222
+     ],
+     "resource": "ice",
+     "richness": 1.0
+    }
+   ],
+   "map_pos": [
+    9.25,
+    -3.1
+   ],
+   "jump_points": [
+    {
+     "to": 5,
+     "lane_ly": 3.0,
+     "pos": [
+      -1708,
+      2706,
+      0
+     ]
+    }
+   ],
+   "home": "F2",
+   "hops_from_F1_home": 6,
+   "hops_from_F2_home": 0,
+   "pirates": null,
+   "controller": "F2"
+  },
+  {
+   "id": 10,
+   "name": "Soldra",
+   "star": "yellow",
+   "side": "mid",
+   "anchors": [
+    {
+     "kind": "large_asteroid",
+     "pos": [
+      -67,
+      1473,
+      -85
+     ],
+     "composition": "ice",
+     "size_km": 1.2,
+     "build_sites": 2
+    },
+    {
+     "kind": "gas_giant",
+     "pos": [
+      -1516,
+      412,
+      21
+     ],
+     "richness": 1.15
+    },
+    {
+     "kind": "gas_giant",
+     "pos": [
+      372,
+      -1951,
+      -7
+     ],
+     "richness": 1.06
+    },
+    {
+     "kind": "asteroid_field",
+     "pos": [
+      -1289,
+      -1091,
+      127
+     ],
+     "resource": "ice",
+     "richness": 0.83
+    },
+    {
+     "kind": "derelict",
+     "pos": [
+      481,
+      2488,
+      -145
+     ],
+     "ship_class": "LARGE",
+     "salvage": {
+      "alloys": 1600,
+      "circuitry": 600,
+      "crystals": 150
+     },
+     "infection_risk": 0.6,
+     "repairable": false
+    },
+    {
+     "kind": "ancient_site",
+     "pos": [
+      887,
+      1000,
+      198
+     ],
+     "infection_source": true,
+     "reward": "unique upgrade"
+    },
+    {
+     "kind": "asteroid_field",
+     "pos": [
+      2446,
+      1043,
+      161
+     ],
+     "resource": "lithium",
+     "richness": 1.22
+    }
+   ],
+   "map_pos": [
+    0.0,
+    -3.6
+   ],
+   "jump_points": [
+    {
+     "to": 1,
+     "lane_ly": 3.0,
+     "pos": [
+      -1982,
+      2512,
+      0
+     ]
+    },
+    {
+     "to": 6,
+     "lane_ly": 3.0,
+     "pos": [
+      1982,
+      2512,
+      0
+     ]
+    }
+   ],
+   "home": null,
+   "hops_from_F1_home": 3,
+   "hops_from_F2_home": 3,
+   "pirates": {
+    "tier": 4,
+    "power": 13.25,
+    "value": 14.59,
+    "ships": {
+     "XS_FIGHTER": 1,
+     "SMALL_FRIGATE": 1,
+     "MEDIUM": 1
+    },
+    "flagship": "LARGE",
+    "installations": [
+     "defense_platform",
+     "ground_core",
+     "ground_battery"
+    ],
+    "shielded": false,
+    "abilities": [
+     "ancient_site",
+     "derelict",
+     "gas",
+     "ice",
+     "large_asteroid",
+     "lithium"
+    ],
+    "garrison": 96,
+    "raids_neighbors": true,
+    "rebuilds_losses": false,
+    "loot": {
+     "alloys": 1751,
+     "circuitry": 729
+    }
+   },
+   "controller": null
+  },
+  {
+   "id": 11,
+   "name": "Doeth",
+   "star": "red dwarf",
+   "side": "mid",
+   "anchors": [
+    {
+     "kind": "gas_giant",
+     "pos": [
+      -989,
+      -1857,
+      171
+     ],
+     "richness": 1.06
+    },
+    {
+     "kind": "asteroid_field",
+     "pos": [
+      2385,
+      478,
+      -229
+     ],
+     "resource": "crystals",
+     "richness": 0.77
+    },
+    {
+     "kind": "asteroid_field",
+     "pos": [
+      -820,
+      2108,
+      -240
+     ],
+     "resource": "crystals",
+     "richness": 1.21
+    },
+    {
+     "kind": "asteroid_field",
+     "pos": [
+      -1815,
+      635,
+      78
+     ],
+     "resource": "ore",
+     "richness": 1.11
+    },
+    {
+     "kind": "ancient_site",
+     "pos": [
+      1968,
+      -526,
+      -150
+     ],
+     "infection_source": true,
+     "reward": "unique upgrade"
+    },
+    {
+     "kind": "asteroid_field",
+     "pos": [
+      505,
+      1058,
+      -77
+     ],
+     "resource": "lithium",
+     "richness": 1.39
+    }
+   ],
+   "map_pos": [
+    0.0,
+    3.6
+   ],
+   "jump_points": [
+    {
+     "to": 3,
+     "lane_ly": 2.0,
+     "pos": [
+      -2266,
+      2259,
+      0
+     ]
+    },
+    {
+     "to": 8,
+     "lane_ly": 2.0,
+     "pos": [
+      2266,
+      2259,
+      0
+     ]
+    },
+    {
+     "to": 1,
+     "lane_ly": 3.5,
+     "pos": [
+      -1700,
+      -2711,
+      0
+     ]
+    },
+    {
+     "to": 6,
+     "lane_ly": 3.5,
+     "pos": [
+      1700,
+      -2711,
+      0
+     ]
+    }
+   ],
+   "home": null,
+   "hops_from_F1_home": 3,
+   "hops_from_F2_home": 3,
+   "pirates": {
+    "tier": 4,
+    "power": 12.35,
+    "value": 14.09,
+    "ships": {
+     "XS_FIGHTER": 8,
+     "SMALL_FRIGATE": 3,
+     "MEDIUM": 1
+    },
+    "flagship": null,
+    "installations": [
+     "defense_platform"
+    ],
+    "shielded": true,
+    "abilities": [
+     "ancient_site",
+     "crystals",
+     "gas",
+     "lithium",
+     "ore"
+    ],
+    "garrison": 32,
+    "raids_neighbors": true,
+    "rebuilds_losses": true,
+    "loot": {
+     "alloys": 1690,
+     "circuitry": 704
+    }
+   },
+   "controller": null
+  }
+ ],
+ "lanes": [
+  {
+   "a": 0,
+   "b": 1,
+   "lane_ly": 3.0
+  },
+  {
+   "a": 0,
+   "b": 2,
+   "lane_ly": 2.5
+  },
+  {
+   "a": 1,
+   "b": 10,
+   "lane_ly": 3.0
+  },
+  {
+   "a": 2,
+   "b": 3,
+   "lane_ly": 2.5
+  },
+  {
+   "a": 3,
+   "b": 11,
+   "lane_ly": 2.0
+  },
+  {
+   "a": 5,
+   "b": 6,
+   "lane_ly": 3.0
+  },
+  {
+   "a": 5,
+   "b": 7,
+   "lane_ly": 2.5
+  },
+  {
+   "a": 6,
+   "b": 10,
+   "lane_ly": 3.0
+  },
+  {
+   "a": 7,
+   "b": 8,
+   "lane_ly": 2.5
+  },
+  {
+   "a": 8,
+   "b": 11,
+   "lane_ly": 2.0
+  },
+  {
+   "a": 3,
+   "b": 8,
+   "lane_ly": 3.0
+  },
+  {
+   "a": 5,
+   "b": 9,
+   "lane_ly": 3.0
+  },
+  {
+   "a": 0,
+   "b": 4,
+   "lane_ly": 3.0
+  },
+  {
+   "a": 1,
+   "b": 11,
+   "lane_ly": 3.5
+  },
+  {
+   "a": 6,
+   "b": 11,
+   "lane_ly": 3.5
+  },
+  {
+   "a": 6,
+   "b": 7,
+   "lane_ly": 3.5
+  },
+  {
+   "a": 1,
+   "b": 2,
+   "lane_ly": 3.5
+  }
+ ],
+ "homes": {
+  "F1": 4,
+  "F2": 9
+ }
+}

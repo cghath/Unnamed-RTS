@@ -1,0 +1,4 @@
+godot_demo/build/
+godot_demo/.godot/
+__pycache__/
+*.pyc

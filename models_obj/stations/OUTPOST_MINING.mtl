@@ -1,0 +1,84 @@
+newmtl Deck
+Kd 0.2 0.21 0.22
+d 1.0
+
+newmtl Interior
+Kd 0.52 0.54 0.55
+d 1.0
+
+newmtl Engine
+Kd 0.09 0.09 0.1
+d 1.0
+
+newmtl Glass
+Kd 0.55 0.8 1.0
+d 0.25
+
+newmtl Hazard
+Kd 0.95 0.62 0.08
+d 1.0
+
+newmtl BreachPanel
+Kd 0.28 0.27 0.25
+d 1.0
+
+newmtl Shield
+Kd 0.3 0.6 1.0
+d 0.3
+Ke 0.3 0.6 1.0
+
+newmtl Reactor
+Kd 0.4 0.85 1.0
+d 1.0
+Ke 0.4 0.85 1.0
+
+newmtl Cover
+Kd 0.3 0.32 0.33
+d 1.0
+
+newmtl Door
+Kd 0.34 0.35 0.36
+d 1.0
+
+newmtl Furniture
+Kd 0.24 0.25 0.27
+d 1.0
+
+newmtl Medical
+Kd 0.82 0.84 0.85
+d 1.0
+
+newmtl BreachWall
+Kd 0.6 0.58 0.52
+d 1.0
+
+newmtl Rock
+Kd 0.32 0.29 0.26
+d 1.0
+
+newmtl Hull
+Kd 0.36 0.39 0.35
+d 1.0
+
+newmtl Armor
+Kd 0.44 0.47 0.42
+d 1.0
+
+newmtl Trim
+Kd 0.15 0.16 0.16
+d 1.0
+
+newmtl Lights
+Kd 1.0 0.7 0.3
+d 1.0
+Ke 1.0 0.7 0.3
+
+newmtl EngineGlow
+Kd 0.35 0.7 1.0
+d 1.0
+Ke 0.35 0.7 1.0
+
+newmtl Turret
+Kd 0.3 0.33 0.3
+d 1.0
+

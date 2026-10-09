@@ -1,0 +1,115 @@
+newmtl Chassis
+Kd 0.56 0.57 0.6
+d 1
+
+newmtl Joint
+Kd 0.07 0.07 0.08
+d 1
+
+newmtl Eye
+Kd 1.0 0.12 0.1
+d 1
+Ke 1.0 0.12 0.1
+
+newmtl Armor
+Kd 0.15 0.16 0.18
+d 1
+
+newmtl ArmorDark
+Kd 0.05 0.05 0.06
+d 1
+
+newmtl Trim
+Kd 0.03 0.03 0.035
+d 1
+
+newmtl Visor
+Kd 0.04 0.04 0.05
+d 1
+
+newmtl Light
+Kd 1.0 0.12 0.1
+d 1
+Ke 1.0 0.12 0.1
+
+newmtl Suit
+Kd 0.22 0.23 0.25
+d 1
+
+newmtl Command
+Kd 0.06 0.06 0.07
+d 1
+
+newmtl Engineering
+Kd 0.8 0.35 0.06
+d 1
+
+newmtl Cargo
+Kd 0.85 0.68 0.08
+d 1
+
+newmtl Medical
+Kd 0.85 0.87 0.88
+d 1
+
+newmtl Flight
+Kd 0.18 0.19 0.21
+d 1
+
+newmtl Security
+Kd 0.32 0.08 0.08
+d 1
+
+newmtl HiVis
+Kd 0.75 0.95 0.1
+d 1
+Ke 0.75 0.95 0.1
+
+newmtl Reflect
+Kd 0.85 0.86 0.88
+d 1
+
+newmtl MedMark
+Kd 0.1 0.75 0.45
+d 1
+Ke 0.1 0.75 0.45
+
+newmtl Rank
+Kd 0.85 0.85 0.88
+d 1
+
+newmtl Science
+Kd 0.08 0.42 0.46
+d 1
+
+newmtl Purge
+Kd 0.6 0.95 1.0
+d 1
+Ke 0.6 0.95 1.0
+
+newmtl WBody
+Kd 0.12 0.12 0.14
+d 1
+
+newmtl WDark
+Kd 0.04 0.04 0.05
+d 1
+
+newmtl WAccent
+Kd 0.9 0.1 0.12
+d 1
+
+newmtl WPanel
+Kd 0.55 0.56 0.6
+d 1
+
+newmtl Optic
+Kd 1.0 0.2 0.35
+d 1
+Ke 1.0 0.2 0.35
+
+newmtl Energy
+Kd 1.0 0.18 0.4
+d 1
+Ke 1.0 0.18 0.4
+

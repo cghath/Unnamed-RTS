@@ -1,0 +1,499 @@
+{
+  "XS_FIGHTER": {
+    "ship_class": "XS_FIGHTER",
+    "length_m": 14.9,
+    "crew": 1,
+    "passenger_seats": 0
+  },
+  "XS_BOMBER": {
+    "ship_class": "XS_BOMBER",
+    "length_m": 15.0,
+    "crew": 2,
+    "passenger_seats": 0
+  },
+  "XS_DROPSHIP": {
+    "ship_class": "XS_DROPSHIP",
+    "length_m": 14.2,
+    "crew": 2,
+    "passenger_seats": 12
+  },
+  "XS_POD": {
+    "ship_class": "XS_POD",
+    "length_m": 7.9,
+    "crew": 0,
+    "passenger_seats": 8
+  },
+  "XS_DROPPOD": {
+    "ship_class": "XS_DROPPOD",
+    "length_m": 1.8,
+    "crew": 0,
+    "passenger_seats": 1
+  },
+  "XS_DARTER": {
+    "ship_class": "XS_DARTER",
+    "length_m": 9.7,
+    "crew": 2,
+    "passenger_seats": 6
+  },
+  "XS_MINER": {
+    "ship_class": "XS_MINER",
+    "length_m": 15.6,
+    "crew": 3,
+    "passenger_seats": 0
+  },
+  "XS_MINING_DRONE": {
+    "ship_class": "XS_MINING_DRONE",
+    "length_m": 2.2,
+    "crew": 0,
+    "passenger_seats": 0
+  },
+  "SMALL_FRIGATE": {
+    "ship_class": "SMALL_FRIGATE",
+    "length_m": 87.2,
+    "decks": 1,
+    "standard_crew": 15,
+    "capacity": {
+      "hangar_slots": 0,
+      "pod_tubes": 6,
+      "drop_tubes": 0,
+      "cargo_pads": 1
+    },
+    "loadout": {
+      "crew": 15,
+      "fighters": 0,
+      "bombers": 0,
+      "dropships": 0,
+      "boarding_pods": 6,
+      "drop_pods": 0,
+      "darters": 0,
+      "troops": 48,
+      "hangar_slots_used": 0,
+      "troop_seats_in_craft": 48,
+      "craft_crew": 0,
+      "total_souls": 63,
+      "problems": []
+    },
+    "bunks_modeled": 27,
+    "escape_pods": 2,
+    "escape_pod_seats": 8,
+    "compartments": 5,
+    "blast_doors": 4,
+    "elevators": 0,
+    "ramps": 0,
+    "breach_zones": 0,
+    "hangar_landing_pads": 0,
+    "airlocks": 2,
+    "turrets": 4,
+    "boarding_pod_tubes": 6,
+    "drop_pod_tubes": 0,
+    "cargo_bay_darter_pads": 1,
+    "cargo_storage_slots": 12,
+    "supply_depot": false,
+    "medbays": 1,
+    "armories": 1,
+    "ready_lockers": 2,
+    "breachable_walls": 3,
+    "locked_doors": 1,
+    "rooms": {
+      "airlock": 2,
+      "armory": 1,
+      "escape": 1,
+      "medbay": 1,
+      "quarters": 3
+    }
+  },
+  "SMALL_SUPPORT": {
+    "ship_class": "SMALL_SUPPORT",
+    "length_m": 85.2,
+    "decks": 1,
+    "standard_crew": 15,
+    "capacity": {
+      "hangar_slots": 0,
+      "pod_tubes": 6,
+      "drop_tubes": 0,
+      "cargo_pads": 1
+    },
+    "loadout": {
+      "crew": 15,
+      "fighters": 0,
+      "bombers": 0,
+      "dropships": 0,
+      "boarding_pods": 6,
+      "drop_pods": 0,
+      "darters": 1,
+      "troops": 48,
+      "hangar_slots_used": 0,
+      "troop_seats_in_craft": 54,
+      "craft_crew": 2,
+      "total_souls": 65,
+      "problems": []
+    },
+    "bunks_modeled": 27,
+    "escape_pods": 2,
+    "escape_pod_seats": 8,
+    "compartments": 5,
+    "blast_doors": 4,
+    "elevators": 0,
+    "ramps": 0,
+    "breach_zones": 0,
+    "hangar_landing_pads": 0,
+    "airlocks": 2,
+    "turrets": 2,
+    "boarding_pod_tubes": 6,
+    "drop_pod_tubes": 0,
+    "cargo_bay_darter_pads": 1,
+    "cargo_storage_slots": 12,
+    "supply_depot": true,
+    "medbays": 1,
+    "armories": 1,
+    "ready_lockers": 2,
+    "breachable_walls": 3,
+    "locked_doors": 1,
+    "rooms": {
+      "airlock": 2,
+      "armory": 1,
+      "escape": 1,
+      "medbay": 1,
+      "quarters": 3
+    }
+  },
+  "SMALL_DROP_FRIGATE": {
+    "ship_class": "SMALL_DROP_FRIGATE",
+    "length_m": 117.2,
+    "decks": 1,
+    "standard_crew": 15,
+    "capacity": {
+      "hangar_slots": 0,
+      "pod_tubes": 6,
+      "drop_tubes": 12,
+      "cargo_pads": 1
+    },
+    "loadout": {
+      "crew": 15,
+      "fighters": 0,
+      "bombers": 0,
+      "dropships": 0,
+      "boarding_pods": 6,
+      "drop_pods": 12,
+      "darters": 0,
+      "troops": 60,
+      "hangar_slots_used": 0,
+      "troop_seats_in_craft": 60,
+      "craft_crew": 0,
+      "total_souls": 75,
+      "problems": []
+    },
+    "bunks_modeled": 27,
+    "escape_pods": 2,
+    "escape_pod_seats": 8,
+    "compartments": 6,
+    "blast_doors": 5,
+    "elevators": 0,
+    "ramps": 0,
+    "breach_zones": 0,
+    "hangar_landing_pads": 0,
+    "airlocks": 2,
+    "turrets": 4,
+    "boarding_pod_tubes": 6,
+    "drop_pod_tubes": 12,
+    "cargo_bay_darter_pads": 1,
+    "cargo_storage_slots": 8,
+    "supply_depot": false,
+    "medbays": 1,
+    "armories": 1,
+    "ready_lockers": 2,
+    "breachable_walls": 0,
+    "locked_doors": 1,
+    "rooms": {
+      "airlock": 2,
+      "armory": 1,
+      "escape": 1,
+      "medbay": 1,
+      "quarters": 3
+    }
+  },
+  "MEDIUM": {
+    "ship_class": "MEDIUM",
+    "length_m": 109.2,
+    "decks": 1,
+    "standard_crew": 30,
+    "capacity": {
+      "hangar_slots": 4,
+      "pod_tubes": 10,
+      "drop_tubes": 0,
+      "cargo_pads": 2
+    },
+    "loadout": {
+      "crew": 30,
+      "fighters": 2,
+      "bombers": 0,
+      "dropships": 1,
+      "boarding_pods": 10,
+      "drop_pods": 0,
+      "darters": 0,
+      "troops": 92,
+      "hangar_slots_used": 4,
+      "troop_seats_in_craft": 92,
+      "craft_crew": 4,
+      "total_souls": 126,
+      "problems": []
+    },
+    "bunks_modeled": 9,
+    "escape_pods": 2,
+    "escape_pod_seats": 8,
+    "compartments": 5,
+    "blast_doors": 4,
+    "elevators": 0,
+    "ramps": 0,
+    "breach_zones": 2,
+    "hangar_landing_pads": 2,
+    "airlocks": 0,
+    "turrets": 4,
+    "boarding_pod_tubes": 10,
+    "drop_pod_tubes": 0,
+    "cargo_bay_darter_pads": 2,
+    "cargo_storage_slots": 12,
+    "supply_depot": false,
+    "medbays": 1,
+    "armories": 1,
+    "ready_lockers": 2,
+    "breachable_walls": 3,
+    "locked_doors": 1,
+    "rooms": {
+      "armory": 1,
+      "breach": 2,
+      "escape": 1,
+      "medbay": 1,
+      "quarters": 1
+    }
+  },
+  "LARGE": {
+    "ship_class": "LARGE",
+    "length_m": 153.2,
+    "decks": 2,
+    "standard_crew": 60,
+    "capacity": {
+      "hangar_slots": 6,
+      "pod_tubes": 14,
+      "drop_tubes": 0,
+      "cargo_pads": 3
+    },
+    "loadout": {
+      "crew": 60,
+      "fighters": 2,
+      "bombers": 1,
+      "dropships": 1,
+      "boarding_pods": 14,
+      "drop_pods": 0,
+      "darters": 0,
+      "troops": 124,
+      "hangar_slots_used": 6,
+      "troop_seats_in_craft": 124,
+      "craft_crew": 6,
+      "total_souls": 190,
+      "problems": []
+    },
+    "bunks_modeled": 36,
+    "escape_pods": 4,
+    "escape_pod_seats": 16,
+    "compartments": 6,
+    "blast_doors": 7,
+    "elevators": 1,
+    "ramps": 1,
+    "breach_zones": 4,
+    "hangar_landing_pads": 3,
+    "airlocks": 0,
+    "turrets": 8,
+    "boarding_pod_tubes": 14,
+    "drop_pod_tubes": 0,
+    "cargo_bay_darter_pads": 3,
+    "cargo_storage_slots": 16,
+    "supply_depot": false,
+    "medbays": 2,
+    "armories": 2,
+    "ready_lockers": 6,
+    "breachable_walls": 10,
+    "locked_doors": 4,
+    "rooms": {
+      "armory": 2,
+      "breach": 4,
+      "comms": 1,
+      "elevator": 2,
+      "escape": 2,
+      "medbay": 2,
+      "mess": 1,
+      "quarters": 4,
+      "ramp": 1,
+      "ramp_top": 1,
+      "storage": 1,
+      "systems": 1
+    }
+  },
+  "XL": {
+    "ship_class": "XL",
+    "length_m": 209.2,
+    "decks": 3,
+    "standard_crew": 100,
+    "capacity": {
+      "hangar_slots": 8,
+      "pod_tubes": 12,
+      "drop_tubes": 0,
+      "cargo_pads": 4
+    },
+    "loadout": {
+      "crew": 100,
+      "fighters": 4,
+      "bombers": 1,
+      "dropships": 1,
+      "boarding_pods": 12,
+      "drop_pods": 0,
+      "darters": 0,
+      "troops": 108,
+      "hangar_slots_used": 8,
+      "troop_seats_in_craft": 108,
+      "craft_crew": 8,
+      "total_souls": 216,
+      "problems": []
+    },
+    "bunks_modeled": 243,
+    "escape_pods": 6,
+    "escape_pod_seats": 24,
+    "compartments": 8,
+    "blast_doors": 18,
+    "elevators": 1,
+    "ramps": 2,
+    "breach_zones": 6,
+    "hangar_landing_pads": 3,
+    "airlocks": 0,
+    "turrets": 12,
+    "boarding_pod_tubes": 12,
+    "drop_pod_tubes": 0,
+    "cargo_bay_darter_pads": 4,
+    "cargo_storage_slots": 20,
+    "supply_depot": false,
+    "medbays": 2,
+    "armories": 3,
+    "ready_lockers": 18,
+    "breachable_walls": 48,
+    "locked_doors": 12,
+    "rooms": {
+      "armory": 3,
+      "breach": 6,
+      "comms": 1,
+      "elevator": 3,
+      "escape": 3,
+      "medbay": 2,
+      "mess": 1,
+      "quarters": 27,
+      "ramp": 2,
+      "ramp_top": 2,
+      "storage": 16,
+      "systems": 8
+    }
+  },
+  "STATION_HOME": {
+    "station": "STATION_HOME",
+    "modules": [
+      "command_core",
+      "reactor",
+      "reactor",
+      "reactor",
+      "refinery",
+      "breeder_reactor",
+      "fabricator",
+      "core_foundry",
+      "assembly_plant",
+      "shipyard_small",
+      "shipyard_medium",
+      "storage_depot",
+      "fuel_depot",
+      "docking_ring",
+      "barracks",
+      "defense_platform",
+      "defense_platform",
+      "shield_generator",
+      "comm_relay"
+    ],
+    "length_m": 325.0,
+    "width_m": 253.6
+  },
+  "STATION_INDUSTRIAL": {
+    "station": "STATION_INDUSTRIAL",
+    "modules": [
+      "command_core",
+      "reactor",
+      "reactor",
+      "refinery",
+      "shipyard_medium",
+      "core_foundry",
+      "docking_ring"
+    ],
+    "length_m": 151.8,
+    "width_m": 208.0
+  },
+  "STATION_FORTRESS": {
+    "station": "STATION_FORTRESS",
+    "modules": [
+      "command_core",
+      "reactor",
+      "reactor",
+      "defense_platform",
+      "defense_platform",
+      "shield_generator",
+      "barracks",
+      "docking_ring"
+    ],
+    "length_m": 158.9,
+    "width_m": 62.5
+  },
+  "STATION_FUEL_HUB": {
+    "station": "STATION_FUEL_HUB",
+    "modules": [
+      "command_core",
+      "reactor",
+      "breeder_reactor",
+      "fuel_depot",
+      "storage_depot",
+      "docking_ring"
+    ],
+    "length_m": 151.8,
+    "width_m": 62.5
+  },
+  "OUTPOST_MINING": {
+    "station": "OUTPOST_MINING",
+    "modules": [
+      "outpost_core",
+      "mining_rig"
+    ],
+    "length_m": 41.7,
+    "width_m": 48.2
+  },
+  "OUTPOST_SKIMMER": {
+    "station": "OUTPOST_SKIMMER",
+    "modules": [
+      "outpost_core",
+      "gas_skimmer"
+    ],
+    "length_m": 41.7,
+    "width_m": 48.2
+  },
+  "GROUND_MINE": {
+    "station": "GROUND_MINE",
+    "modules": [
+      "ground_core",
+      "surface_drill"
+    ],
+    "length_m": 121.7,
+    "width_m": 114.4
+  },
+  "GROUND_FORT": {
+    "station": "GROUND_FORT",
+    "modules": [
+      "ground_core",
+      "ground_battery",
+      "landing_pads"
+    ],
+    "length_m": 155.1,
+    "width_m": 132.0
+  }
+}

@@ -1,0 +1,41 @@
+; Starship Kit demo. Open this folder in Godot 4.5 (or newer) and press F5.
+
+config_version=5
+
+[application]
+
+config/name="Starship Kit Demo"
+run/main_scene="res://menu.tscn"
+config/features=PackedStringArray("4.5", "Forward Plus")
+
+[autoload]
+
+G="*res://scripts/game.gd"
+
+[display]
+
+window/size/viewport_width=1600
+window/size/viewport_height=900
+
+[layer_names]
+
+3d_physics/layer_1="world"
+3d_physics/layer_2="characters"
+3d_physics/layer_3="doors"
+3d_physics/layer_4="pick"
+
+[physics]
+
+3d/physics_engine="Jolt Physics"
+common/physics_ticks_per_second=60
+
+[rendering]
+
+anti_aliasing/quality/msaa_3d=2
+
+[shader_globals]
+
+cut_height={
+"type": "float",
+"value": 10000.0
+}
