@@ -1,4 +1,4 @@
-# Handoff: where work stopped (2026-10-09, session 2)
+# Handoff: where work stopped (2026-10-09, session 3)
 
 Work happens in the fork `cghath/unnamed-rts` on branch **`handoff-tasks`** (upstream: `noahgonzalez4506/Unnamed-RTS`).
 Do not commit to `main`; it stays in sync with upstream. PRs go from `handoff-tasks` to upstream when Noah is ready.
@@ -23,22 +23,27 @@ GDScript warnings count as errors: give explicit types when reading from a Dicti
   - The network "grenade" action now sends `[at, emp]` (`character.gd` player input, `network.gd` `_action`).
   - Snapshot flag 128 = `stun_t > 0`. On a client, the possessed body calls `stun(2.0)` when that flag rises
     (meta `net_stun`), so EMPs thrown on the host also stun and blind the client's player.
-- **Bullpup battle rifle (task 2): built and compiled, NOT yet looked at in the hands or first person.**
+- **Bullpup battle rifle (task 2): done, rendered and looked at in first and third person (session 3).**
   - `tests/make_bullpup.gd` (run: `$GODOT --headless --path godot_demo -s res://tests/make_bullpup.gd`) builds the gun
     from boxes and cylinders, using the materials from the old `.glb` of the same faction. It writes
     `models/weapons/weapon_F1_BattleRifle.tscn` and `weapon_P_BattleRifle.tscn`. Re-run it after changing the shape.
   - Shape: about 0.75 m (butt z -0.345, flash hider ends z 0.42), magazine behind the grip, vented shroud over a
-    short barrel, top rail and holo sight. Markers: Grip (0,-0.06,-0.01), SupportHand (0,0,0.29), Muzzle (0,0.05,0.42),
-    Sight (0,0.15,0.05), MagWell (0,-0.02,-0.165). The Mag mesh is built around its own top centre, so the reload
+    short barrel, top rail and a sight mount. Markers: Grip (0,-0.06,-0.01), SupportHand (0,0,0.29), Muzzle (0,0.05,0.42),
+    Sight (0,0.12,0.05), MagWell (0,-0.02,-0.165). The Mag mesh is built around its own top centre, so the reload
     hand-mag (`rig._hand_mag`) sits in the hand properly.
     The shorter SupportHand and Muzzle are on purpose: it's a bullpup.
   - `character.give_weapon` loads `weapon_<x>.tscn` when it exists, otherwise the `.glb`.
   - Stats (`blender/character_generator.py` WEAPON_CLASSES and both `data/` and `godot_demo/data/` JSON copies):
     damage 24 (F2 31.2), rpm 780, no `burst`, 32 rounds, reload 2.3 s, range 45 m.
   - `viewmodel.gd`: BattleRifle gets the holo sight. PulseCarbine (the F2 battle rifle) keeps its 3x scope.
-  - **To finish:** render it (weaponshots plus a third-person look). Check the grip, support hand and stock against
-    the shoulder, the ADS sight line through the holo, reload, and backface/winding (the faces wind clockwise for Godot).
-    Then fix and re-run the builder.
+  - Session 3: the model's own holo (posts, roof, opaque `Optic` pane) sat under the holo that `viewmodel.gd`
+    adds to every rifle, so ADS looked into a solid pane. The model now has only a mount block on the rail with
+    `Sight` on top of it (y 0.12); the viewmodel's sight rides on it. Checked: hip, up/down, ADS (dot on the
+    crosshair), reload, and third person (right hand on the grip, butt in the shoulder, left hand on the shroud,
+    no missing faces).
+  - `tests/weapon_shots.gd` now has a bullpup reload and `tp_*` third-person shots, and takes `--only <text>`
+    (e.g. `-- --weaponshots --only BattleRifle <folder>`). Under Xvfb with llvmpipe each shot takes about 15 s,
+    so the full list (33 shots) runs about 8 minutes; use `--only` for one gun.
 
 ## Done in session 1 (compiled, not playtested)
 - **Escape pods**: placed only indoors (`ship.gd` `_inside_hull`: inside a zone, with a ceiling and walls on 4 sides).
@@ -59,7 +64,7 @@ GDScript warnings count as errors: give explicit types when reading from a Dicti
 - **Bang before entry (#27)**: `squad._start_clear` against a hostile room. The nearest member with an EMP (else a frag) throws it in. `_clear_slot` holds the squad beside the doorway until `clear.go_at` (detonation), then they flow in.
 
 ## Still to do
-1. **Finish the bullpup check** (see above).
+1. ~~Finish the bullpup check~~ (done in session 3).
 2. **Grenadier role replaces marksman (#29).**
    - Rename "marksman" in every role list: `character.COMBAT_ROLES`, `match.gd` (lines ~59, REQ_ROLES, ~1388), `ship.gd` BOARD_ROLES and drop lists, `station.gd` SQUAD, `squad.gd` `_promote`, `campaign/minidrop.gd`, `commander.gd` CLASSES, `hud.gd` role blurbs, and `G.TECH`/HUD text if any.
    - Role data:
