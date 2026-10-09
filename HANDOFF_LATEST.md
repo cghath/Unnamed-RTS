@@ -10,12 +10,12 @@ GDScript warnings count as errors: give explicit types when reading from a Dicti
 ## Start here: open loose ends from session 3
 Everything below this section is done and pushed to `handoff-tasks` (last code commit dd88742). What's still open:
 
-1. **Windows build repo.** The user is creating a private repo **`cghath/StarshipDemo-windows`** for game builds.
-   (Claude's GitHub integration can't create repos: 403. It can push once the repo exists and the Claude GitHub
-   App has access to it.) If it has no build yet, rebuild from `handoff-tasks` (see "Windows build" below) and push
-   `PLAY.bat`, `StarshipDemo.part1`-`part5` and a short README with the play steps into a folder per build,
-   named `<date>_<commit>/` (e.g. `2026-10-09_dd88742/`). GitHub refuses files over 100 MB, so never push the
-   joined 139 MB .exe. A user-attached build repo and this fork can share a session (different names).
+1. **Windows build repo: done.** Private repo **`cghath/StarshipDemo-windows`** holds builds, one folder per build
+   named `<date>_<commit>/`, newest listed first in its README table. `2026-10-09_dd88742/` = `handoff-tasks` at
+   dd88742 (`PLAY.bat`, `StarshipDemo.part1`-`part5`, README; joined SHA-256 verified from a fresh clone).
+   For a new build: rebuild (see "Windows build" below), add a folder and a README row, push to its `main`.
+   GitHub refuses files over 100 MB, so never push the joined .exe. `.gitattributes` keeps parts binary and
+   `PLAY.bat` byte for byte (CRLF). Claude can't create repos (403), but can push to this one.
 2. **PR to upstream not opened yet.** Claude can't open it: `noahgonzalez4506/Unnamed-RTS` has the same name as
    this fork, so the two can't be attached to one session. The user opens it themselves from
    https://github.com/noahgonzalez4506/Unnamed-RTS/compare/main...cghath:Unnamed-RTS:handoff-tasks?expand=1
