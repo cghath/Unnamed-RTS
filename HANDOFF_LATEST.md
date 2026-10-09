@@ -17,6 +17,13 @@ GDScript warnings count as errors: give explicit types when reading from a Dicti
   Use `--only BattleRifle`, `--only BullpupGL`, `--only kit` (matches gun or pose names).
 - Headless match tests need no Xvfb: `$GODOT --headless --path godot_demo res://match.tscn -- --selftest`
   (a few minutes, ends "SELFTEST RESULT: PASS") and `-- --grenadiertest` (about a minute, "GRENADIER TEST DONE 0").
+- Windows build: the export needs Godot's export templates. Download
+  `https://github.com/godotengine/godot/releases/download/4.5.1-stable/Godot_v4.5.1-stable_export_templates.tpz` (1.3 GB),
+  unzip only `templates/version.txt` and `templates/windows_*_x86_64*.exe` into
+  `~/.local/share/godot/export_templates/4.5.1.stable/`, delete the .tpz, then run the Export line above from `godot_demo`.
+  Check the pack with `$GODOT --headless --main-pack build/windows/StarshipDemo.exe res://match.tscn -- --grenadiertest`.
+  Split with `split -b 28M --numeric-suffixes=1 -a 1 StarshipDemo.exe StarshipDemo.part`. PLAY.bat joins the parts with
+  `copy /b`, checks the SHA-256 with `certutil`, and starts the game. Session 3 built commit dd88742 this way (5 parts).
 - Ask the user before launching the game under Xvfb; they stopped one such run in session 2. In session 3 they said
   to go ahead with weaponshots re-runs without asking each time.
 
