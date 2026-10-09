@@ -1765,11 +1765,32 @@ func fire_breach_round(from: Vector3, dir: Vector3, aim: Dictionary = {}) -> Nod
 	rig.recoil = 1.0
 	var r := BREACH_ROUND.new()
 	get_tree().root.add_child(r)
+	if aim.is_empty():
+		aim = _breach_target_along(from, dir)          # a player's round: what they aimed at, and only that
+		r.claim = false                                 # (it doesn't own that target's "charged" flag)
 	r.fire(from, dir, self, st, aim)
 	G.flash(from + dir * 0.2, Color(1.0, 0.75, 0.4), 1.6, 2.0, 0.06)
 	if G.sfx:
 		G.sfx.play("shotgun", from, -4.0 if self == G.possessed else -10.0)
 	return r
+
+
+## The breachable wall or intact door a round fired from `from` along `dir` would hit (or {}).
+func _breach_target_along(from: Vector3, dir: Vector3) -> Dictionary:
+	var hit := G.ray(from, from + dir.normalized() * 60.0, [get_rid()], G.LAYER_WORLD | G.LAYER_DOOR)
+	if hit.is_empty():
+		return {}
+	var v: Node = BREACH_ROUND._vessel_of(hit.collider)
+	if v == null:
+		return {}
+	var at_floor: Vector3 = v.to_local(hit.position) - Vector3(0, 1.2, 0)   # (wall_near / door_near take a standing spot)
+	var reach: float = float(G.data.get("items", {}).get("BreachRound", {}).get("reach_m", 1.5))
+	var d: Dictionary = v.wall_near(at_floor, reach) if v.has_method("wall_near") else {}
+	if d.is_empty() and v.has_method("door_near"):
+		d = v.door_near(at_floor, reach)
+		if not d.is_empty() and d["breached"]:
+			d = {}
+	return d
 
 
 ## AI grenadier as the squad's breacher: from 12 m or less with a clear line, fire a breaching

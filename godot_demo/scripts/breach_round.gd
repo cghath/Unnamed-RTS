@@ -8,7 +8,8 @@ extends Node3D
 const BODY_R := 0.02
 
 var by: Node = null               # who fired it
-var aim := {}                     # the door or wall it was fired at (its "charged" flag is ours)
+var aim := {}                     # the door or wall it was fired at: it opens that one only
+var claim := true                 # an AI breacher's round: the target's "charged" flag is ours
 var vel := Vector3.ZERO
 var model: Node3D
 var stuck := false
@@ -78,8 +79,10 @@ func _go_off() -> void:
 		var reach: float = float(_st.get("reach_m", 1.5))
 		var p: Vector3 = vessel.to_local(nose)
 		var at_floor := p - Vector3(0, 1.2, 0)            # door_near / wall_near take a standing position
-		if not aim.is_empty() and not aim["breached"] and (aim["center"] as Vector3).distance_to(p) < reach + 1.0:
-			d = aim
+		if not aim.is_empty():
+			# aimed at something: open that, or nothing (never a different door it happened to land by)
+			if not aim["breached"] and (aim["center"] as Vector3).distance_to(p) < reach + 1.0:
+				d = aim
 		elif vessel.has_method("wall_near"):
 			d = vessel.wall_near(at_floor, reach)
 		if d.is_empty() and vessel.has_method("door_near"):
@@ -95,8 +98,6 @@ func _go_off() -> void:
 	var push := nrm * (1.0 if ((d["center"] as Vector3) - from_side).dot(nrm) >= 0.0 else -1.0)
 	push.y = 0.0
 	vessel.breach_door(d, by if by and is_instance_valid(by) else null, push)
-	if not aim.is_empty() and not aim["breached"]:
-		aim["charged"] = false                           # opened something else: the target is free again
 	G.say("Breaching round: %s opened" % ("wall" if d["kind"] == "wall" else "door"), by.team if by and is_instance_valid(by) else 1)
 	queue_free()
 
@@ -104,7 +105,7 @@ func _go_off() -> void:
 ## Nothing to breach: a small blast where it is, and the target is free to try again.
 func _fail() -> void:
 	G.blast(model.global_transform * Vector3(0, 0, 0.07), float(_st.get("radius_m", 1.5)), float(_st.get("damage", 40.0)), by)
-	if not aim.is_empty() and not aim["breached"]:
+	if claim and not aim.is_empty() and not aim["breached"]:
 		aim["charged"] = false
 	queue_free()
 

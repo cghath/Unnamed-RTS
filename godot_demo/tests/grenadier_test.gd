@@ -188,6 +188,10 @@ func _physics_process(dt: float) -> void:
 				for n in g2.breach_rounds:
 					shown += 1 if (n as Node3D).visible else 0
 				_check(shown == 1, "one round left on the hips (%d)" % shown)
+				# a player's round goes for what's in the crosshair: aimed at this wall, that's its target
+				var gm: Vector3 = g2._gl_muzzle()
+				var wc: Vector3 = wall_vessel().to_global(wall["center"])
+				_check(is_same(g2._breach_target_along(gm, (wc - gm).normalized()), wall), "a player's round targets the wall in the crosshair")
 				step = 5
 				_wait = 0.55
 				_g2 = g2
