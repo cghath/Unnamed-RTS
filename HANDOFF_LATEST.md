@@ -225,9 +225,86 @@ down is for Linux containers and doesn't apply. The user's Windows profile folde
 3. **Earlier report**: the infected visuals, the T station layout and the cities are unverified in play.
 4. **Grenadier follow-ups**:
    - Playtest it: B cycling, the launcher's arc at range, and AI grenadiers in a boarding action.
-   - ~~Send `gl_ammo`/`breach_ammo` in snapshots~~ (session 4).
+   - ~~Send `gl_ammo`/`breach_ammo` in snapshots~~ (done in the audit fixes).
    - The player's breaching round opens whatever it sticks near (not tied to a chosen door).
-5. **Roadmap left**: zero-g / EVA in the game (port it from `player.gd`), a two-storey hangar, walkable pod and
-   shuttle interiors.
-6. **Playtest the session 4 fixes**, especially campaign save/load (research, caches, hangars, mini dropships) and
-   multiplayer (helm, E actions, walls, fighters).
+5. **Friendly-fire safety for all friendly AI (new, from the user's playtest notes, session 4).** Directive: cut blue-on-blue way down.
+   - Grenade safety: when a frag, EMP or launcher shell has been thrown or fired into a room, friendlies stay out of
+     that room until it detonates, then enter. `squad._start_clear` already holds the clearing squad until
+     `clear.go_at`. Generalise it: register every live grenade/shell (position, room/zone via `vessel.zone_at`,
+     fuse end) and have pathing and slot choice for every friendly of that team avoid the zone and a blast radius
+     around it until it goes off (fuse 2.6 s frag, 1.8 s EMP, impact for 40 mm shells).
+     Also gate the throwers: no frag, EMP or launcher shot if a friendly is within the blast radius of the aim point
+     (the launcher already checks this, `_ai_launcher`). Extend the check to `_throw_grenade` callers: AI grenade at
+     `character.gd` ~line 1021, squad order 0, and `_start_clear`.
+   - Line of fire: before an AI fires, check the shot line (muzzle to target) for friendlies within ~0.6 m of the
+     segment (use `vessel.near_occupants` along it). If one is in the way, hold fire and side-step or crouch to
+     clear the line instead. The player's shots stay as they are.
+   - Passing in a fight: when moving past a friendly who is engaging (has a target and line of sight), prefer to
+     pass behind them, on the side away from their target, not across their muzzle. One way is to offset the
+     waypoint or add a temporary nav avoidance. Also apply it to `squad.bound_point` and `_slot_at` choices.
+6. **Performance (new, session 4).**
+   - Frame rate drops across the board near abandoned cities. Suspects: `campaign/ruins.gd` `_city` builds hundreds
+     of separate MeshInstance3D boxes per building (walls, slabs, debris, lamps, cars), with no merging, no
+     MultiMesh and no visibility ranges.
+     - Fix: merge static city geometry per block into one ArrayMesh (SurfaceTool append, grouped by material) or use
+       MultiMesh for repeated props.
+     - Set `visibility_range_end` on small props.
+     - Check the shadow casting count. Profile with `--camptest --perf` near a city first to confirm.
+   - On planets, after alt-tabbing out and back in, the frame rate drops sharply and stays low. Suspects:
+     - the first-frame catch-up of the physics or `_process` timers after a long frame (cap delta: set
+       `Engine.max_physics_steps_per_frame` low, and clamp `dt` in the big ticks)
+     - the fog, ground and AI ticks all running at once after the pause
+     - something rebuilt on focus or resize, e.g. the pause menu's `_apply_quality` or viewport scaling being
+       reapplied
+     - the window regaining focus at a different resolution
+     Reproduce: run on a planet, minimise for 30 s, restore, and watch `us_*` stats (G.stat) and the Godot monitor.
+     Check `Engine.get_frames_per_second` before and after.
+7. **Next roadmap items (from the original roadmap in the root `HANDOFF.md`).** The rest of that roadmap is done:
+   the core ship (`match.deploy_station`), player outposts with a build menu (N, `outposts.gd`), breachable walls,
+   player driving and fog of war/radar (basic; gaps in item 8).
+   The two-storey hangar is deferred (the user picked these three for now).
+   - **Zero-g / EVA and airlocks.**
+     - The `eva_boarder` role already exists. Add a zero-g movement mode for characters outside a hull or in a
+       depressurised zone: 6-DOF thrust with the exo energy, no gravity, magnetic boots on hull surfaces.
+     - Airlocks (`AirlockPort/Stbd` doors) cycle: inner door shut, outer door open, with a short delay. A breached
+       outer door vents the zone, pulls loose people toward the hole, and makes the zone unbreathable until sealed.
+     - EVA boarding lets troops cross from a ship to an adjacent hull without pods.
+     - Needs per-zone pressure state in `vessel.gd` (beside the infection fields) and an EVA nav/locomotion path that
+       doesn't use the deck navmesh.
+   - **Walkable pod and shuttle interiors.** Boarding pods (`pod.gd`, XS_POD) and shuttles (`shuttle.gd`,
+     XS_DROPSHIP) carry riders as hidden nodes (`riding`). Make them small vessels instead: give the models an
+     Interior collider plus a tiny navmesh and seats (the `*_Seat_n` markers already exist).
+     - Riders sit visibly and the player can walk inside, look out, and exit down the ramp or hatch
+       (`RampExit` / `ExitPoint`).
+     - Keep riders parented to the craft so they move with it.
+   - **Supply ship landing and cargo loading on the ground.** (The audit found a first version already in:
+     `match.gd` `land`, `campaign/depot.gd` UNLOAD/LOAD CARGO, `bays.gd` ramps. Check what's missing before building.)
+     - The supply ship (SMALL_SUPPORT) lands on a planet LZ or pad (`surface.gd` layout, `match.ground_y`).
+     - It drops its ramp, and depot cargo or salvage crates (`depot.gd`, caches) can be carried or driven aboard and
+       flown up to a station.
+     - Reuse the vehicle bay ramp logic (`bays.gd`, `load_vehicles`) and the Darter logistics runs (`logistics.gd`)
+       for automatic hauling.
+8. **Fog of war and radar gaps (session 4).** What works now (`fog.gd`): enemy vessels, fighters, pods, missiles,
+   vehicles, outposts, caches and ground troops are hidden outside sensor range. Vessels within twice the sensor
+   range show as "UNKNOWN CONTACT" (minimap "?" blip). Stations and outposts stay on the map once seen, and fogged
+   units can't be picked (`commander.gd` ~line 795). Still missing:
+   - **AI fog**: only the player's side is fogged; enemy AI sides know where everything is.
+     - Run the same eyes and sensor pass per AI team: generalise `fog.gd` from `G.player_team` to a per-team `state`
+       and `known`.
+     - Have AI targeting and strategic orders (`ai.gd`, ship target picking, outpost raids) only use units in that
+       team's "vis", or last-seen positions for "known".
+   - **Ground minimap**: on planets, vehicles, troops and outposts aren't drawn on the minimap (`minimap.gd` only
+     draws vessels, fighters, pods and missiles). ~~Enemy missiles drawn through the fog~~ (fixed in the audit
+     fixes: `minimap.gd` checks `visible`).
+   - **Fog shading and last-seen state**:
+     - No darkened overlay for areas outside sensor range: shade the minimap and add a world-space fog plane or
+       post effect on planets and in the RTS view.
+     - Known stations and outposts show live: snapshot hp, team and position when they leave sight, show that
+       ghost until seen again.
+   - **Ground radar and interior sight**:
+     - On planets the ground eyes have radar 0, so there are no unknown-contact blips beyond eyesight. Give
+       outposts, vehicles and landed ships a radar ring.
+     - Inside a visible enemy ship every crew member is shown. Hide enemy occupants that none of your people
+       aboard (or a camera or sensor) has line of sight to, with a short last-seen marker.
+9. **Playtest the audit fixes** (the "Done in session 4" section above), especially campaign save/load (research,
+   caches, hangars, mini dropships) and multiplayer (helm, E actions, walls, fighters).
