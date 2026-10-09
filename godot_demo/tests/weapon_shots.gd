@@ -1,6 +1,6 @@
 extends Node
 ## First-person weapon pictures:  godot --path . res://match.tscn -- --weaponshots [--only <text>] <folder>
-## --only keeps the shots whose gun name contains <text> (e.g. --only BattleRifle).
+## --only keeps the shots whose gun or pose name contains <text> (e.g. --only BattleRifle, --only kit).
 ## Each gun type: at the hip looking level, up and down; aimed down the sights.
 ## "tp_*" shots look at the soldier from outside (third person) to check the hands and stock.
 
@@ -26,13 +26,15 @@ func _ready() -> void:
 	shots.append(["F1_AssaultRifle", "tp_side"])
 	for pose in ["hip", "ads", "reload", "tp_side", "tp_left", "tp_front"]:
 		shots.append(["F1_BullpupGL", pose])
+	shots.append(["F1_BullpupGL", "tp_kit_front"])       # the grenadier's bandolier and pack holders
+	shots.append(["F1_BullpupGL", "tp_kit_back"])
 	shots.append(["F2_BullpupGL", "hip"])
 	shots.append(["F2_BullpupGL", "tp_side"])
 	var args := OS.get_cmdline_user_args()
 	var only := args.find("--only")
 	if only >= 0 and only + 1 < args.size() - 1:
 		var key: String = args[only + 1]
-		shots = shots.filter(func(s: Array) -> bool: return String(s[0]).contains(key))
+		shots = shots.filter(func(s: Array) -> bool: return String(s[0]).contains(key) or String(s[1]).contains(key))
 	process_priority = 1000                 # after the commander has placed its camera
 
 
@@ -81,6 +83,13 @@ var busy := false
 
 func _pose() -> void:
 	var s: Array = shots[i]
+	if s[1].begins_with("tp_kit") and c.gl_rounds.is_empty():
+		c._grenadier_kit()                       # same armour as the rifleman we're looking at
+		c.gl_ammo = 4                            # two shells fired, one breaching round used
+		c.breach_ammo = 1
+		c.kit_refresh()
+	if s[1].begins_with("tp_kit") and c.rig.weapon != null:
+		c.rig.set_weapon("")                     # arms down, so the chest shows (the next gun puts it back)
 	var tp: bool = s[1].begins_with("tp_")
 	c.rig.set_first_person(not tp)
 	c.set_meta("force_ads", s[1] in ["ads", "tp_ads"])
@@ -106,6 +115,8 @@ func _process(_dt: float) -> void:
 		"tp_top": at + Vector3.UP * 1.0 + right * 0.4 - fwd * 0.3,
 		"tp_ads": at + right * 1.1 + fwd * 0.3,
 		"tp_reload": at + right * 0.9 + fwd * 0.7 - Vector3.UP * 0.2,
+		"tp_kit_front": at + fwd * 1.1 - right * 0.35 + Vector3.UP * 0.1,
+		"tp_kit_back": at - fwd * 1.3 + right * 0.5 + Vector3.UP * 0.2,
 	}[shots[i][1]]
 	cam.fov = 50.0
 	cam.look_at_from_position(from, at)

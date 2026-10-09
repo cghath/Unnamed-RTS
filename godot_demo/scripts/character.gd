@@ -6,6 +6,8 @@ extends CharacterBody3D
 ## direct control (G.possessed == self) the same body is driven by the keyboard.
 
 const RIG := preload("res://scripts/rig.gd")
+const GRENADE := preload("res://scripts/grenade.gd")
+const BREACH_ROUND := preload("res://scripts/breach_round.gd")
 const BODY_SHADER := preload("res://shaders/infected_body.gdshader")
 const COMBAT_ROLES := ["rifleman", "breacher", "medic", "heavy", "grenadier", "squad_leader", "eva_boarder", "drop_trooper"]
 const JOBS := {
@@ -47,6 +49,10 @@ var emps: Array = []              # EMP grenades (slot names)
 var stun_t := 0.0                 # > 0: staggered and blinded by an EMP
 var charges: Array = []
 var revive_kit := 0
+var gl_ammo := 0                  # grenadier: 40 mm shells left (on the chest bandolier)
+var breach_ammo := 0              # grenadier: breaching rounds left (in the pack-side holders)
+var gl_rounds: Array = []         # ...the shell models on the bandolier, one hidden per shot
+var breach_rounds: Array = []     # ...the breaching-round models in the holders
 var armed := false
 var geared := 0                   # crew: 0 none, 1 ready locker, 2 armory
 var purging := false              # scientist using a purge emitter
@@ -184,6 +190,8 @@ func setup(v: Node3D, team_: int, faction_: int, role_: String) -> void:
 			var sn: Node = rig.model.find_child("Slot_" + String(sl), true, false)
 			if sn is MeshInstance3D:
 				(sn as MeshInstance3D).material_override = G._mat(Color(0.3, 0.7, 1.0), 1.5)
+	if role == "grenadier":
+		_grenadier_kit()
 	if model != "":
 		give_weapon(model)
 	if role == "medic":
@@ -220,6 +228,97 @@ func give_weapon(model: String) -> void:
 	rig.set_weapon(scn if ResourceLoader.exists(scn) else "res://models/weapons/weapon_%s.glb" % file)
 	mag = int(wstats.get("ammo_per_load", 30))
 	armed = true
+
+
+# ------------------------------------------------------------------ grenadier kit
+
+const GL_ROUNDS := 6
+const BREACH_ROUNDS := 2
+
+
+## A bandolier of 40 mm shells across the chest (left shoulder to right ribs) and two breaching
+## rounds in holders on the pack's sides. Measured off the chest armour, so it fits both factions.
+## Hung on the UpperChest bone (bones have identity rest rotation, so a node's local position is
+## its model-space position minus the bone's). Named "_mesh" so first person hides them like the
+## rest of the chest.
+func _grenadier_kit() -> void:
+	gl_ammo = GL_ROUNDS
+	breach_ammo = BREACH_ROUNDS
+	if not rig.b.has("UpperChest"):
+		return
+	var bone: Node3D = rig.b["UpperChest"]
+	var bone_pos: Vector3 = rig._model_pos("UpperChest")
+	var chest := AABB(bone_pos + Vector3(-0.22, -0.18, -0.22), Vector3(0.44, 0.38, 0.42))
+	var cm: Node = bone.find_child("UpperChest_mesh", false, false)
+	if cm is MeshInstance3D:
+		chest = _model_aabb(cm)
+	var front: float = chest.end.z
+	var mags: Node = rig.model.find_child("Slot_MagSlot_1", true, false)
+	if mags is MeshInstance3D:
+		front = maxf(front, _model_aabb(mags).end.z)
+	var hw: float = chest.size.x * 0.5
+	var webbing := StandardMaterial3D.new()
+	webbing.albedo_color = Color(0.15, 0.14, 0.11)
+	webbing.roughness = 0.9
+	# the bandolier
+	var a := Vector3(hw * 0.62, chest.end.y - 0.05, front + 0.007)
+	var b := Vector3(-hw * 0.62, chest.position.y + 0.07, front + 0.007)
+	var band := Node3D.new()
+	band.name = "Bandolier_mesh"
+	band.position = (a + b) * 0.5 - bone_pos
+	band.rotation.z = atan2(a.y - b.y, a.x - b.x)     # local +x up the strap, so +y (the noses) points up
+	bone.add_child(band)
+	var strap := MeshInstance3D.new()
+	var sb := BoxMesh.new()
+	sb.size = Vector3(a.distance_to(b) + 0.08, 0.05, 0.01)
+	strap.mesh = sb
+	strap.material_override = webbing
+	band.add_child(strap)
+	gl_rounds.clear()
+	for i in GL_ROUNDS:
+		var sh: Node3D = GRENADE.shell_model()
+		sh.position = Vector3((i - (GL_ROUNDS - 1) * 0.5) * 0.046, 0.004, 0.025)
+		sh.rotation.x = -PI * 0.5                    # nose along the strap's "up" side
+		band.add_child(sh)
+		gl_rounds.append(sh)
+	# the breaching rounds, nose up in open sleeves on the pack's back corners
+	var holders := Node3D.new()
+	holders.name = "BreachHolders_mesh"
+	bone.add_child(holders)
+	breach_rounds.clear()
+	var sleeve := BoxMesh.new()
+	sleeve.size = Vector3(0.05, 0.085, 0.05)
+	for side in [-1.0, 1.0]:
+		var at := Vector3(side * (hw - 0.05), (chest.position.y + chest.end.y) * 0.5 - 0.04, chest.position.z + 0.07)
+		var sl := MeshInstance3D.new()
+		sl.mesh = sleeve
+		sl.material_override = webbing
+		sl.position = at - bone_pos
+		holders.add_child(sl)
+		var r: Node3D = BREACH_ROUND.build_model()
+		r.position = at - bone_pos + Vector3(0, 0.05, 0)
+		r.rotation.x = -PI * 0.5                     # nose up
+		holders.add_child(r)
+		breach_rounds.append(r)
+	kit_refresh()
+
+
+## Show as many shells and breaching rounds as are left.
+func kit_refresh() -> void:
+	for i in gl_rounds.size():
+		(gl_rounds[i] as Node3D).visible = i < gl_ammo
+	for i in breach_rounds.size():
+		(breach_rounds[i] as Node3D).visible = i < breach_ammo
+
+
+## A mesh's bounds in the character model's space (at rest).
+func _model_aabb(mi: MeshInstance3D) -> AABB:
+	var xf := Transform3D.IDENTITY
+	var n: Node = mi
+	while n != null and n != rig.model:
+		xf = (n as Node3D).transform * xf
+		n = n.get_parent()
+	return xf * mi.get_aabb()
 
 
 # ------------------------------------------------------------------ helpers
@@ -1779,6 +1878,10 @@ func player_use(hit: Dictionary) -> String:
 				if role == "breacher":
 					while charges.size() < 2:
 						charges.append("armory_charge_%d" % charges.size())
+				if role == "grenadier":
+					gl_ammo = GL_ROUNDS
+					breach_ammo = BREACH_ROUNDS
+					kit_refresh()
 				if not armed:
 					set_meta("gear_spot", String(s.name))
 					_finish_gear_up()
